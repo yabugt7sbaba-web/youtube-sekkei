@@ -422,6 +422,7 @@ function drawLayout(box, L) {
   }
   // 飾り：帯・箱・丸・矢印・吹き出し・ギザギザ吹き出し・線・写真のコマ・絵文字・集中線・画面のフチの枠
   // （layer が front なら人物の上に描く。枠はいちばん上）
+  const sceneUse = {};  // 同じ背景写真のコマは、写す範囲を変えて並べる
   shapes.forEach((s, si) => {
     const [x, y, w, h] = area(s);
     const fill = col(s.fill, "none"), stroke = col(s.stroke, "none"), sw = stroke === "none" ? 0 : 12, rot = num(s.rot, -45, 45, 0);
@@ -444,11 +445,16 @@ function drawLayout(box, L) {
       }
       el = `<polygon points="${pts.join(" ")}" fill="${fill === "none" ? "#FFE600" : fill}" stroke="${stroke}" stroke-width="${sw}" stroke-linejoin="round"${tr}/>`;
     } else if (s.kind === "panel") {
-      const cid = `pc${id}_${si}`, dim = num(s.dim, 0, 0.7, 0);
+      // 写真のコマ：同じ写真の2つ目からは寄って別の所を写す。t に絵文字があれば、コマの真ん中に大きく重ねる（料理・商品の写真の代わり）
+      const cid = `pc${id}_${si}`, dim = num(s.dim, 0, 0.7, 0), sc = ASSET_ID.test(s.scene || "") ? s.scene : "";
+      const k = sc ? (sceneUse[sc] = (sceneUse[sc] || 0) + 1) - 1 : 0, z = 1 + Math.min(1.5, 0.5 * k);
+      const ox = [0.5, 0, 1, 0.5, 0.2][k % 5], oy = [0.5, 0.3, 0.7, 1, 0][k % 5], ch = Array.from(String(s.t || "")).slice(0, 4).join("");
+      const efs = Math.min(w, h) * 0.62;
       defs += `<clipPath id="${cid}"><rect x="${x}" y="${y}" width="${w}" height="${h}"/></clipPath>`;
       el = `<g${tr}><rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${fill === "none" ? "#D9D9D9" : fill}"/>` +
-        (ASSET_ID.test(s.scene || "") ? `<image href="${SCENE_BASE}${s.scene}.jpg" x="${x}" y="${y}" width="${w}" height="${h}" preserveAspectRatio="xMidYMid slice" clip-path="url(#${cid})"/>` : "") +
+        (sc ? `<image href="${SCENE_BASE}${sc}.jpg" x="${x - (w * z - w) * ox}" y="${y - (h * z - h) * oy}" width="${w * z}" height="${h * z}" preserveAspectRatio="xMidYMid slice" clip-path="url(#${cid})"/>` : "") +
         (dim ? `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#000000" opacity="${dim}"/>` : "") +
+        (ch ? `<text x="${x + w / 2}" y="${y + h / 2 + efs * 0.35}" font-size="${efs}" text-anchor="middle" font-family="Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif">${esc(ch)}</text>` : "") +
         (stroke !== "none" ? `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="none" stroke="${stroke}" stroke-width="${Math.max(6, H * 0.012)}"/>` : "") + `</g>`;
     } else if (s.kind === "emoji") {
       const ch = Array.from(String(s.t || "")).slice(0, 4).join(""), fs = Math.max(24, Math.min(w, h)) * 0.9;
