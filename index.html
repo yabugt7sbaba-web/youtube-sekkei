@@ -400,7 +400,7 @@ function drawLayout(box, L) {
   const ol = L.outline === "" ? "" : col(L.outline, "#FFFFFF");  // 人物のフチ（空ならフチなし）
   let defs = ol ? `<filter id="ol${id}" x="-15%" y="-15%" width="130%" height="130%"><feMorphology in="SourceAlpha" operator="dilate" radius="7" result="d"/>
     <feFlood flood-color="${ol}"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>` : "";
-  let back = "", front = "", people = "", texts = "", frame = "";
+  let back = "", front = "", people = "", texts = "", frame = "", frameT = 0;
   // 背景：写真（架空の場面）・単色・グラデーション・塗り分け
   if (bg.kind === "photo" && SCENE_IDS.indexOf(bg.scene) >= 0) {
     back += `<rect width="${W}" height="${H}" fill="${c1}"/><image href="${SCENE_BASE}${bg.scene}.jpg" x="0" y="0" width="${W}" height="${H}" preserveAspectRatio="xMidYMid slice"/>`;
@@ -435,7 +435,9 @@ function drawLayout(box, L) {
       el = `<g${tr}><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${Math.min(w, h) * 0.22}" fill="${fill === "none" ? "#FFFFFF" : fill}" stroke="${stroke}" stroke-width="${sw}"/>
         <polygon points="${tx - 34},${y + h - 2} ${tx + 34},${y + h - 2} ${tx + (s.tail === "left" ? -60 : s.tail === "right" ? 60 : 0)},${y + h + 70}" fill="${fill === "none" ? "#FFFFFF" : fill}" stroke="${stroke}" stroke-width="${sw}"/></g>`;
     } else if (s.kind === "frame") {
-      const t = num(s.h, 0.005, 0.08, 0.025) * H, c = fill !== "none" ? fill : stroke !== "none" ? stroke : "#FFE600";
+      const hv = num(s.h, 0, 1.4, 0.025), t = (hv > 0.1 ? 0.025 : Math.max(0.006, Math.min(0.04, hv))) * H;
+      const c = fill !== "none" ? fill : stroke !== "none" ? stroke : "#FFE600";
+      frameT = Math.max(frameT, t);
       frame += `<rect x="${t / 2}" y="${t / 2}" width="${W - t}" height="${H - t}" fill="none" stroke="${c}" stroke-width="${t}"/>`;
       return;
     } else if (s.kind === "line") { const lh = Math.min(Math.max(8, h), H * 0.03); el = `<rect x="${x}" y="${y}" width="${w}" height="${lh}" rx="${lh / 2}" fill="${fill === "none" ? stroke : fill}"${tr}/>`; }
@@ -454,23 +456,45 @@ function drawLayout(box, L) {
     const img = `<image href="${PERSON_BASE}${p.id}.png" x="${cx - W / 2}" y="${H - h}" width="${W}" height="${h}" preserveAspectRatio="xMidYMax meet" ${ol ? ` filter="url(#ol${id})"` : ""}/>`;
     people += p.flip ? `<g transform="translate(${2 * cx},0) scale(-1,1)">${img}</g>` : img;
   });
+  // 文字の下地の色（帯・箱・吹き出し・丸・背景）。写真の上なら空
+  function luminance(h) { const v = [1, 3, 5].map(i => parseInt(h.substr(i, 2), 16) / 255).map(c => c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4)); return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2]; }
+  function contrast(a, b) { const x = luminance(a), y = luminance(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); }
+  function underColor(px, py) {
+    let u = "";
+    (L.shapes || []).slice(0, 8).forEach(c => {
+      const f = col(c.fill, ""), sx = num(c.x, -0.2, 1.2, 0), sy = num(c.y, -0.2, 1.2, 0), sw2 = num(c.w, 0, 1.4, 0.2), sh = num(c.h, 0, 1.4, 0.1);
+      if (f && ["band", "rect", "bubble", "circle"].indexOf(c.kind) >= 0 && !num(c.rot, -45, 45, 0) && px >= sx && px <= sx + sw2 && py >= sy && py <= sy + sh) u = f;
+    });
+    if (u) return u;
+    if (bg.kind === "photo" && SCENE_IDS.indexOf(bg.scene) >= 0) return "";
+    if (bg.kind === "split") { const at = num(bg.at, 0.1, 0.9, 0.5); return (bg.dir === "v" ? py : px) < at ? c1 : c2; }
+    if (bg.kind === "gradient") return "#" + [1, 3, 5].map(i => Math.round((parseInt(c1.substr(i, 2), 16) + parseInt(c2.substr(i, 2), 16)) / 2).toString(16).padStart(2, "0")).join("");  // 中間の色で見る
+    return c1;
+  }
   // 文字：位置・大きさ・色・縁取り・箱。「／」で改行
   (L.texts || []).slice(0, 5).forEach(t => {
     const lines = String(t.t || "").split("／").map(x => x.trim()).filter(Boolean).slice(0, 3);
     if (!lines.length) return;
-    const size = num(t.size, 0.05, 0.3, 0.14) * H, x = num(t.x, 0, 1, 0.05) * W, y = num(t.y, 0.05, 1, 0.3) * H;
-    const anchor = ["start", "middle", "end"].indexOf(t.align) >= 0 ? t.align : "start";
-    const fill = col(t.color, "#FFFFFF"), stroke = col(t.stroke, ""), swr = stroke ? num(t.sw, 0, 0.3, 0.14) : 0;
+    const size = num(t.size, 0.05, 0.3, 0.14) * H, y = num(t.y, 0.05, 1, 0.3) * H;
+    let x = num(t.x, 0, 1, 0.05) * W, anchor = ["start", "middle", "end"].indexOf(t.align) >= 0 ? t.align : "start";
+    let fill = col(t.color, "#FFFFFF"), stroke = col(t.stroke, ""), swr = stroke ? num(t.sw, 0, 0.3, 0.14) : 0;
+    const under = col(t.box, "") || underColor(x / W, (y - size * 0.4) / H);
+    if (under) {
+      if (contrast(fill, under) < 3 && !(stroke && swr >= 0.08 && contrast(stroke, under) >= 3))
+        fill = contrast("#111111", under) >= contrast("#FFFFFF", under) ? "#111111" : "#FFFFFF";
+    } else if (!stroke) { stroke = luminance(fill) > 0.4 ? "#000000" : "#FFFFFF"; swr = 0.1; }
     let maxw = num(t.maxw, 0.1, 1, 0.9) * W;
     const rot = num(t.rot, -30, 30, 0);
-    // 吹き出し・箱・帯の中に置いた文字は、その中に収める
+    // 吹き出し・箱の中に置いた文字は、その中央に収める。帯の中の文字は、帯からはみ出さない幅にする
     const inside = (L.shapes || []).slice(0, 8).find(c => ["bubble", "rect", "band"].indexOf(c.kind) >= 0 && !num(c.rot, -45, 45, 0) &&
       x >= num(c.x, -0.2, 1.2, 0) * W && x <= (num(c.x, -0.2, 1.2, 0) + num(c.w, 0, 1.4, 0.2)) * W &&
       y - size * 0.4 >= num(c.y, -0.2, 1.2, 0) * H && y - size * 0.4 <= (num(c.y, -0.2, 1.2, 0) + num(c.h, 0, 1.4, 0.1)) * H);
     if (inside) {
-      const cx0 = num(inside.x, -0.2, 1.2, 0) * W, cw = num(inside.w, 0, 1.4, 0.2) * W, pd = Math.min(cw * 0.06, 30);
-      const room = anchor === "start" ? cx0 + cw - pd - x : anchor === "end" ? x - cx0 - pd : 2 * Math.min(x - cx0, cx0 + cw - x) - 2 * pd;
-      maxw = Math.max(W * 0.08, Math.min(maxw, room));
+      const cx0 = num(inside.x, -0.2, 1.2, 0) * W, cw = num(inside.w, 0, 1.4, 0.2) * W, pd = Math.min(cw * 0.07, 36);
+      if (inside.kind === "band") {
+        const room = anchor === "start" ? cx0 + cw - pd - x : anchor === "end" ? x - cx0 - pd : 2 * Math.min(x - cx0, cx0 + cw - x) - 2 * pd;
+        maxw = Math.max(W * 0.08, Math.min(maxw, room));
+      } else { x = cx0 + cw / 2; anchor = "middle"; maxw = Math.max(W * 0.08, cw - 2 * pd); }
     }
     const ts = lines.map((s, k) => `<text x="${x}" y="${y + k * size * 1.12}" font-size="${size}" fill="${fill}"${stroke ? ` stroke="${stroke}" stroke-width="${swr * size}"` : ""} text-anchor="${anchor}" data-maxw="${maxw}" data-swr="${swr}">${esc(s)}</text>`).join("");
     texts += `<g class="tx" data-box="${col(t.box, "")}"${rot ? ` transform="rotate(${rot} ${x} ${y})"` : ""}>${ts}</g>`;
@@ -493,6 +517,9 @@ function drawLayout(box, L) {
     const ts = [...g.querySelectorAll("text")];
     let k = 1;
     ts.forEach(el => { const w = el.getComputedTextLength(), m = +el.dataset.maxw; if (w > m) k = Math.min(k, m / w); });
+    // 小さくしすぎない（画面の高さの6.5%まで。飾りの中の文字は除く）
+    const fs0 = parseFloat(ts[0].getAttribute("font-size")), floor = Math.min(fs0, H * 0.065);
+    if (!g.dataset.in && fs0 * k < floor) k = floor / fs0;
     shrink(ts, k);
     const it = {g: g, ts: ts, dx: 0, key: ts[0].getAttribute("text-anchor") + Math.round(+ts[0].getAttribute("x") / 25)};
     it.bp = () => g.dataset.box ? parseFloat(ts[0].getAttribute("font-size")) * 0.16 : 0;
@@ -519,7 +546,7 @@ function drawLayout(box, L) {
   // 3) 画面の内側に収める 4) 箱を後から敷く
   items.forEach(({g, ts, dx, bp}) => {
     if (!g.dataset.in) {
-      const m = H * 0.03, b = g.getBBox();
+      const m = Math.max(H * 0.03, frameT + H * 0.012), b = g.getBBox();
       let dy = 0;
       const l0 = b.x + dx - bp(), r0 = b.x + dx + b.width + bp();
       if (b.y - bp() < m) dy = m - (b.y - bp()); else if (b.y + b.height + bp() > H - m) dy = H - m - (b.y + b.height + bp());
