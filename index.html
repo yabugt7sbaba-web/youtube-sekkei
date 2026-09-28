@@ -270,7 +270,7 @@ function render(d, biz) {
     <div class="card"><div class="h2">KEYWORDS｜実際に検索されている言葉</div><div class="chips">${(d.keywords || []).map(k => `<span class="chip">${esc(k)}</span>`).join("")}</div></div>
     <div class="card"><div class="h2">PLANS｜最初に撮る企画${(d.plans || []).length}本</div>${plans}</div>
     <div class="card"><div class="h2">THUMBNAILS｜サムネイル案</div>${thumbs}
-      <div class="note">${ths.some(t => t.layout) ? "人物と背景の写真はAIで作った架空のもの（イメージ）です。実際は出演者や現場の写真に差し替えます。" : "人物は仮のシルエットです。実際は出演者の写真を切り抜いて入れます。"}</div></div>
+      <div class="note">${ths.some(t => t.layout) ? "人物・背景・物の写真はAIで作った架空のもの（イメージ）です。実際は出演者や現場・商品の写真に差し替えます。" : "人物は仮のシルエットです。実際は出演者の写真を切り抜いて入れます。"}</div></div>
     <div class="card"><div class="h2">FIRST STEP｜最初の一歩</div><ol class="steps">${(d.steps || []).map(s => `<li>${esc(s)}</li>`).join("")}</ol></div>
     <div class="card" style="text-align:center"><div style="font-weight:900;font-size:16px;color:var(--navy)">この設計を、あなたの会社に合わせて<br>一緒に詰めませんか？</div>
       <a class="btn cta" href="${CONSULT_URL}" target="_blank" rel="noopener">無料で相談する</a>
@@ -280,7 +280,7 @@ function render(d, biz) {
   $("#loading").classList.add("hide"); $("#result").classList.remove("hide"); window.scrollTo(0, 0);
   const draw = () => ths.forEach((t, n) => drawThumb($("#th" + n), t));
   draw();
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(draw);
+  loadThumbFonts(ths.map(t => t.layout).filter(Boolean)).then(draw);
 }
 
 // ---------- サムネイル案の描き方 ----------
@@ -388,8 +388,35 @@ function drawThumb(box, t) {
 // ---------- 競合サムネイルの再現 ----------
 // AIが参考の動画のサムネイル画像を見て書いた設計図（layout）どおりに描く。座標は画面に対する割合（0〜1）
 // 人物は AIで作った架空の人物（persons/ の切り抜きPNG）、写真の背景・コマは架空の場面（scenes/ のJPEG）。一覧は裏側（Code.gs の PERSONS・SCENES）
-const PERSON_BASE = "persons/", SCENE_BASE = "scenes/";
+const PERSON_URL = id => "persons/" + id + ".webp", SCENE_URL = id => "scenes/" + id + ".webp", OBJECT_URL = id => "objects/" + id + ".webp";
 const ASSET_ID = /^[a-z0-9_]{2,40}$/;
+// サムネイルの書体（Google Fonts）。AIが参考の文字に近いものを選ぶ。どの端末でも同じ太さで出る
+const THUMB_FONTS = {
+  gothic: {css: "Noto+Sans+JP:wght@900", family: "'Noto Sans JP'", weight: 900},          // 極太ゴシック（標準）
+  impact: {css: "Dela+Gothic+One", family: "'Dela Gothic One'", weight: 400},            // 超極太（強い見出し）
+  round: {css: "M+PLUS+Rounded+1c:wght@900", family: "'M PLUS Rounded 1c'", weight: 900}, // 丸ゴシック（やさしい・食べ物・子ども）
+  mincho: {css: "Shippori+Mincho+B1:wght@800", family: "'Shippori Mincho B1'", weight: 800}, // 明朝（高級・伝統・まじめ）
+  pop: {css: "Mochiy+Pop+One", family: "'Mochiy Pop One'", weight: 400},                 // ポップ（かわいい・カジュアル）
+  hand: {css: "Yusei+Magic", family: "'Yusei Magic'", weight: 400},                      // 手書き風（マーカー）
+};
+const fontOf = f => THUMB_FONTS[f] || THUMB_FONTS.gothic;
+// 使う書体だけ読み込む（文字の幅は書体で変わるので、読み込んでから描き直す）。ふつうは4秒で打ち切り（wait=0 なら最後まで待つ）
+const loadedFontCss = {};
+function loadThumbFonts(layouts, wait = 4000) {
+  if (!document.fonts || !document.fonts.load) return Promise.resolve();
+  const need = {};
+  layouts.forEach(L => ((L && L.texts) || []).forEach(t => { const k = THUMB_FONTS[t.font] ? t.font : "gothic"; need[k] = (need[k] || "") + String(t.t || ""); }));
+  const keys = Object.keys(need), missing = keys.filter(k => !loadedFontCss[k]);
+  const css = new Promise(res => {
+    if (!missing.length) return res();
+    missing.forEach(k => { loadedFontCss[k] = true; });
+    const l = document.createElement("link");
+    l.rel = "stylesheet"; l.href = "https://fonts.googleapis.com/css2?" + missing.map(k => "family=" + THUMB_FONTS[k].css).join("&") + "&display=swap";
+    l.onload = res; l.onerror = res; document.head.appendChild(l);
+  });
+  const all = css.then(() => Promise.all(keys.map(k => document.fonts.load(`${fontOf(k).weight} 60px ${fontOf(k).family}`, need[k]).catch(() => null))));
+  return (wait > 0 ? Promise.race([all, new Promise(r => setTimeout(r, wait))]) : all).then(() => {}, () => {});
+}
 function drawLayout(box, L) {
   const id = box.id, W = 1280, H = 720, SVGNS = "http://www.w3.org/2000/svg";
   const num = (v, lo, hi, d) => { v = Number(v); return isFinite(v) ? Math.min(hi, Math.max(lo, v)) : d; };
@@ -398,14 +425,22 @@ function drawLayout(box, L) {
   const shapes = (L.shapes || []).slice(0, 10);
   const area = s => [num(s.x, -0.2, 1.2, 0) * W, num(s.y, -0.2, 1.2, 0) * H, num(s.w, 0, 1.4, 0.2) * W, num(s.h, 0, 1.4, 0.1) * H];
   const ol = L.outline === "" ? "" : col(L.outline, "#FFFFFF");  // 人物のフチ（空ならフチなし）
-  let defs = ol ? `<filter id="ol${id}" x="-15%" y="-15%" width="130%" height="130%"><feMorphology in="SourceAlpha" operator="dilate" radius="7" result="d"/>
-    <feFlood flood-color="${ol}"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>` : "";
+  // 人物：白フチ＋やわらかい影（切り抜きが浮かないように）。物の写真：影だけ。写真：少し鮮やかに（ぼかすときは先にぼかす）
+  const vivid = `<feColorMatrix type="saturate" values="1.18"/><feComponentTransfer><feFuncR type="linear" slope="1.08" intercept="-0.03"/><feFuncG type="linear" slope="1.08" intercept="-0.03"/><feFuncB type="linear" slope="1.08" intercept="-0.03"/></feComponentTransfer>`;
+  let defs = `<filter id="ol${id}" x="-20%" y="-15%" width="140%" height="135%">
+    <feMorphology in="SourceAlpha" operator="dilate" radius="${ol ? 9 : 0.1}" result="d"/><feGaussianBlur in="d" stdDeviation="12" result="b"/><feOffset in="b" dy="10" result="bo"/>
+    <feFlood flood-color="#000000" flood-opacity="0.38"/><feComposite in2="bo" operator="in" result="sh"/>
+    <feFlood flood-color="${ol || "#FFFFFF"}" flood-opacity="${ol ? 1 : 0}"/><feComposite in2="d" operator="in" result="o"/>
+    <feMerge><feMergeNode in="sh"/><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="os${id}" x="-20%" y="-20%" width="140%" height="150%"><feGaussianBlur in="SourceAlpha" stdDeviation="8" result="b"/><feOffset in="b" dy="8" result="bo"/>
+    <feFlood flood-color="#000000" flood-opacity="0.35"/><feComposite in2="bo" operator="in" result="sh"/><feMerge><feMergeNode in="sh"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="pp${id}" color-interpolation-filters="sRGB">${vivid}</filter>`;
   let back = "", front = "", people = "", texts = "", frame = "", frameT = 0;
   // 背景：写真（架空の場面。ぼかし・暗さ・色味）・単色・グラデーション・塗り分け
   if (bg.kind === "photo" && ASSET_ID.test(bg.scene || "")) {
     const blur = num(bg.blur, 0, 1, 0), dim = num(bg.dim, 0, 0.7, 0), m = blur ? 40 : 0;
-    if (blur) defs += `<filter id="bb${id}"><feGaussianBlur stdDeviation="${(blur * 16).toFixed(1)}"/></filter>`;
-    back += `<rect width="${W}" height="${H}" fill="${c1}"/><image href="${SCENE_BASE}${bg.scene}.jpg" x="${-m}" y="${-m}" width="${W + 2 * m}" height="${H + 2 * m}" preserveAspectRatio="xMidYMid slice"${blur ? ` filter="url(#bb${id})"` : ""}/>`;
+    defs += `<filter id="bb${id}" color-interpolation-filters="sRGB">${blur ? `<feGaussianBlur stdDeviation="${(blur * 16).toFixed(1)}"/>` : ""}${vivid}</filter>`;
+    back += `<rect width="${W}" height="${H}" fill="${c1}"/><image href="${SCENE_URL(bg.scene)}" x="${-m}" y="${-m}" width="${W + 2 * m}" height="${H + 2 * m}" preserveAspectRatio="xMidYMid slice" filter="url(#bb${id})"/>`;
     if (dim) back += `<rect width="${W}" height="${H}" fill="${col(bg.tint, "#000000")}" opacity="${dim}"/>`;
   } else if (bg.kind === "gradient") {
     const d = bg.dir === "v" ? 'x2="0" y2="1"' : bg.dir === "d" ? 'x2="1" y2="1"' : 'x2="1" y2="0"';
@@ -420,7 +455,13 @@ function drawLayout(box, L) {
         : `<rect x="${W * at}" width="${W * (1 - at)}" height="${H}" fill="${c2}"/>`;
     }
   }
-  // 飾り：帯・箱・丸・矢印・吹き出し・ギザギザ吹き出し・線・写真のコマ・絵文字・集中線・画面のフチの枠
+  // 周りを暗くする（視線を真ん中に集める）
+  const vig = num(bg.vignette, 0, 0.8, 0);
+  if (vig) {
+    defs += `<radialGradient id="vg${id}" cx="50%" cy="50%" r="72%"><stop offset="0.55" stop-color="#000000" stop-opacity="0"/><stop offset="1" stop-color="#000000" stop-opacity="${vig}"/></radialGradient>`;
+    back += `<rect width="${W}" height="${H}" fill="url(#vg${id})"/>`;
+  }
+  // 飾り：帯・箱・丸・矢印・吹き出し・ギザギザ吹き出し・線・写真のコマ・物の写真・絵文字・集中線・画面のフチの枠
   // （layer が front なら人物の上に描く。枠はいちばん上）
   const sceneUse = {};  // 同じ背景写真のコマは、写す範囲を変えて並べる
   shapes.forEach((s, si) => {
@@ -452,10 +493,13 @@ function drawLayout(box, L) {
       const efs = Math.min(w, h) * 0.62;
       defs += `<clipPath id="${cid}"><rect x="${x}" y="${y}" width="${w}" height="${h}"/></clipPath>`;
       el = `<g${tr}><rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${fill === "none" ? "#D9D9D9" : fill}"/>` +
-        (sc ? `<image href="${SCENE_BASE}${sc}.jpg" x="${x - (w * z - w) * ox}" y="${y - (h * z - h) * oy}" width="${w * z}" height="${h * z}" preserveAspectRatio="xMidYMid slice" clip-path="url(#${cid})"/>` : "") +
+        (sc ? `<g clip-path="url(#${cid})"><image href="${SCENE_URL(sc)}" x="${x - (w * z - w) * ox}" y="${y - (h * z - h) * oy}" width="${w * z}" height="${h * z}" preserveAspectRatio="xMidYMid slice" filter="url(#pp${id})"/></g>` : "") +
         (dim ? `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#000000" opacity="${dim}"/>` : "") +
         (ch ? `<text x="${x + w / 2}" y="${y + h / 2 + efs * 0.35}" font-size="${efs}" text-anchor="middle" font-family="Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif">${esc(ch)}</text>` : "") +
         (stroke !== "none" ? `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="none" stroke="${stroke}" stroke-width="${Math.max(6, H * 0.012)}"/>` : "") + `</g>`;
+    } else if (s.kind === "object") {
+      // 物の写真（AIで作った切り抜き。お金・書類・料理・歯・工具など）。x,y,w,h の範囲に収める
+      if (ASSET_ID.test(s.obj || "")) el = `<image href="${OBJECT_URL(s.obj)}" x="${x}" y="${y}" width="${w}" height="${h}" preserveAspectRatio="xMidYMid meet" filter="url(#os${id})"${tr}/>`;
     } else if (s.kind === "emoji") {
       const ch = Array.from(String(s.t || "")).slice(0, 4).join(""), fs = Math.max(24, Math.min(w, h)) * 0.9;
       if (ch) el = `<text x="${x + w / 2}" y="${y + h / 2 + fs * 0.35}" font-size="${fs}" text-anchor="middle" font-family="Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif"${tr}>${esc(ch)}</text>`;
@@ -486,7 +530,7 @@ function drawLayout(box, L) {
   const persons = (L.people || []).slice(0, 3).filter(p => ASSET_ID.test(p.id || ""));
   persons.forEach(p => {
     const h = num(p.h, 0.3, 1.25, 0.9) * H, cx = num(p.cx, 0, 1, 0.5) * W, bot = num(p.bottom, 0.3, 1, 1) * H;
-    const img = `<image href="${PERSON_BASE}${p.id}.png" x="${cx - W / 2}" y="${bot - h}" width="${W}" height="${h}" preserveAspectRatio="xMidYMax meet"${ol ? ` filter="url(#ol${id})"` : ""}/>`;
+    const img = `<image href="${PERSON_URL(p.id)}" x="${cx - W / 2}" y="${bot - h}" width="${W}" height="${h}" preserveAspectRatio="xMidYMax meet" filter="url(#ol${id})"/>`;
     people += p.flip ? `<g transform="translate(${2 * cx},0) scale(-1,1)">${img}</g>` : img;
   });
   // 文字の下地の色（帯・箱・吹き出し・丸・背景）。写真（背景・コマ）の上なら空
@@ -499,7 +543,7 @@ function drawLayout(box, L) {
     shapes.forEach(c => {
       const sx = num(c.x, -0.2, 1.2, 0), sy = num(c.y, -0.2, 1.2, 0), sw2 = num(c.w, 0, 1.4, 0.2), sh = num(c.h, 0, 1.4, 0.1);
       if (num(c.rot, -45, 45, 0) || px < sx || px > sx + sw2 || py < sy || py > sy + sh) return;
-      if (c.kind === "panel") { u = "photo"; underBox = null; return; }
+      if (c.kind === "panel" || c.kind === "object") { u = "photo"; underBox = null; return; }
       const f = col(c.fill, "");
       if (f && ["band", "rect", "bubble", "circle", "burst"].indexOf(c.kind) >= 0) { u = f; underBox = [sx * W, sy * H, (sx + sw2) * W, (sy + sh) * H]; }
     });
@@ -531,7 +575,8 @@ function drawLayout(box, L) {
     if (fill2) defs += `<linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0.2" stop-color="${fill}"/><stop offset="0.95" stop-color="${fill2}"/></linearGradient>`;
     const paint = fill2 ? `url(#${gid})` : fill;
     const strokeAt = sz => stroke ? ` stroke="${stroke}" stroke-width="${swr * sz}"` : "";
-    const eff = (stroke2 ? ` data-s2="${stroke2}" data-sw2="${num(t.sw2, 0.02, 0.3, 0.1)}"` : "") + (col(t.glow, "") ? ` data-glow="${col(t.glow, "")}"` : "") + (t.shadow ? ` data-shadow="1"` : "");
+    const eff = (stroke2 ? ` data-s2="${stroke2}" data-sw2="${num(t.sw2, 0.02, 0.3, 0.1)}"` : "") + (col(t.glow, "") ? ` data-glow="${col(t.glow, "")}"` : "") + (t.shadow || (!under && !bx) ? ` data-shadow="1"` : "");
+    const fo = fontOf(t.font), fa = ` font-family="${fo.family}, 'Hiragino Sans', sans-serif" font-weight="${fo.weight}"`;
     if (vertical) {
       // 縦書き：「／」ごとに1列。右の列から左へ。x＝いちばん右の列の中心、y＝列の上端、maxw＝列の長さの上限（画面の高さに対する割合）
       const n = Math.max(...lines.map(l => Array.from(l).length));
@@ -546,7 +591,7 @@ function drawLayout(box, L) {
         else if (/[、。，．]/.test(ch)) { dx = size * 0.36; dy = -size * 0.52; }
         els += `<text x="${cx + dx}" y="${top + size * 0.88 + dy}" font-size="${size}" fill="${paint}"${strokeAt(size)} text-anchor="middle" data-maxw="99999" data-swr="${swr}"${extra}>${esc(ch)}</text>`;
       }));
-      texts += `<g class="tx" data-v="1" data-box="${bx}"${eff}${tf ? ` transform="${tf}"` : ""}>${els}</g>`;
+      texts += `<g class="tx" data-v="1" data-box="${bx}"${eff}${fa}${tf ? ` transform="${tf}"` : ""}>${els}</g>`;
       return;
     }
     let maxw = num(t.maxw, 0.1, 1, 0.9) * W;
@@ -563,10 +608,10 @@ function drawLayout(box, L) {
     }
     const ts = lines.map((s, j) => `<text x="${x}" y="${y + j * size * 1.12}" font-size="${size}" fill="${paint}"${strokeAt(size)} text-anchor="${anchor}" data-maxw="${maxw}" data-swr="${swr}">${esc(s)}</text>`).join("");
     const ub = !bx && underBox && !stroke && !stroke2 ? ` data-ub="${underBox.join(",")}"` : "";
-    texts += `<g class="tx" data-box="${bx}"${ub}${eff}${tf ? ` transform="${tf}"` : ""}>${ts}</g>`;
+    texts += `<g class="tx" data-box="${bx}"${ub}${eff}${fa}${tf ? ` transform="${tf}"` : ""}>${ts}</g>`;
   });
   box.innerHTML = `<svg viewBox="0 0 ${W} ${H}" xmlns="${SVGNS}"><defs>${defs}</defs>${back}${people}${front}
-    <g font-family="Hiragino Sans, Noto Sans JP, sans-serif" font-weight="900" stroke-linejoin="round" style="paint-order:stroke">${texts}</g>${frame}</svg>`;
+    <g font-family="'Noto Sans JP', 'Hiragino Sans', sans-serif" font-weight="900" stroke-linejoin="round" style="paint-order:stroke">${texts}</g>${frame}</svg>`;
   // はみ出す行があれば、そのかたまり全体を同じ割合で小さくする。人物の顔にかかる文字は顔の横の広い側へ寄せ、
   // 画面の内側に収めてから、箱を後から敷き、最後に文字の効果（外側の縁取り・光・影）を付ける
   const shrink = (g, ts, k) => {
