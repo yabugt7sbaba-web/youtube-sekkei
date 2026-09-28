@@ -6,9 +6,9 @@
 <meta name="robots" content="noindex, nofollow">
 <meta property="og:type" content="website">
 <meta property="og:title" content="あなた専用のYouTube設計｜Tsuzuru">
-<meta property="og:description" content="3つ答えるだけで、コンセプト・競合チャンネル・企画5本・サムネ案をその場でAIが作成します（無料・約30秒）">
+<meta property="og:description" content="3つ答えるだけで、コンセプト・競合チャンネル・企画・サムネイル案をその場でAIが作成します（無料）">
 <meta property="og:url" content="https://yabugt7sbaba-web.github.io/youtube-sekkei/">
-<meta property="og:image" content="https://yabugt7sbaba-web.github.io/youtube-sekkei/ogp.png">
+<meta property="og:image" content="https://yabugt7sbaba-web.github.io/youtube-sekkei/ogp2.png">
 <meta name="twitter:card" content="summary_large_image">
 <title>あなた専用のYouTube設計｜Tsuzuru</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -26,12 +26,16 @@ h1{font-size:22px;line-height:1.45;margin:22px 0 6px;color:var(--navy)}
 .lead{font-size:13.5px;color:var(--muted);margin:0 0 18px}
 .card{background:#fff;border-radius:16px;padding:18px 16px;margin:12px 0;box-shadow:0 1px 3px rgba(10,22,51,.06)}
 label{display:block;font-weight:700;font-size:14.5px;margin:0 0 6px}
-textarea,input[type=text]{width:100%;border:2px solid var(--line);border-radius:12px;padding:12px;font:inherit;font-size:15px;background:#fafbfd;resize:none}
+textarea,input[type=text],input[type=url]{width:100%;border:2px solid var(--line);border-radius:12px;padding:12px;font:inherit;font-size:15px;background:#fafbfd;resize:none}
 textarea:focus,input:focus{outline:none;border-color:var(--blue)}
 .field{margin-bottom:16px}
+.field:last-child{margin-bottom:4px}
 .opts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .opt{border:2px solid var(--line);border-radius:12px;padding:11px 6px;text-align:center;font-weight:700;font-size:14px;background:#fafbfd;cursor:pointer}
 .opt.on{border-color:var(--blue);background:#EEF3FF;color:var(--navy)}
+.ohead{display:flex;align-items:center;gap:8px;font-weight:900;font-size:16px;color:var(--navy)}
+.badge{font-size:11px;font-weight:700;color:var(--blue);background:#EEF3FF;border-radius:999px;padding:1px 9px}
+.hint{font-size:12.5px;color:var(--muted);margin:4px 0 14px}
 .btn{display:block;width:100%;border:none;border-radius:14px;padding:15px;font:inherit;font-weight:900;font-size:16px;cursor:pointer;text-align:center;text-decoration:none}
 .btn.main{background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff}
 .btn.cta{background:#F97316;color:#fff;margin-top:10px}
@@ -45,31 +49,58 @@ textarea:focus,input:focus{outline:none;border-color:var(--blue)}
 @keyframes sp{to{transform:rotate(360deg)}}
 .stepline{font-size:14px;color:var(--muted);margin:6px 0}
 .stepline.done{color:var(--navy);font-weight:700}
+.wait{font-size:12px;color:var(--muted);margin-top:14px}
 /* result */
 .for{font-size:13px;color:var(--muted);margin:22px 0 2px}
+.src{font-size:12.5px;color:var(--navy2);background:#EEF3FF;border-radius:10px;padding:7px 10px;margin:6px 0 0}
 .h2{font-size:12px;font-weight:900;letter-spacing:.2em;color:var(--blue);margin:0 0 6px}
-.concept{font-size:23px;font-weight:900;color:var(--navy);line-height:1.4;margin:2px 0 8px}
+.concept{font-size:23px;font-weight:900;color:var(--navy);line-height:1.4;margin:2px 0 10px}
+.crow{display:flex;gap:10px;border-top:1px solid var(--line);padding:7px 0;font-size:13.5px}
+.crow b{flex:none;width:6.6em;color:var(--blue);font-size:12.5px}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
 .chip{background:#EEF3FF;color:var(--navy2);border-radius:999px;padding:4px 12px;font-size:13px;font-weight:700}
-.comp{border-top:1px solid var(--line);padding:10px 0}
-.comp:first-of-type{border-top:none;padding-top:2px}
-.comp .n{font-weight:900;font-size:14.5px}
-.comp .s{font-size:12px;color:#fff;background:var(--navy2);border-radius:6px;padding:1px 8px;margin-left:6px;font-weight:700}
-.comp .d{font-size:13px;color:var(--muted)}
+.market{background:#F6F8FC;border-radius:12px;padding:10px 12px;margin:2px 0 8px;font-size:13px}
+.market .top{display:flex;align-items:center;gap:8px;font-weight:700;color:var(--navy);text-decoration:none;margin-bottom:4px}
+.market img{width:26px;height:26px;border-radius:50%}
+.comp{border-top:1px solid var(--line);padding:12px 0}
+.comp:first-of-type{border-top:none}
+.chead{display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit}
+.chead .ic{width:46px;height:46px;border-radius:50%;flex:none;background:#e5e7eb;object-fit:cover}
+.chead .nm{font-weight:900;font-size:14.5px;line-height:1.35}
+.chead .sb{font-size:12px;color:var(--muted)}
+.chead .go{margin-left:auto;flex:none;font-size:11.5px;font-weight:700;color:#fff;background:#E60012;border-radius:999px;padding:3px 10px}
+.comp .d{font-size:13px;color:var(--muted);margin-top:6px}
 .comp .g{font-size:13px;margin-top:2px}
 .comp .g b{color:#F97316}
+.vrow{display:flex;gap:8px;overflow-x:auto;padding:8px 0 2px;-webkit-overflow-scrolling:touch}
+.vcard{flex:none;width:152px;text-decoration:none;color:inherit}
+.vcard img{width:152px;height:86px;object-fit:cover;border-radius:8px;display:block;background:#e5e7eb}
+.vcard .vt{font-size:11.5px;line-height:1.4;margin-top:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.vcard .vv{font-size:11px;color:var(--muted)}
 .plan{display:flex;gap:10px;border-top:1px solid var(--line);padding:11px 0}
 .plan:first-of-type{border-top:none;padding-top:2px}
 .plan .no{flex:none;width:26px;height:26px;border-radius:50%;background:var(--navy);color:var(--yellow);font-weight:900;font-size:13px;display:flex;align-items:center;justify-content:center;margin-top:2px}
 .plan .t{font-weight:900;font-size:14.5px;line-height:1.5}
-.plan .k{display:inline-block;font-size:11.5px;background:#FFF4D6;color:#8a5a00;border-radius:6px;padding:0 8px;margin:4px 0 2px;font-weight:700}
+.tag{display:inline-block;font-size:11.5px;border-radius:6px;padding:0 8px;margin:4px 4px 2px 0;font-weight:700}
+.tag.k{background:#FFF4D6;color:#8a5a00}
+.tag.y{background:#EEF3FF;color:var(--navy2)}
 .plan .w{font-size:13px;color:var(--muted)}
-.thumb{margin:10px 0 4px}
+.thumb{border-top:1px solid var(--line);padding:14px 0 6px}
+.thumb:first-of-type{border-top:none;padding-top:4px}
 .thumb svg{width:100%;height:auto;display:block;border-radius:10px}
-.thumb .cap{font-size:12.5px;color:var(--muted);margin-top:4px}
+.thumb .cap{font-weight:900;font-size:13.5px;margin-top:8px;line-height:1.5}
+.thumb .meta{font-size:12.5px;color:var(--muted);margin-top:2px}
+.thumb .aim{font-size:13px;margin-top:4px}
+.thumb .aim b,.borrow b{color:#F97316}
+.ref{display:flex;gap:10px;align-items:flex-start;background:#F6F8FC;border-radius:10px;padding:8px;margin-top:8px;text-decoration:none;color:inherit}
+.ref img{width:118px;height:66px;object-fit:cover;border-radius:6px;flex:none;background:#e5e7eb}
+.ref .rl{font-size:11px;font-weight:900;color:var(--blue)}
+.ref .rt{font-size:12px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ref .rm{font-size:11px;color:var(--muted)}
+.borrow{font-size:12.5px;margin-top:4px}
 ol.steps{margin:0;padding-left:20px;font-size:14px}
 ol.steps li{margin:4px 0}
-.note{font-size:11.5px;color:var(--muted);margin-top:14px}
+.note{font-size:11.5px;color:var(--muted);margin-top:12px}
 .hide{display:none}
 </style>
 </head>
@@ -78,8 +109,8 @@ ol.steps li{margin:4px 0}
 <div class="wrap">
 
 <section id="form">
-  <h1>あなたの会社専用の<br>YouTube設計を<br>30秒でつくります</h1>
-  <p class="lead">コンセプト・競合チャンネル・企画5本・サムネ案まで。企業のYouTubeを支援している現場の考え方で作ります。</p>
+  <h1>あなたの会社専用の<br>YouTube設計を<br>その場でつくります</h1>
+  <p class="lead">コンセプト・競合チャンネル・企画・サムネイル案まで。企業のYouTubeを支援してきたTsuzuruの知見をもとに作ります。</p>
   <div class="card">
     <div class="field"><label for="biz">どんな事業ですか？</label>
       <textarea id="biz" rows="2" placeholder="例：埼玉で注文住宅をつくる工務店"></textarea></div>
@@ -92,19 +123,31 @@ ol.steps li{margin:4px 0}
         <div class="opt" data-v="商談の成約率アップ">商談の成約率アップ</div>
         <div class="opt" data-v="会社を知ってもらう">会社を知ってもらう</div>
       </div></div>
-    <button class="btn main" id="go">設計をつくる（無料）</button>
-    <div class="err" id="err"></div>
-    <div class="demo" id="demo">入力例を入れてみる
-      <button data-k="koumuten">工務店の例</button><button data-k="rpo">IT採用の会社の例</button></div>
   </div>
+  <div class="card">
+    <div class="ohead">もっと精度を上げる<span class="badge">任意</span></div>
+    <p class="hint">入れていただくと、ホームページや実績の内容を読み込んで、あなたの会社にしか作れない提案にします。わかるものだけで大丈夫です。</p>
+    <div class="field"><label for="company">会社名・屋号</label>
+      <input type="text" id="company" placeholder="例：株式会社◯◯工務店"></div>
+    <div class="field"><label for="hp">ホームページのURL</label>
+      <input type="url" id="hp" inputmode="url" autocapitalize="off" placeholder="https://"></div>
+    <div class="field"><label for="blog">ブログ・note・SNSのURL</label>
+      <input type="url" id="blog" inputmode="url" autocapitalize="off" placeholder="https://"></div>
+    <div class="field"><label for="yt">いまのYouTubeチャンネルのURL（ある方）</label>
+      <input type="url" id="yt" inputmode="url" autocapitalize="off" placeholder="https://www.youtube.com/@..."></div>
+    <div class="field"><label for="str">強み・実績・よく聞かれる質問など</label>
+      <textarea id="str" rows="3" placeholder="例：創業30年・年間40棟。自然素材の家が得意。「総額いくら？」とよく聞かれる"></textarea></div>
+  </div>
+  <button class="btn main" id="go">設計をつくる（無料）</button>
+  <div class="err" id="err"></div>
+  <div class="demo" id="demo">入力例を入れてみる
+    <button data-k="koumuten">工務店の例</button><button data-k="rpo">IT採用の会社の例</button></div>
 </section>
 
 <section id="loading" class="hide">
   <div class="spin"></div>
-  <div class="stepline" data-i="0">競合チャンネルを探しています</div>
-  <div class="stepline" data-i="1">実際に検索されている言葉を調べています</div>
-  <div class="stepline" data-i="2">コンセプトと企画を考えています</div>
-  <div class="stepline" data-i="3">サムネ案をつくっています</div>
+  <div id="steplines"></div>
+  <div class="wait">1分ほどかかります。このままお待ちください。</div>
 </section>
 
 <section id="result" class="hide"></section>
@@ -115,8 +158,11 @@ ol.steps li{margin:4px 0}
 const API_URL = "https://script.google.com/macros/s/AKfycbwtQtVQrfOaH9p1loaIjetJCYi-IfV3jGSfXBTrJVm7AbDf5KaeVqPbmxwWx3KZTkC4eg/exec";
 const CONSULT_URL = "https://tsuzuru-movie.com/contact/?utm_source=line&utm_medium=sekkei";
 const DEMO = {"koumuten": {"input": {"business": "埼玉で注文住宅をつくる工務店", "audience": "はじめて家を建てる30〜40代の夫婦", "goal": "問い合わせ・集客"}, "concept": {"title": "建てる前に見る、地元工務店のホンネ", "desc": "埼玉で家を建てる人のために、工務店の社長と設計士が「後悔しない家づくり」の本当のところを話すチャンネル。全国向けの大手チャンネルが話せない、埼玉の土地・相場・暮らしの話で差をつけます。"}, "names": ["埼玉の家づくり相談室", "建てる前に見るチャンネル", "工務店社長のホンネ家づくり"], "target": "埼玉ではじめて注文住宅を考えている30〜40代の夫婦。とくに「ハウスメーカーと工務店で迷っている」「総額がいくらになるか不安」な人", "competitors": [{"name": "職人社長の家づくり工務店", "subs": "25.6万人", "note": "工務店の社長が業界の裏側を話す、この分野の最大手", "gap": "全国向けなので、埼玉の土地や相場の話はできない"}, {"name": "木の家専門店 谷口工務店", "subs": "2.4万人", "note": "滋賀の工務店。社長と設計士が家づくりのポイントを解説。1年で登録者が約1.2倍", "gap": "地方の工務店でも伸びる証拠。同じ型を埼玉でやる"}, {"name": "行列のできる工務店（埼玉・川口）", "subs": "1.2万人", "note": "同じ埼玉の工務店。ショート動画が中心", "gap": "長尺のルームツアー＋費用公開で、じっくり検討する人を取りにいく"}], "keywords": ["注文住宅 後悔", "工務店 選び方", "ハウスメーカー 工務店 違い", "注文住宅 費用", "注文住宅 間取り 後悔", "平屋 間取り", "土地探し コツ", "注文住宅 ルームツアー 30坪"], "plans": [{"title": "ハウスメーカーと工務店、どっちで建てる？埼玉の工務店社長が本音で答えます", "keyword": "ハウスメーカー 工務店 違い", "why": "迷っている人がそのまま検索する言葉。工務店が自分で言うから信頼される", "thumb": ["ハウスメーカーと", "工務店", "選ぶ基準は？"]}, {"title": "【費用公開】埼玉で30坪の注文住宅、総額いくらかかった？（施主さんの許可をいただいて公開）", "keyword": "注文住宅 費用", "why": "いちばん知りたいのに、どこも出さない数字。見学会の申し込みにつながりやすい", "thumb": ["30坪の家", "総額いくら？", "全部見せます"]}, {"title": "注文住宅で後悔した間取り10選｜建てた人に聞いたリアル", "keyword": "注文住宅 間取り 後悔", "why": "「後悔」は検索が多い言葉。施主さんの声を使えば、ほかにない一次情報になる", "thumb": ["その間取り", "住んでから", "後悔します"]}, {"title": "【ルームツアー】30坪・4人家族の家｜建てた理由と、住んでみてどうか", "keyword": "注文住宅 ルームツアー 30坪", "why": "見て比べたい人が必ず見る型。施工事例がそのまま動画になる", "thumb": ["30坪で", "4人家族が", "ゆったり暮らす"]}, {"title": "工務店の選び方｜見積もりのこの項目で、いい会社か分かります", "keyword": "工務店 選び方", "why": "選ぶ側の悩みに正面から答えると、「この会社なら」と思ってもらえる", "thumb": ["見積もりの", "この項目で", "会社が分かる"]}], "thumbs": [0, 1, 2], "steps": ["まず「会社の顔」になる5本（社長の家づくりへの考え方・ルームツアー2本・家づくりの流れ・よくある質問）", "次に、検索される言葉（後悔・費用・間取り・選び方）で月4本", "見学会・相談会の申し込みを、概要欄の上3行と動画の中で毎回案内"]}, "rpo": {"input": {"business": "IT企業向けの採用代行（RPO）", "audience": "エンジニアが採れないIT企業の経営者・人事", "goal": "問い合わせ・集客"}, "concept": {"title": "IT採用の中の人", "desc": "エンジニア採用で本当に起きていることを、現場を知る代表が話すチャンネル。採用担当者向けは市場が小さいので、再生数より「探している人に見つけてもらう」「商談の前に信頼してもらう」ことを狙います。"}, "names": ["エンジニア採用の裏側", "IT採用の中の人", "エンジニア採用ラボ"], "target": "スタートアップ〜グロースのIT企業の経営者・CTO・人事責任者。とくに「エンジニアが採れない」「人事が1〜2人で手が回らない」会社", "competitors": [{"name": "ジンジゴト（即戦力RPO）", "subs": "1,130人", "note": "スタートアップ・エンジニア採用のRPO。いちばん近い競合", "gap": "最近はショート中心。長尺で深く話すチャンネルは空いている"}, {"name": "採用係長の採用道", "subs": "6,540人", "note": "中小企業の経営者・人事向け。1本あたり平均 約2,000回", "gap": "IT・エンジニアに絞った話はしていない"}, {"name": "IT菩薩モロー（参考：求職者向け）", "subs": "3.6万人", "note": "IT転職エージェント。転職エージェント比較の動画は136万回", "gap": "見る人はエンジニア側。採用する側はまだ手薄"}], "keywords": ["エンジニア採用", "採用代行とは", "rpoとは", "リファラル採用", "採用 失敗", "スカウトメール", "面接官 質問", "採用 ai"], "plans": [{"title": "エンジニア採用が失敗する会社の特徴3つ｜元エンジニアの採用コンサルが本音で話す", "keyword": "エンジニア採用", "why": "「失敗する会社」型は開かれやすい。現場を知る人の一次情報になる", "thumb": ["その求人票", "エンジニアに", "読まれてない"]}, {"title": "採用代行（RPO）とは？頼んでも採れない会社と、頼むべき会社", "keyword": "採用代行とは", "why": "検索されている言葉そのまま。「向いていない会社もある」と正直に話すと信頼になる", "thumb": ["採用代行", "頼んでも", "採れない会社"]}, {"title": "スカウトの返信率が上がる文面・下がる文面", "keyword": "スカウトメール", "why": "明日から使える実務ネタで保存される", "thumb": ["そのスカウト", "開かれずに", "消えてます"]}, {"title": "エンジニアが内定を辞退する本当の理由｜人事が知らない選考の裏側", "keyword": "採用 辞退", "why": "「年収じゃない」という常識の逆を言う型", "thumb": ["内定辞退", "本当の理由は", "年収じゃない"]}, {"title": "採用業務はAIでどこまで減らせる？実際のやり方を全部見せます", "keyword": "採用 ai", "why": "今いちばん関心が高いテーマ。自社の仕組みの見せ場になる", "thumb": ["採用業務", "AIで", "ここまで減る"]}], "thumbs": [0, 1, 2], "steps": ["まず「会社の顔」になる5本（代表のストーリー・サービス・支援の流れ・メンバー・よくある質問）", "紹介をもらったら、商談の前に動画のリンクを送る", "検索される言葉で月4本。事例・対談は、出てくださる支援先が決まり次第"]}};
+const TITLE_TYPES = {T1: "緊急・警告型", T2: "講義型", T3: "失敗回避型", T4: "数字の裏づけ型", T5: "問い→断言型"};
+const THUMB_TYPES = {A: "セリフ", B: "内部公開", C: "対立", D: "問いかけ", E: "結果の告白", F: "名指し"};
 const $ = s => document.querySelector(s);
-const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const val = id => $(id).value.trim();
 let goal = "", demoKey = "";
 
 document.querySelectorAll("#goal .opt").forEach(o => o.onclick = () => {
@@ -132,17 +178,22 @@ document.querySelectorAll("#demo button").forEach(b => b.onclick = () => {
 ["#biz", "#aud"].forEach(id => $(id).addEventListener("input", () => { demoKey = ""; }));
 
 $("#go").onclick = async () => {
-  const biz = $("#biz").value.trim(), aud = $("#aud").value.trim();
-  if (!biz || !aud || !goal) { $("#err").textContent = "3つとも入力してください"; return; }
+  const req = {business: val("#biz"), audience: val("#aud"), goal,
+               company: val("#company"), hp: val("#hp"), blog: val("#blog"), youtube: val("#yt"), strengths: val("#str")};
+  if (!req.business || !req.audience || !goal) { $("#err").textContent = "上の3つ（事業・届けたい相手・叶えたいこと）は入力してください"; return; }
   $("#err").textContent = "";
+  const steps = [];
+  if (req.hp || req.blog || req.youtube) steps.push("ホームページ・チャンネルを読んでいます");
+  steps.push("競合チャンネルと、よく見られている動画を調べています", "実際に検索されている言葉を調べています",
+             "Tsuzuruの知見をもとに、コンセプトと企画を考えています", "競合のサムネイルを参考に、サムネイル案をつくっています");
+  $("#steplines").innerHTML = steps.map(s => `<div class="stepline">${s}</div>`).join("");
   $("#form").classList.add("hide"); $("#loading").classList.remove("hide"); window.scrollTo(0, 0);
   const lines = document.querySelectorAll(".stepline");
-  let i = 0; const timer = setInterval(() => { if (i < lines.length) lines[i++].classList.add("done"); }, API_URL ? 6000 : 700);
+  let i = 0; const timer = setInterval(() => { if (i < lines.length) lines[i++].classList.add("done"); }, API_URL ? 9000 : 700);
   try {
     let data;
     if (API_URL) {
-      const r = await fetch(API_URL, {method: "POST", headers: {"Content-Type": "text/plain;charset=utf-8"},
-        body: JSON.stringify({business: biz, audience: aud, goal})});
+      const r = await fetch(API_URL, {method: "POST", headers: {"Content-Type": "text/plain;charset=utf-8"}, body: JSON.stringify(req)});
       data = await r.json();
       if (data.error) throw new Error(data.error);
     } else {
@@ -150,67 +201,187 @@ $("#go").onclick = async () => {
       data = DEMO[demoKey];
       if (!data) throw new Error("試作版では「例で試す」の2つだけ表示できます。本番では、入力した内容でその場でAIが作ります。");
     }
-    clearInterval(timer); render(data, biz);
+    clearInterval(timer); render(data, req.business);
   } catch (e) {
     clearInterval(timer);
     $("#loading").classList.add("hide"); $("#form").classList.remove("hide");
-    lines.forEach(l => l.classList.remove("done"));
     $("#err").textContent = e.message || "うまく作れませんでした。時間をおいてもう一度お試しください。";
   }
 };
 
+function videoCard(v) {
+  return `<a class="vcard" href="${esc(v.url)}" target="_blank" rel="noopener"><img src="${esc(v.thumb)}" alt="" loading="lazy">
+    <div class="vt">${esc(v.title)}</div><div class="vv">${esc(v.views)}再生${v.ratio >= 1 ? `・登録者の${esc(v.ratio)}倍` : ""}</div></a>`;
+}
+
 function render(d, biz) {
-  const plans = d.plans.map((p, i) => `<div class="plan"><div class="no">${i + 1}</div><div>
-    <div class="t">${esc(p.title)}</div><span class="k">検索：${esc(p.keyword)}</span><div class="w">${esc(p.why)}</div></div></div>`).join("");
-  const comps = d.competitors.map(c => `<div class="comp"><div><span class="n">${esc(c.name)}</span><span class="s">${esc(c.subs)}</span></div>
-    <div class="d">${esc(c.note)}</div><div class="g"><b>差をつけるなら：</b>${esc(c.gap)}</div></div>`).join("");
-  const thumbs = d.thumbs.map((idx, n) => `<div class="thumb"><div id="th${n}"></div>
-    <div class="cap">案${n + 1}：${esc(d.plans[idx].title)}</div></div>`).join("");
+  // 読み込んだもの
+  const src = d.sources || {};
+  const names = {hp: "ホームページ", blog: "ブログ・SNS", channel: "いまのチャンネル"};
+  const ok = Object.keys(names).filter(k => src[k] === "ok").map(k => names[k]);
+  const ng = Object.keys(names).filter(k => src[k] === "ng").map(k => names[k]);
+  let srcLine = "";
+  if (ok.length) srcLine += `${ok.join("・")}の内容も読み込んで作りました。`;
+  if (ng.length) srcLine += `${ng.join("・")}は読み込めなかったので、入力いただいた内容で作っています。`;
+  const own = d.own_channel ? `<div class="market" style="margin-top:8px"><a class="top" href="${esc(d.own_channel.url)}" target="_blank" rel="noopener">
+      ${d.own_channel.icon ? `<img src="${esc(d.own_channel.icon)}" alt="" referrerpolicy="no-referrer">` : ""}いまのチャンネル：${esc(d.own_channel.name)}</a>
+      登録者${esc(d.own_channel.subs)}・動画${esc(d.own_channel.videos)}本。今のチャンネルを伸ばす前提で設計しています。</div>` : "";
+  // コンセプト（誰の・どんな悩みに・どんな良いことを・どう差をつけて）
+  const c = d.concept || {};
+  const crow = (k, v) => v ? `<div class="crow"><b>${k}</b><div>${esc(v)}</div></div>` : "";
+  const concept = `<div class="concept">${esc(c.title)}</div>${crow("誰に", c.who)}${crow("どんな悩み", c.needs)}${crow("得られること", c.benefit)}${crow("差のつけ方", c.diff)}` +
+    (c.desc && !c.who ? `<div style="font-size:14px">${esc(c.desc)}</div>` : "");
+  // 市場と競合
+  const mt = d.market_top;
+  const market = (mt || d.market) ? `<div class="market">${mt ? `<a class="top" href="${esc(mt.url)}" target="_blank" rel="noopener">
+      ${mt.icon ? `<img src="${esc(mt.icon)}" alt="" referrerpolicy="no-referrer">` : ""}この分野でいちばん大きいチャンネル：${esc(mt.name)}（登録者${esc(mt.subs)}）</a>` : ""}
+      ${d.market ? `<div>${esc(d.market)}</div>` : ""}</div>` : "";
+  const comps = (d.competitors || []).map(x => `<div class="comp">
+    <a class="chead" href="${esc(x.url || "#")}" target="_blank" rel="noopener">
+      ${x.icon ? `<img class="ic" src="${esc(x.icon)}" alt="" referrerpolicy="no-referrer">` : `<div class="ic"></div>`}
+      <div><div class="nm">${esc(x.name)}</div><div class="sb">登録者${esc(x.subs)}</div></div><span class="go">YouTubeで見る</span></a>
+    <div class="d">${esc(x.note)}</div><div class="g"><b>差をつけるなら：</b>${esc(x.gap)}</div>
+    ${(x.videos || []).length ? `<div class="vrow">${x.videos.map(videoCard).join("")}</div>` : ""}</div>`).join("");
+  // 企画
+  const plans = (d.plans || []).map((p, i) => `<div class="plan"><div class="no">${i + 1}</div><div>
+    <div class="t">${esc(p.title)}</div>
+    <span class="tag k">検索：${esc(p.keyword)}</span>${TITLE_TYPES[p.ttype] ? `<span class="tag y">${TITLE_TYPES[p.ttype]}</span>` : ""}
+    ${p.who ? `<div class="w">こんな人に：${esc(p.who)}</div>` : ""}<div class="w">${esc(p.why)}</div></div></div>`).join("");
+  // サムネイル案（前の版の形でも表示できるようにしておく）
+  const ths = (d.thumbnails && d.thumbnails.length) ? d.thumbnails
+    : (d.thumbs || []).map(i => ({plan: i, type: "D", focus: "text", color: "navy", texts: {main: (d.plans[i].thumb || [])[1] || "", sub: (d.plans[i].thumb || [])[2] || ""}}));
+  const thumbs = ths.map((t, n) => {
+    const p = d.plans[t.plan] || {};
+    const meta = [THUMB_TYPES[t.type] ? `型：${t.type} ${THUMB_TYPES[t.type]}` : "", t.focus === "face" ? `人物が主役${t.expression ? `（表情：${esc(t.expression)}）` : ""}` : "文字が主役"].filter(Boolean).join("／");
+    const ref = t.ref ? `<a class="ref" href="${esc(t.ref.url)}" target="_blank" rel="noopener"><img src="${esc(t.ref.thumb)}" alt="" loading="lazy">
+      <div><div class="rl">参考にした動画</div><div class="rt">${esc(t.ref.title)}</div>
+      <div class="rm">${esc(t.ref.channel)}・${esc(t.ref.views)}再生${t.ref.ratio >= 1 ? `（登録者の${esc(t.ref.ratio)}倍）` : ""}</div></div></a>` : "";
+    return `<div class="thumb"><div id="th${n}"></div>
+      <div class="cap">案${n + 1}：${esc(p.title)}</div><div class="meta">${meta}</div>
+      ${t.aim ? `<div class="aim"><b>ねらい：</b>${esc(t.aim)}</div>` : ""}${ref}
+      ${t.borrow ? `<div class="borrow"><b>参考にしたところ：</b>${esc(t.borrow)}</div>` : ""}</div>`;
+  }).join("");
   $("#result").innerHTML = `
-    <p class="for">「${esc(biz)}」のあなたへ</p>
-    <div class="card"><div class="h2">CONCEPT｜コンセプト</div><div class="concept">${esc(d.concept.title)}</div>
-      <div style="font-size:14px">${esc(d.concept.desc)}</div></div>
-    <div class="card"><div class="h2">NAME｜チャンネル名の案</div><div class="chips">${d.names.map(n => `<span class="chip">${esc(n)}</span>`).join("")}</div>
+    <p class="for">「${esc(biz)}」のあなたへ</p>${srcLine ? `<div class="src">${esc(srcLine)}</div>` : ""}${own}
+    <div class="card"><div class="h2">CONCEPT｜コンセプト</div>${concept}</div>
+    <div class="card"><div class="h2">NAME｜チャンネル名の案</div><div class="chips">${(d.names || []).map(n => `<span class="chip">${esc(n)}</span>`).join("")}</div>
       <div class="h2" style="margin-top:14px">TARGET｜見てほしい人</div><div style="font-size:14px">${esc(d.target)}</div></div>
-    <div class="card"><div class="h2">RIVALS｜参考にする競合チャンネル</div>${comps}</div>
-    <div class="card"><div class="h2">KEYWORDS｜実際に検索されている言葉</div><div class="chips">${d.keywords.map(k => `<span class="chip">${esc(k)}</span>`).join("")}</div></div>
-    <div class="card"><div class="h2">PLANS｜最初に撮る企画5本</div>${plans}</div>
-    <div class="card"><div class="h2">THUMBNAILS｜サムネ案</div>${thumbs}
+    ${(market || comps) ? `<div class="card"><div class="h2">RIVALS｜参考にする競合チャンネル</div>${market}${comps}</div>` : ""}
+    <div class="card"><div class="h2">KEYWORDS｜実際に検索されている言葉</div><div class="chips">${(d.keywords || []).map(k => `<span class="chip">${esc(k)}</span>`).join("")}</div></div>
+    <div class="card"><div class="h2">PLANS｜最初に撮る企画${(d.plans || []).length}本</div>${plans}</div>
+    <div class="card"><div class="h2">THUMBNAILS｜サムネイル案</div>${thumbs}
       <div class="note">人物は仮のシルエットです。実際は出演者の写真を切り抜いて入れます。</div></div>
-    <div class="card"><div class="h2">FIRST STEP｜最初の一歩</div><ol class="steps">${d.steps.map(s => `<li>${esc(s)}</li>`).join("")}</ol></div>
+    <div class="card"><div class="h2">FIRST STEP｜最初の一歩</div><ol class="steps">${(d.steps || []).map(s => `<li>${esc(s)}</li>`).join("")}</ol></div>
     <div class="card" style="text-align:center"><div style="font-weight:900;font-size:16px;color:var(--navy)">この設計を、あなたの会社に合わせて<br>一緒に詰めませんか？</div>
-      <a class="btn cta" href="${CONSULT_URL}" target="_blank">無料で相談する</a>
+      <a class="btn cta" href="${CONSULT_URL}" target="_blank" rel="noopener">無料で相談する</a>
       <div class="note">企画10本・費用の目安まで入った詳しい設計書（PDF）がほしい方は、LINEで「設計書」と送ってください。</div></div>
-    <button class="btn ghost" onclick="location.reload()">もう一度つくる</button>
-    <p class="note">競合チャンネルと登録者数は YouTube の公開データ、検索の言葉は YouTube の検索候補から取得しています。企画・サムネ案はAIによる提案です。</p>`;
-  // 文字幅は表示してからでないと測れないので、先に結果を出してからサムネを描く（フォント読み込み後にもう一度合わせる）
+    <button class="btn ghost" onclick="location.reload()">もう一度つくる</button>`;
+  // 文字幅は表示してからでないと測れないので、先に結果を出してからサムネイルを描く（フォント読み込み後にもう一度合わせる）
   $("#loading").classList.add("hide"); $("#result").classList.remove("hide"); window.scrollTo(0, 0);
-  const draw = () => d.thumbs.forEach((idx, n) => drawThumb($("#th" + n), d.plans[idx].thumb));
+  const draw = () => ths.forEach((t, n) => drawThumb($("#th" + n), t));
   draw();
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(draw);
 }
 
-// サムネ案：前置き（白）→キーワード（赤）→結論（黄）の3段。人物は仮のシルエット
-function drawThumb(box, lines) {
-  const NS = "http://www.w3.org/2000/svg";
-  box.innerHTML = `<svg viewBox="0 0 1280 720" xmlns="${NS}">
-    <defs><radialGradient id="bg${box.id}" cx="78%" cy="40%" r="80%"><stop offset="0" stop-color="#2b3f73"/><stop offset=".45" stop-color="#101a33"/><stop offset="1" stop-color="#05070d"/></radialGradient>
-    <linearGradient id="pg${box.id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7d8aa8"/><stop offset="1" stop-color="#3a4560"/></linearGradient></defs>
-    <rect width="1280" height="720" fill="url(#bg${box.id})"/>
-    <g transform="translate(830,120) scale(0.94)"><circle cx="235" cy="190" r="118" fill="url(#pg${box.id})"/>
-      <path d="M20 640 C 30 430, 140 350, 235 350 C 330 350, 440 430, 450 640 Z" fill="url(#pg${box.id})"/></g>
-    <rect x="7" y="7" width="1266" height="706" fill="none" stroke="#E60012" stroke-width="14"/>
-    <g font-family="Hiragino Sans, Noto Sans JP, sans-serif" font-weight="900" stroke-linejoin="round" style="paint-order:stroke">
-      <text x="50" y="190" font-size="96" fill="#fff" stroke="#000" stroke-width="18"></text>
-      <text x="50" y="370" font-size="128" fill="#FF1A1A" stroke="#fff" stroke-width="18"></text>
-      <text x="50" y="580" font-size="150" fill="#FFFC00" stroke="#000" stroke-width="22"></text>
-    </g></svg>`;
-  const texts = box.querySelectorAll("text");
-  lines.slice(0, 3).forEach((s, i) => {
-    const t = texts[i]; t.textContent = s;
-    let fs = parseFloat(t.getAttribute("font-size"));
-    while (t.getComputedTextLength() > 740 && fs > 40) { fs -= 2; t.setAttribute("font-size", fs); }
+// ---------- サムネイル案の描き方 ----------
+// 知見DB：文字は12字以下・数字なし／顔が主役か文字が主役に振り切る（人物は中央・表情は真剣/驚き/不満）／背景は単色・色は3色まで
+// 型（A セリフ／B 内部公開／C 対立／D 問いかけ／E 結果の告白／F 名指し）ごとに飾りを変える
+const PAL = {
+  navy:   {bg: "#0f1d44", bg2: "#23408a", dark: true},
+  black:  {bg: "#0d0d0d", bg2: "#2e2e2e", dark: true},
+  red:    {bg: "#c8101e", bg2: "#ff3a3a", dark: true},
+  blue:   {bg: "#123fb5", bg2: "#2f7dff", dark: true},
+  green:  {bg: "#0b6b34", bg2: "#1fb35b", dark: true},
+  orange: {bg: "#e0600c", bg2: "#ff9d3c", dark: true},
+  yellow: {bg: "#ffcf00", bg2: "#ffe666", dark: false},
+  white:  {bg: "#f1f4f9", bg2: "#ffffff", dark: false},
+};
+function splitLines(s) {
+  s = String(s || "");
+  if (s.indexOf("／") >= 0) return s.split("／").filter(Boolean).slice(0, 2);
+  if (s.length <= 7) return [s];
+  let best = -1;
+  for (let i = 2; i < s.length - 1; i++) if ("、，。 　？！".indexOf(s[i]) >= 0 && (best < 0 || Math.abs(i + 1 - s.length / 2) < Math.abs(best - s.length / 2))) best = i + 1;
+  return best > 0 ? [s.slice(0, best).trim(), s.slice(best).trim()] : [s];
+}
+function drawThumb(box, t) {
+  if (!box) return;
+  const P = PAL[t.color] || (t.focus === "face" ? PAL.navy : PAL.yellow);
+  const id = box.id, face = t.focus === "face", type = t.type || "D";
+  const tx = t.texts || {}, main = splitLines(tx.main), sub = String(tx.sub || "").replace(/／/g, "");
+  const ink = P.dark ? "#FFFFFF" : "#111111", acc = P.dark ? "#FFE14D" : "#E60012", edge = P.dark ? "#000000" : "#FFFFFF";
+  const F = `font-family="Hiragino Sans, Noto Sans JP, sans-serif" font-weight="900" stroke-linejoin="round" style="paint-order:stroke"`;
+  const T = (x, y, size, fill, s, o = {}) => `<text x="${x}" y="${y}" font-size="${size}" fill="${fill}" ${o.stroke !== false ? `stroke="${o.stroke || edge}" stroke-width="${Math.round(size * (o.sw || 0.16))}"` : ""} text-anchor="${o.anchor || "middle"}" data-maxw="${o.maxw || 1160}" ${o.id ? `id="${o.id}"` : ""}>${esc(s)}</text>`;
+  const person = (cx, sc) => `<g transform="translate(${cx},720) scale(${sc})"><circle cx="0" cy="-440" r="150" fill="url(#pp${id})"/>
+      <path d="M-300 0 C -290 -190 -170 -300 0 -300 C 170 -300 290 -190 300 0 Z" fill="url(#pp${id})"/></g>`;
+  const chip = (x, y, s) => `<g><rect x="${x}" y="${y}" width="${s.length * 30 + 44}" height="56" rx="28" fill="rgba(0,0,0,.55)"/>
+      <text x="${x + 22}" y="${y + 38}" font-size="28" fill="#fff" font-family="Hiragino Sans, Noto Sans JP, sans-serif" font-weight="700">${esc(s)}</text></g>`;
+  let body = "";
+  const mainLines = (cx, y, size, fill, o = {}) => main.length === 1 ? T(cx, y, size, fill, main[0], o)
+    : T(cx, y - size * 0.58, size, fill, main[0], o) + T(cx, y + size * 0.58, size, fill, main[1], o);
+  if (face) {
+    if (type === "C") {
+      body += person(330, 0.78) + person(950, 0.78);
+      body += `<circle cx="640" cy="430" r="86" fill="${acc}" stroke="${edge}" stroke-width="10"/>` + T(640, 466, 96, P.dark ? "#111" : "#fff", "VS", {stroke: false});
+      body += T(330, 150, 104, ink, main.join(""), {maxw: 580}) + T(950, 150, 104, acc, sub || "", {maxw: 580});
+    } else {
+      body += person(type === "A" ? 800 : 640, 1);
+      if (type === "A") {  // 吹き出しは左、人物は少し右（頭に重ねない）
+        body += `<path d="M76 40 H564 a36 36 0 0 1 36 36 V244 a36 36 0 0 1 -36 36 H540 L640 360 L470 280 H76 a36 36 0 0 1 -36 -36 V76 a36 36 0 0 1 36 -36 Z" fill="#fff" stroke="#111" stroke-width="8"/>`;
+        body += main.length === 1 ? T(320, 190, 96, "#111", main[0], {stroke: false, maxw: 510}) : T(320, 140, 84, "#111", main[0], {stroke: false, maxw: 510}) + T(320, 242, 84, "#111", main[1], {stroke: false, maxw: 510});
+        if (sub) body += T(640, 670, 84, acc, sub, {maxw: 1100});
+      } else if (type === "E") {
+        body += `<rect x="0" y="548" width="1280" height="172" fill="${P.dark ? "#000" : "#111"}"/>` + T(640, 668, 110, "#fff", main.join(""), {stroke: false, maxw: 1180});
+        if (sub) body += T(640, 120, 70, ink, sub, {maxw: 1100});
+      } else {
+        if (sub) body += T(640, 118, 76, acc, sub, {maxw: 1100});
+        body += mainLines(640, main.length === 1 ? 630 : 585, 128, ink, {maxw: 1200, sw: 0.2});
+        if (type === "D") body += T(1090, 330, 220, acc, "？", {}) + T(190, 360, 160, acc, "！", {});
+        if (type === "B") body += `<g transform="rotate(-12 1060 220)"><rect x="930" y="160" width="260" height="120" rx="14" fill="none" stroke="#E60012" stroke-width="12"/></g>` + `<g transform="rotate(-12 1060 220)">${T(1060, 250, 76, "#E60012", "公開", {stroke: false})}</g>`;
+      }
+    }
+    if (t.expression) body += type === "C" ? chip(530, 610, "表情：" + t.expression) : chip(type === "A" ? 1000 : 190, 150, "表情：" + t.expression);
+  } else {
+    if (type === "A") {
+      body += `<path d="M110 70 H1170 a50 50 0 0 1 50 50 V470 a50 50 0 0 1 -50 50 H420 L300 640 L320 520 H160 a50 50 0 0 1 -50 -50 V120 a50 50 0 0 1 50 -50 Z" fill="#fff" stroke="#111" stroke-width="10"/>`;
+      body += mainLines(640, 300, 150, "#111", {stroke: false, maxw: 1000});
+      if (sub) body += T(900, 640, 80, P.dark ? "#fff" : "#111", sub, {maxw: 700});
+    } else if (type === "B") {
+      body += `<g transform="rotate(-4 640 470)"><rect x="330" y="300" width="620" height="400" rx="10" fill="#fff" stroke="#d6dbe4" stroke-width="4"/>
+        ${[360, 420, 480, 540, 600].map((y, i) => `<rect x="380" y="${y}" width="${[520, 440, 500, 380, 470][i]}" height="30" fill="${i % 2 ? "#111" : "#c9ced8"}"/>`).join("")}</g>`;
+      body += `<g transform="rotate(-14 1010 420)"><rect x="860" y="360" width="300" height="130" rx="16" fill="none" stroke="#E60012" stroke-width="14"/>${T(1010, 455, 88, "#E60012", "公開", {stroke: false})}</g>`;
+      body += mainLines(640, 170, 128, ink, {maxw: 1180, sw: 0.2});
+      if (sub) body += T(640, main.length === 1 ? 268 : 330, 64, acc, sub, {maxw: 1100});
+    } else if (type === "C") {
+      const right = P.dark ? (P === PAL.red ? "#123fb5" : "#E60012") : "#111111";
+      body += `<rect x="640" y="0" width="640" height="720" fill="${right}"/>`;
+      body += T(320, 400, 150, ink, main.join(""), {maxw: 560, sw: 0.18}) + T(960, 400, 150, P.dark ? "#FFE14D" : "#fff", sub || "", {maxw: 560, stroke: "#000", sw: 0.18});
+      body += `<circle cx="640" cy="360" r="92" fill="#FFE14D" stroke="#000" stroke-width="10"/>` + T(640, 398, 100, "#E60012", "VS", {stroke: false});
+    } else if (type === "D") {
+      body += `<text x="1010" y="650" font-size="720" fill="${acc}" opacity=".22" text-anchor="middle" font-family="Hiragino Sans, Noto Sans JP, sans-serif" font-weight="900">？</text>`;
+      body += main.length === 1 ? T(70, 400, 170, ink, main[0], {anchor: "start", maxw: 1140, sw: 0.2}) : T(70, 300, 160, ink, main[0], {anchor: "start", maxw: 1140, sw: 0.2}) + T(70, 480, 160, ink, main[1], {anchor: "start", maxw: 1140, sw: 0.2});
+      if (sub) body += T(70, 640, 80, acc, sub, {anchor: "start", maxw: 1000});
+    } else if (type === "F") {
+      body += `<rect x="40" y="40" width="1200" height="640" rx="36" fill="none" stroke="${acc}" stroke-width="12"/>`;
+      body += mainLines(640, 330, 150, ink, {maxw: 1080, sw: 0.18});
+      if (sub) body += T(1150, 600, 72, acc, sub, {anchor: "end", maxw: 900});
+    } else {  // E 結果の告白：余白を活かして一言だけ
+      body += mainLines(640, 380, 180, ink, {maxw: 1100, sw: 0.14, id: "em" + id});
+      body += `<rect id="ul${id}" x="340" y="${main.length === 1 ? 440 : 540}" width="600" height="14" rx="7" fill="${acc}"/>`;
+      if (sub) body += T(640, 620, 70, P.dark ? "#cbd5e1" : "#555", sub, {stroke: false, maxw: 1000});
+    }
+  }
+  box.innerHTML = `<svg viewBox="0 0 1280 720" xmlns="http://www.w3.org/2000/svg">
+    <defs><radialGradient id="bg${id}" cx="50%" cy="42%" r="78%"><stop offset="0" stop-color="${P.bg2}"/><stop offset="1" stop-color="${P.bg}"/></radialGradient>
+      <linearGradient id="pp${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${P.dark ? "#dfe5ef" : "#5c6475"}"/><stop offset="1" stop-color="${P.dark ? "#8f9ab0" : "#2b3140"}"/></linearGradient></defs>
+    <rect width="1280" height="720" fill="url(#bg${id})"/><g ${F}>${body}</g></svg>`;
+  // はみ出す文字は小さくする
+  box.querySelectorAll("text[data-maxw]").forEach(el => {
+    const max = +el.dataset.maxw; let fs = parseFloat(el.getAttribute("font-size"));
+    while (el.getComputedTextLength() > max && fs > 36) { fs -= 4; el.setAttribute("font-size", fs); if (el.getAttribute("stroke-width")) el.setAttribute("stroke-width", Math.round(fs * 0.16)); }
   });
+  const em = box.querySelector("#em" + id), ul = box.querySelector("#ul" + id);
+  if (em && ul) { const w = Math.min(1100, em.getComputedTextLength()); ul.setAttribute("x", 640 - w / 2); ul.setAttribute("width", w); }
 }
 </script>
 </body>
