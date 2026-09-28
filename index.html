@@ -252,7 +252,7 @@ function render(d, biz) {
     : (d.thumbs || []).map(i => ({plan: i, type: "D", focus: "text", color: "navy", texts: {main: (d.plans[i].thumb || [])[1] || "", sub: (d.plans[i].thumb || [])[2] || ""}}));
   const thumbs = ths.map((t, n) => {
     const p = d.plans[t.plan] || {};
-    const meta = [THUMB_TYPES[t.type] ? `型：${t.type} ${THUMB_TYPES[t.type]}` : "", t.focus === "face" ? `人物が主役${t.expression ? `（表情：${esc(t.expression)}）` : ""}` : "文字が主役"].filter(Boolean).join("／");
+    const meta = [THUMB_TYPES[t.type] ? `言葉の型：${t.type} ${THUMB_TYPES[t.type]}` : "", t.layout ? (t.ref ? "競合の人気動画を再現" : "") : (t.focus === "face" ? `人物が主役${t.expression ? `（表情：${esc(t.expression)}）` : ""}` : "文字が主役")].filter(Boolean).join("／");
     const ref = t.ref ? `<a class="ref" href="${esc(t.ref.url)}" target="_blank" rel="noopener"><img src="${esc(t.ref.thumb)}" alt="" loading="lazy">
       <div><div class="rl">参考にした動画</div><div class="rt">${esc(t.ref.title)}</div>
       <div class="rm">${esc(t.ref.channel)}・${esc(t.ref.views)}再生${t.ref.ratio >= 1 ? `（登録者の${esc(t.ref.ratio)}倍）` : ""}</div></div></a>` : "";
@@ -270,7 +270,7 @@ function render(d, biz) {
     <div class="card"><div class="h2">KEYWORDS｜実際に検索されている言葉</div><div class="chips">${(d.keywords || []).map(k => `<span class="chip">${esc(k)}</span>`).join("")}</div></div>
     <div class="card"><div class="h2">PLANS｜最初に撮る企画${(d.plans || []).length}本</div>${plans}</div>
     <div class="card"><div class="h2">THUMBNAILS｜サムネイル案</div>${thumbs}
-      <div class="note">人物は仮のシルエットです。実際は出演者の写真を切り抜いて入れます。</div></div>
+      <div class="note">${ths.some(t => t.layout) ? "人物と背景の写真はAIで作った架空のもの（イメージ）です。実際は出演者や現場の写真に差し替えます。" : "人物は仮のシルエットです。実際は出演者の写真を切り抜いて入れます。"}</div></div>
     <div class="card"><div class="h2">FIRST STEP｜最初の一歩</div><ol class="steps">${(d.steps || []).map(s => `<li>${esc(s)}</li>`).join("")}</ol></div>
     <div class="card" style="text-align:center"><div style="font-weight:900;font-size:16px;color:var(--navy)">この設計を、あなたの会社に合わせて<br>一緒に詰めませんか？</div>
       <a class="btn cta" href="${CONSULT_URL}" target="_blank" rel="noopener">無料で相談する</a>
@@ -306,6 +306,7 @@ function splitLines(s) {
 }
 function drawThumb(box, t) {
   if (!box) return;
+  if (t.layout) return drawLayout(box, t.layout);
   const P = PAL[t.color] || (t.focus === "face" ? PAL.navy : PAL.yellow);
   const id = box.id, face = t.focus === "face", type = t.type || "D";
   const tx = t.texts || {}, main = splitLines(tx.main), sub = String(tx.sub || "").replace(/／/g, "");
@@ -382,6 +383,156 @@ function drawThumb(box, t) {
   });
   const em = box.querySelector("#em" + id), ul = box.querySelector("#ul" + id);
   if (em && ul) { const w = Math.min(1100, em.getComputedTextLength()); ul.setAttribute("x", 640 - w / 2); ul.setAttribute("width", w); }
+}
+
+// ---------- 競合サムネイルの再現 ----------
+// AIが参考の動画のサムネイル画像を見て書いた設計図（layout）どおりに描く。座標は画面に対する割合（0〜1）
+// 人物は、AIで作った架空の人物（persons/ のPNG。背景を切り抜いたもの）から選ぶ
+const PERSON_BASE = "persons/", SCENE_BASE = "scenes/";
+const SCENE_IDS = ["living", "house", "office", "construction", "classroom", "clinic", "shop", "desk"];
+const PERSON_IDS = ["m40_suit_surprise", "m40_suit_serious", "m40_suit_troubled", "f30_office_surprise", "f30_office_serious", "f30_office_troubled",
+  "m50_work_surprise", "m50_work_serious", "m30_casual_surprise", "m30_casual_troubled", "f40_uniform_serious", "f40_suit_surprise"];
+function drawLayout(box, L) {
+  const id = box.id, W = 1280, H = 720, SVGNS = "http://www.w3.org/2000/svg";
+  const num = (v, lo, hi, d) => { v = Number(v); return isFinite(v) ? Math.min(hi, Math.max(lo, v)) : d; };
+  const col = (c, d) => /^#[0-9a-fA-F]{6}$/.test(c || "") ? c : d;
+  const bg = L.bg || {}, c1 = col(bg.c1, "#111111"), c2 = col(bg.c2, c1);
+  const ol = L.outline === "" ? "" : col(L.outline, "#FFFFFF");  // 人物のフチ（空ならフチなし）
+  let defs = ol ? `<filter id="ol${id}" x="-15%" y="-15%" width="130%" height="130%"><feMorphology in="SourceAlpha" operator="dilate" radius="7" result="d"/>
+    <feFlood flood-color="${ol}"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>` : "";
+  let back = "", front = "", people = "", texts = "", frame = "";
+  // 背景：写真（架空の場面）・単色・グラデーション・塗り分け
+  if (bg.kind === "photo" && SCENE_IDS.indexOf(bg.scene) >= 0) {
+    back += `<rect width="${W}" height="${H}" fill="${c1}"/><image href="${SCENE_BASE}${bg.scene}.jpg" x="0" y="0" width="${W}" height="${H}" preserveAspectRatio="xMidYMid slice"/>`;
+    const dim = num(bg.dim, 0, 0.7, 0);
+    if (dim) back += `<rect width="${W}" height="${H}" fill="#000000" opacity="${dim}"/>`;
+  } else if (bg.kind === "gradient") {
+    const d = bg.dir === "v" ? 'x2="0" y2="1"' : bg.dir === "d" ? 'x2="1" y2="1"' : 'x2="1" y2="0"';
+    defs += `<linearGradient id="bg${id}" x1="0" y1="0" ${d}><stop offset="0" stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/></linearGradient>`;
+    back += `<rect width="${W}" height="${H}" fill="url(#bg${id})"/>`;
+  } else {
+    back += `<rect width="${W}" height="${H}" fill="${c1}"/>`;
+    if (bg.kind === "split") {
+      const at = num(bg.at, 0.1, 0.9, 0.5);
+      back += bg.dir === "v" ? `<rect y="${H * at}" width="${W}" height="${H * (1 - at)}" fill="${c2}"/>`
+        : bg.dir === "d" ? `<polygon points="${W * at + 90},0 ${W},0 ${W},${H} ${W * at - 90},${H}" fill="${c2}"/>`
+        : `<rect x="${W * at}" width="${W * (1 - at)}" height="${H}" fill="${c2}"/>`;
+    }
+  }
+  // 飾り：帯・箱・丸・矢印・吹き出し・線・画面のフチの枠（layer が front なら人物の上に描く。枠はいちばん上）
+  (L.shapes || []).slice(0, 8).forEach(s => {
+    const x = num(s.x, -0.2, 1.2, 0) * W, y = num(s.y, -0.2, 1.2, 0) * H, w = num(s.w, 0, 1.4, 0.2) * W, h = num(s.h, 0, 1.4, 0.1) * H;
+    const fill = col(s.fill, "none"), stroke = col(s.stroke, "none"), sw = stroke === "none" ? 0 : 12, rot = num(s.rot, -45, 45, 0);
+    const tr = rot ? ` transform="rotate(${rot} ${x + w / 2} ${y + h / 2})"` : "";
+    let el;
+    if (s.kind === "circle") el = `<ellipse cx="${x + w / 2}" cy="${y + h / 2}" rx="${w / 2}" ry="${h / 2}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"${tr}/>`;
+    else if (s.kind === "arrow") {
+      const x2 = num(s.x2, -0.2, 1.2, (x + w) / W) * W, y2 = num(s.y2, -0.2, 1.2, (y + h) / H) * H, len = Math.max(60, Math.hypot(x2 - x, y2 - y));
+      const deg = Math.atan2(y2 - y, x2 - x) * 180 / Math.PI, hl = Math.min(110, len * 0.45);
+      el = `<polygon points="0,-20 ${len - hl},-20 ${len - hl},-52 ${len},0 ${len - hl},52 ${len - hl},20 0,20" fill="${fill === "none" ? "#E60012" : fill}" stroke="${stroke}" stroke-width="${sw ? 8 : 0}" transform="translate(${x},${y}) rotate(${deg})"/>`;
+    } else if (s.kind === "bubble") {
+      const tx = s.tail === "right" ? x + w * 0.78 : s.tail === "left" ? x + w * 0.22 : x + w * 0.5;
+      el = `<g${tr}><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${Math.min(w, h) * 0.22}" fill="${fill === "none" ? "#FFFFFF" : fill}" stroke="${stroke}" stroke-width="${sw}"/>
+        <polygon points="${tx - 34},${y + h - 2} ${tx + 34},${y + h - 2} ${tx + (s.tail === "left" ? -60 : s.tail === "right" ? 60 : 0)},${y + h + 70}" fill="${fill === "none" ? "#FFFFFF" : fill}" stroke="${stroke}" stroke-width="${sw}"/></g>`;
+    } else if (s.kind === "frame") {
+      const t = num(s.h, 0.005, 0.08, 0.025) * H, c = fill !== "none" ? fill : stroke !== "none" ? stroke : "#FFE600";
+      frame += `<rect x="${t / 2}" y="${t / 2}" width="${W - t}" height="${H - t}" fill="none" stroke="${c}" stroke-width="${t}"/>`;
+      return;
+    } else if (s.kind === "line") { const lh = Math.min(Math.max(8, h), H * 0.03); el = `<rect x="${x}" y="${y}" width="${w}" height="${lh}" rx="${lh / 2}" fill="${fill === "none" ? stroke : fill}"${tr}/>`; }
+    else el = `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${s.kind === "rect" ? 16 : 0}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"${tr}/>`;
+    if (s.layer === "front") front += el; else back += el;
+    // 飾りの中の文字（「VS」「公開」など）
+    if (s.t && s.kind !== "arrow" && s.kind !== "line") {
+      const fs = Math.min(h * 0.58, H * 0.2), cy = s.kind === "bubble" ? y + h / 2 : y + h / 2;
+      texts += `<g class="tx" data-box="" data-in="1"${tr}><text x="${x + w / 2}" y="${cy + fs * 0.36}" font-size="${fs}" fill="${col(s.tc, "#FFFFFF")}" text-anchor="middle" data-maxw="${w * 0.86}" data-swr="0">${esc(String(s.t).slice(0, 8))}</text></g>`;
+    }
+  });
+  // 人物：下端を画面の下にそろえ、中心の横位置（cx）と高さ（h）で置く。白フチつき
+  (L.people || []).slice(0, 2).forEach(p => {
+    if (PERSON_IDS.indexOf(p.id) < 0) return;
+    const h = num(p.h, 0.3, 1.25, 0.9) * H, cx = num(p.cx, 0, 1, 0.5) * W;
+    const img = `<image href="${PERSON_BASE}${p.id}.png" x="${cx - W / 2}" y="${H - h}" width="${W}" height="${h}" preserveAspectRatio="xMidYMax meet" ${ol ? ` filter="url(#ol${id})"` : ""}/>`;
+    people += p.flip ? `<g transform="translate(${2 * cx},0) scale(-1,1)">${img}</g>` : img;
+  });
+  // 文字：位置・大きさ・色・縁取り・箱。「／」で改行
+  (L.texts || []).slice(0, 5).forEach(t => {
+    const lines = String(t.t || "").split("／").map(x => x.trim()).filter(Boolean).slice(0, 3);
+    if (!lines.length) return;
+    const size = num(t.size, 0.05, 0.3, 0.14) * H, x = num(t.x, 0, 1, 0.05) * W, y = num(t.y, 0.05, 1, 0.3) * H;
+    const anchor = ["start", "middle", "end"].indexOf(t.align) >= 0 ? t.align : "start";
+    const fill = col(t.color, "#FFFFFF"), stroke = col(t.stroke, ""), swr = stroke ? num(t.sw, 0, 0.3, 0.14) : 0;
+    let maxw = num(t.maxw, 0.1, 1, 0.9) * W;
+    const rot = num(t.rot, -30, 30, 0);
+    // 吹き出し・箱・帯の中に置いた文字は、その中に収める
+    const inside = (L.shapes || []).slice(0, 8).find(c => ["bubble", "rect", "band"].indexOf(c.kind) >= 0 && !num(c.rot, -45, 45, 0) &&
+      x >= num(c.x, -0.2, 1.2, 0) * W && x <= (num(c.x, -0.2, 1.2, 0) + num(c.w, 0, 1.4, 0.2)) * W &&
+      y - size * 0.4 >= num(c.y, -0.2, 1.2, 0) * H && y - size * 0.4 <= (num(c.y, -0.2, 1.2, 0) + num(c.h, 0, 1.4, 0.1)) * H);
+    if (inside) {
+      const cx0 = num(inside.x, -0.2, 1.2, 0) * W, cw = num(inside.w, 0, 1.4, 0.2) * W, pd = Math.min(cw * 0.06, 30);
+      const room = anchor === "start" ? cx0 + cw - pd - x : anchor === "end" ? x - cx0 - pd : 2 * Math.min(x - cx0, cx0 + cw - x) - 2 * pd;
+      maxw = Math.max(W * 0.08, Math.min(maxw, room));
+    }
+    const ts = lines.map((s, k) => `<text x="${x}" y="${y + k * size * 1.12}" font-size="${size}" fill="${fill}"${stroke ? ` stroke="${stroke}" stroke-width="${swr * size}"` : ""} text-anchor="${anchor}" data-maxw="${maxw}" data-swr="${swr}">${esc(s)}</text>`).join("");
+    texts += `<g class="tx" data-box="${col(t.box, "")}"${rot ? ` transform="rotate(${rot} ${x} ${y})"` : ""}>${ts}</g>`;
+  });
+  box.innerHTML = `<svg viewBox="0 0 ${W} ${H}" xmlns="${SVGNS}"><defs>${defs}</defs>${back}${people}${front}
+    <g font-family="Hiragino Sans, Noto Sans JP, sans-serif" font-weight="900" stroke-linejoin="round" style="paint-order:stroke">${texts}</g>${frame}</svg>`;
+  // はみ出す行があれば、そのかたまり全体を同じ割合で小さくする。人物の顔にかかる文字は顔の横の広い側へ寄せ、
+  // 画面の内側に収めてから、箱を後から敷く
+  const shrink = (ts, k) => {
+    if (!(k < 1)) return;
+    const y0 = +ts[0].getAttribute("y"), fs = parseFloat(ts[0].getAttribute("font-size")) * k;
+    ts.forEach((el, i) => { el.setAttribute("font-size", fs); el.setAttribute("y", y0 + i * fs * 1.12); if (+el.dataset.swr) el.setAttribute("stroke-width", fs * el.dataset.swr); });
+  };
+  const faces = (L.people || []).slice(0, 2).filter(p => PERSON_IDS.indexOf(p.id) >= 0).map(p => {
+    const h = num(p.h, 0.3, 1.25, 0.9) * H, cx = num(p.cx, 0, 1, 0.5) * W;
+    return {x1: cx - 0.19 * h, x2: cx + 0.19 * h, y1: H - h, y2: H - h * 0.5};
+  });
+  // 1) はみ出しを縮める 2) 顔にかかるものは、横へずらす量を決める（同じ列の文字は同じだけずらして、そろいを崩さない）
+  const items = [...box.querySelectorAll("g.tx")].map(g => {
+    const ts = [...g.querySelectorAll("text")];
+    let k = 1;
+    ts.forEach(el => { const w = el.getComputedTextLength(), m = +el.dataset.maxw; if (w > m) k = Math.min(k, m / w); });
+    shrink(ts, k);
+    const it = {g: g, ts: ts, dx: 0, key: ts[0].getAttribute("text-anchor") + Math.round(+ts[0].getAttribute("x") / 25)};
+    it.bp = () => g.dataset.box ? parseFloat(ts[0].getAttribute("font-size")) * 0.16 : 0;
+    if (g.dataset.in || /rotate/.test(g.getAttribute("transform") || "")) return it;
+    const m = H * 0.03, pad = W * 0.015;
+    faces.forEach(f => {
+      let b = g.getBBox();
+      const x1 = b.x + it.dx - it.bp(), x2 = b.x + it.dx + b.width + it.bp(), y1 = b.y - it.bp(), y2 = b.y + b.height + it.bp();
+      if (x2 <= f.x1 || x1 >= f.x2 || y2 <= f.y1 || y1 >= f.y2) return;
+      const left = (x1 + x2) / 2 < (f.x1 + f.x2) / 2, room = left ? f.x1 - pad - m : W - m - pad - f.x2;
+      if (room < W * 0.22) return;  // 顔の横に余地がなければ、そのまま
+      if (x2 - x1 > room) { shrink(ts, room / (x2 - x1)); b = g.getBBox(); }
+      const l0 = b.x - it.bp(), w = b.width + 2 * it.bp();
+      it.dx = left ? Math.max(m - l0, Math.min(it.dx, f.x1 - pad - (l0 + w))) : Math.min(W - m - w - l0, Math.max(it.dx, f.x2 + pad - l0));
+    });
+    return it;
+  });
+  const cols = {};
+  items.forEach(it => { if (!it.g.dataset.in) (cols[it.key] = cols[it.key] || []).push(it); });
+  Object.keys(cols).forEach(key => {
+    const ds = cols[key].map(it => it.dx), hi = Math.max(0, ...ds), lo = Math.min(0, ...ds), d = -lo > hi ? lo : hi;
+    cols[key].forEach(it => { it.dx = d; });
+  });
+  // 3) 画面の内側に収める 4) 箱を後から敷く
+  items.forEach(({g, ts, dx, bp}) => {
+    if (!g.dataset.in) {
+      const m = H * 0.03, b = g.getBBox();
+      let dy = 0;
+      const l0 = b.x + dx - bp(), r0 = b.x + dx + b.width + bp();
+      if (b.y - bp() < m) dy = m - (b.y - bp()); else if (b.y + b.height + bp() > H - m) dy = H - m - (b.y + b.height + bp());
+      if (l0 < m) dx += m - l0; else if (r0 > W - m) dx += W - m - r0;
+      if (dx || dy) g.setAttribute("transform", `translate(${dx},${dy}) ` + (g.getAttribute("transform") || ""));
+    }
+    if (g.dataset.box) {
+      const b = g.getBBox(), pad = parseFloat(ts[0].getAttribute("font-size")) * 0.16;
+      const r = document.createElementNS(SVGNS, "rect");
+      r.setAttribute("x", b.x - pad); r.setAttribute("y", b.y - pad * 0.5); r.setAttribute("width", b.width + pad * 2); r.setAttribute("height", b.height + pad);
+      r.setAttribute("fill", g.dataset.box); g.insertBefore(r, g.firstChild);
+    }
+  });
 }
 </script>
 </body>
