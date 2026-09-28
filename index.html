@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>あなた専用のYouTube設計｜Tsuzuru</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0A1633;--navy2:#1B2B5E;--blue:#1B4B9F;--yellow:#FFD24D;--bg:#F2F5FA;--text:#1f2937;--muted:#64748b;--line:#E1E8F3}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Hiragino Sans","Noto Sans JP",sans-serif;line-height:1.7;-webkit-font-smoothing:antialiased}
+.wrap{max-width:560px;margin:0 auto;padding:0 16px 40px}
+header{background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;padding:14px 16px}
+header .in{max-width:560px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
+header b{font-size:15px}
+header span{font-size:11px;letter-spacing:.3em;opacity:.8}
+h1{font-size:22px;line-height:1.45;margin:22px 0 6px;color:var(--navy)}
+.lead{font-size:13.5px;color:var(--muted);margin:0 0 18px}
+.card{background:#fff;border-radius:16px;padding:18px 16px;margin:12px 0;box-shadow:0 1px 3px rgba(10,22,51,.06)}
+label{display:block;font-weight:700;font-size:14.5px;margin:0 0 6px}
+textarea,input[type=text]{width:100%;border:2px solid var(--line);border-radius:12px;padding:12px;font:inherit;font-size:15px;background:#fafbfd;resize:none}
+textarea:focus,input:focus{outline:none;border-color:var(--blue)}
+.field{margin-bottom:16px}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.opt{border:2px solid var(--line);border-radius:12px;padding:11px 6px;text-align:center;font-weight:700;font-size:14px;background:#fafbfd;cursor:pointer}
+.opt.on{border-color:var(--blue);background:#EEF3FF;color:var(--navy)}
+.btn{display:block;width:100%;border:none;border-radius:14px;padding:15px;font:inherit;font-weight:900;font-size:16px;cursor:pointer;text-align:center;text-decoration:none}
+.btn.main{background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff}
+.btn.cta{background:#F97316;color:#fff;margin-top:10px}
+.btn.ghost{background:#E6EBF3;color:var(--navy2);font-weight:700;font-size:14px;margin-top:10px}
+.demo{margin-top:14px;font-size:12.5px;color:var(--muted)}
+.demo button{border:1px dashed #94a3b8;background:#fff;border-radius:999px;padding:5px 12px;margin:4px 4px 0 0;font:inherit;font-size:12.5px;cursor:pointer;color:var(--navy2)}
+.err{color:#dc2626;font-size:13px;margin-top:8px;min-height:1em}
+/* loading */
+#loading{text-align:center;padding:60px 10px}
+.spin{width:46px;height:46px;border:5px solid #dbe3f0;border-top-color:var(--blue);border-radius:50%;margin:0 auto 18px;animation:sp 1s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.stepline{font-size:14px;color:var(--muted);margin:6px 0}
+.stepline.done{color:var(--navy);font-weight:700}
+/* result */
+.for{font-size:13px;color:var(--muted);margin:22px 0 2px}
+.h2{font-size:12px;font-weight:900;letter-spacing:.2em;color:var(--blue);margin:0 0 6px}
+.concept{font-size:23px;font-weight:900;color:var(--navy);line-height:1.4;margin:2px 0 8px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{background:#EEF3FF;color:var(--navy2);border-radius:999px;padding:4px 12px;font-size:13px;font-weight:700}
+.comp{border-top:1px solid var(--line);padding:10px 0}
+.comp:first-of-type{border-top:none;padding-top:2px}
+.comp .n{font-weight:900;font-size:14.5px}
+.comp .s{font-size:12px;color:#fff;background:var(--navy2);border-radius:6px;padding:1px 8px;margin-left:6px;font-weight:700}
+.comp .d{font-size:13px;color:var(--muted)}
+.comp .g{font-size:13px;margin-top:2px}
+.comp .g b{color:#F97316}
+.plan{display:flex;gap:10px;border-top:1px solid var(--line);padding:11px 0}
+.plan:first-of-type{border-top:none;padding-top:2px}
+.plan .no{flex:none;width:26px;height:26px;border-radius:50%;background:var(--navy);color:var(--yellow);font-weight:900;font-size:13px;display:flex;align-items:center;justify-content:center;margin-top:2px}
+.plan .t{font-weight:900;font-size:14.5px;line-height:1.5}
+.plan .k{display:inline-block;font-size:11.5px;background:#FFF4D6;color:#8a5a00;border-radius:6px;padding:0 8px;margin:4px 0 2px;font-weight:700}
+.plan .w{font-size:13px;color:var(--muted)}
+.thumb{margin:10px 0 4px}
+.thumb svg{width:100%;height:auto;display:block;border-radius:10px}
+.thumb .cap{font-size:12.5px;color:var(--muted);margin-top:4px}
+ol.steps{margin:0;padding-left:20px;font-size:14px}
+ol.steps li{margin:4px 0}
+.note{font-size:11.5px;color:var(--muted);margin-top:14px}
+.hide{display:none}
+</style>
+</head>
+<body>
+<header><div class="in"><b>あなた専用のYouTube設計</b><span>TSUZURU</span></div></header>
+<div class="wrap">
+
+<section id="form">
+  <h1>あなたの会社専用の<br>YouTube設計を<br>30秒でつくります</h1>
+  <p class="lead">コンセプト・競合チャンネル・企画5本・サムネ案まで。企業のYouTubeを支援している現場の考え方で作ります。</p>
+  <div class="card">
+    <div class="field"><label for="biz">どんな事業ですか？</label>
+      <textarea id="biz" rows="2" placeholder="例：埼玉で注文住宅をつくる工務店"></textarea></div>
+    <div class="field"><label for="aud">動画を届けたい相手は？</label>
+      <textarea id="aud" rows="2" placeholder="例：はじめて家を建てる30〜40代の夫婦"></textarea></div>
+    <div class="field"><label>YouTubeでいちばん叶えたいこと</label>
+      <div class="opts" id="goal">
+        <div class="opt" data-v="問い合わせ・集客">問い合わせ・集客</div>
+        <div class="opt" data-v="採用">採用</div>
+        <div class="opt" data-v="商談の成約率アップ">商談の成約率アップ</div>
+        <div class="opt" data-v="会社を知ってもらう">会社を知ってもらう</div>
+      </div></div>
+    <button class="btn main" id="go">設計をつくる（無料）</button>
+    <div class="err" id="err"></div>
+    <div class="demo" id="demo">入力例を入れてみる
+      <button data-k="koumuten">工務店の例</button><button data-k="rpo">IT採用の会社の例</button></div>
+  </div>
+</section>
+
+<section id="loading" class="hide">
+  <div class="spin"></div>
+  <div class="stepline" data-i="0">競合チャンネルを探しています</div>
+  <div class="stepline" data-i="1">実際に検索されている言葉を調べています</div>
+  <div class="stepline" data-i="2">コンセプトと企画を考えています</div>
+  <div class="stepline" data-i="3">サムネ案をつくっています</div>
+</section>
+
+<section id="result" class="hide"></section>
+</div>
+
+<script>
+// 本番：Google Apps Script のURLを入れると、その場でAIが作る。空のときは試作版（例の2つだけ表示）
+const API_URL = "https://script.google.com/macros/s/AKfycbwtQtVQrfOaH9p1loaIjetJCYi-IfV3jGSfXBTrJVm7AbDf5KaeVqPbmxwWx3KZTkC4eg/exec";
+const CONSULT_URL = "https://tsuzuru-movie.com/contact/?utm_source=line&utm_medium=sekkei";
+const DEMO = {"koumuten": {"input": {"business": "埼玉で注文住宅をつくる工務店", "audience": "はじめて家を建てる30〜40代の夫婦", "goal": "問い合わせ・集客"}, "concept": {"title": "建てる前に見る、地元工務店のホンネ", "desc": "埼玉で家を建てる人のために、工務店の社長と設計士が「後悔しない家づくり」の本当のところを話すチャンネル。全国向けの大手チャンネルが話せない、埼玉の土地・相場・暮らしの話で差をつけます。"}, "names": ["埼玉の家づくり相談室", "建てる前に見るチャンネル", "工務店社長のホンネ家づくり"], "target": "埼玉ではじめて注文住宅を考えている30〜40代の夫婦。とくに「ハウスメーカーと工務店で迷っている」「総額がいくらになるか不安」な人", "competitors": [{"name": "職人社長の家づくり工務店", "subs": "25.6万人", "note": "工務店の社長が業界の裏側を話す、この分野の最大手", "gap": "全国向けなので、埼玉の土地や相場の話はできない"}, {"name": "木の家専門店 谷口工務店", "subs": "2.4万人", "note": "滋賀の工務店。社長と設計士が家づくりのポイントを解説。1年で登録者が約1.2倍", "gap": "地方の工務店でも伸びる証拠。同じ型を埼玉でやる"}, {"name": "行列のできる工務店（埼玉・川口）", "subs": "1.2万人", "note": "同じ埼玉の工務店。ショート動画が中心", "gap": "長尺のルームツアー＋費用公開で、じっくり検討する人を取りにいく"}], "keywords": ["注文住宅 後悔", "工務店 選び方", "ハウスメーカー 工務店 違い", "注文住宅 費用", "注文住宅 間取り 後悔", "平屋 間取り", "土地探し コツ", "注文住宅 ルームツアー 30坪"], "plans": [{"title": "ハウスメーカーと工務店、どっちで建てる？埼玉の工務店社長が本音で答えます", "keyword": "ハウスメーカー 工務店 違い", "why": "迷っている人がそのまま検索する言葉。工務店が自分で言うから信頼される", "thumb": ["ハウスメーカーと", "工務店", "選ぶ基準は？"]}, {"title": "【費用公開】埼玉で30坪の注文住宅、総額いくらかかった？（施主さんの許可をいただいて公開）", "keyword": "注文住宅 費用", "why": "いちばん知りたいのに、どこも出さない数字。見学会の申し込みにつながりやすい", "thumb": ["30坪の家", "総額いくら？", "全部見せます"]}, {"title": "注文住宅で後悔した間取り10選｜建てた人に聞いたリアル", "keyword": "注文住宅 間取り 後悔", "why": "「後悔」は検索が多い言葉。施主さんの声を使えば、ほかにない一次情報になる", "thumb": ["その間取り", "住んでから", "後悔します"]}, {"title": "【ルームツアー】30坪・4人家族の家｜建てた理由と、住んでみてどうか", "keyword": "注文住宅 ルームツアー 30坪", "why": "見て比べたい人が必ず見る型。施工事例がそのまま動画になる", "thumb": ["30坪で", "4人家族が", "ゆったり暮らす"]}, {"title": "工務店の選び方｜見積もりのこの項目で、いい会社か分かります", "keyword": "工務店 選び方", "why": "選ぶ側の悩みに正面から答えると、「この会社なら」と思ってもらえる", "thumb": ["見積もりの", "この項目で", "会社が分かる"]}], "thumbs": [0, 1, 2], "steps": ["まず「会社の顔」になる5本（社長の家づくりへの考え方・ルームツアー2本・家づくりの流れ・よくある質問）", "次に、検索される言葉（後悔・費用・間取り・選び方）で月4本", "見学会・相談会の申し込みを、概要欄の上3行と動画の中で毎回案内"]}, "rpo": {"input": {"business": "IT企業向けの採用代行（RPO）", "audience": "エンジニアが採れないIT企業の経営者・人事", "goal": "問い合わせ・集客"}, "concept": {"title": "IT採用の中の人", "desc": "エンジニア採用で本当に起きていることを、現場を知る代表が話すチャンネル。採用担当者向けは市場が小さいので、再生数より「探している人に見つけてもらう」「商談の前に信頼してもらう」ことを狙います。"}, "names": ["エンジニア採用の裏側", "IT採用の中の人", "エンジニア採用ラボ"], "target": "スタートアップ〜グロースのIT企業の経営者・CTO・人事責任者。とくに「エンジニアが採れない」「人事が1〜2人で手が回らない」会社", "competitors": [{"name": "ジンジゴト（即戦力RPO）", "subs": "1,130人", "note": "スタートアップ・エンジニア採用のRPO。いちばん近い競合", "gap": "最近はショート中心。長尺で深く話すチャンネルは空いている"}, {"name": "採用係長の採用道", "subs": "6,540人", "note": "中小企業の経営者・人事向け。1本あたり平均 約2,000回", "gap": "IT・エンジニアに絞った話はしていない"}, {"name": "IT菩薩モロー（参考：求職者向け）", "subs": "3.6万人", "note": "IT転職エージェント。転職エージェント比較の動画は136万回", "gap": "見る人はエンジニア側。採用する側はまだ手薄"}], "keywords": ["エンジニア採用", "採用代行とは", "rpoとは", "リファラル採用", "採用 失敗", "スカウトメール", "面接官 質問", "採用 ai"], "plans": [{"title": "エンジニア採用が失敗する会社の特徴3つ｜元エンジニアの採用コンサルが本音で話す", "keyword": "エンジニア採用", "why": "「失敗する会社」型は開かれやすい。現場を知る人の一次情報になる", "thumb": ["その求人票", "エンジニアに", "読まれてない"]}, {"title": "採用代行（RPO）とは？頼んでも採れない会社と、頼むべき会社", "keyword": "採用代行とは", "why": "検索されている言葉そのまま。「向いていない会社もある」と正直に話すと信頼になる", "thumb": ["採用代行", "頼んでも", "採れない会社"]}, {"title": "スカウトの返信率が上がる文面・下がる文面", "keyword": "スカウトメール", "why": "明日から使える実務ネタで保存される", "thumb": ["そのスカウト", "開かれずに", "消えてます"]}, {"title": "エンジニアが内定を辞退する本当の理由｜人事が知らない選考の裏側", "keyword": "採用 辞退", "why": "「年収じゃない」という常識の逆を言う型", "thumb": ["内定辞退", "本当の理由は", "年収じゃない"]}, {"title": "採用業務はAIでどこまで減らせる？実際のやり方を全部見せます", "keyword": "採用 ai", "why": "今いちばん関心が高いテーマ。自社の仕組みの見せ場になる", "thumb": ["採用業務", "AIで", "ここまで減る"]}], "thumbs": [0, 1, 2], "steps": ["まず「会社の顔」になる5本（代表のストーリー・サービス・支援の流れ・メンバー・よくある質問）", "紹介をもらったら、商談の前に動画のリンクを送る", "検索される言葉で月4本。事例・対談は、出てくださる支援先が決まり次第"]}};
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+let goal = "", demoKey = "";
+
+document.querySelectorAll("#goal .opt").forEach(o => o.onclick = () => {
+  document.querySelectorAll("#goal .opt").forEach(x => x.classList.remove("on"));
+  o.classList.add("on"); goal = o.dataset.v;
+});
+document.querySelectorAll("#demo button").forEach(b => b.onclick = () => {
+  const d = DEMO[b.dataset.k]; if (!d) return;
+  demoKey = b.dataset.k; $("#biz").value = d.input.business; $("#aud").value = d.input.audience;
+  document.querySelectorAll("#goal .opt").forEach(x => x.classList.toggle("on", x.dataset.v === d.input.goal));
+  goal = d.input.goal;
+});
+["#biz", "#aud"].forEach(id => $(id).addEventListener("input", () => { demoKey = ""; }));
+
+$("#go").onclick = async () => {
+  const biz = $("#biz").value.trim(), aud = $("#aud").value.trim();
+  if (!biz || !aud || !goal) { $("#err").textContent = "3つとも入力してください"; return; }
+  $("#err").textContent = "";
+  $("#form").classList.add("hide"); $("#loading").classList.remove("hide"); window.scrollTo(0, 0);
+  const lines = document.querySelectorAll(".stepline");
+  let i = 0; const timer = setInterval(() => { if (i < lines.length) lines[i++].classList.add("done"); }, API_URL ? 6000 : 700);
+  try {
+    let data;
+    if (API_URL) {
+      const r = await fetch(API_URL, {method: "POST", headers: {"Content-Type": "text/plain;charset=utf-8"},
+        body: JSON.stringify({business: biz, audience: aud, goal})});
+      data = await r.json();
+      if (data.error) throw new Error(data.error);
+    } else {
+      await new Promise(r => setTimeout(r, 3000));
+      data = DEMO[demoKey];
+      if (!data) throw new Error("試作版では「例で試す」の2つだけ表示できます。本番では、入力した内容でその場でAIが作ります。");
+    }
+    clearInterval(timer); render(data, biz);
+  } catch (e) {
+    clearInterval(timer);
+    $("#loading").classList.add("hide"); $("#form").classList.remove("hide");
+    lines.forEach(l => l.classList.remove("done"));
+    $("#err").textContent = e.message || "うまく作れませんでした。時間をおいてもう一度お試しください。";
+  }
+};
+
+function render(d, biz) {
+  const plans = d.plans.map((p, i) => `<div class="plan"><div class="no">${i + 1}</div><div>
+    <div class="t">${esc(p.title)}</div><span class="k">検索：${esc(p.keyword)}</span><div class="w">${esc(p.why)}</div></div></div>`).join("");
+  const comps = d.competitors.map(c => `<div class="comp"><div><span class="n">${esc(c.name)}</span><span class="s">${esc(c.subs)}</span></div>
+    <div class="d">${esc(c.note)}</div><div class="g"><b>差をつけるなら：</b>${esc(c.gap)}</div></div>`).join("");
+  const thumbs = d.thumbs.map((idx, n) => `<div class="thumb"><div id="th${n}"></div>
+    <div class="cap">案${n + 1}：${esc(d.plans[idx].title)}</div></div>`).join("");
+  $("#result").innerHTML = `
+    <p class="for">「${esc(biz)}」のあなたへ</p>
+    <div class="card"><div class="h2">CONCEPT｜コンセプト</div><div class="concept">${esc(d.concept.title)}</div>
+      <div style="font-size:14px">${esc(d.concept.desc)}</div></div>
+    <div class="card"><div class="h2">NAME｜チャンネル名の案</div><div class="chips">${d.names.map(n => `<span class="chip">${esc(n)}</span>`).join("")}</div>
+      <div class="h2" style="margin-top:14px">TARGET｜見てほしい人</div><div style="font-size:14px">${esc(d.target)}</div></div>
+    <div class="card"><div class="h2">RIVALS｜参考にする競合チャンネル</div>${comps}</div>
+    <div class="card"><div class="h2">KEYWORDS｜実際に検索されている言葉</div><div class="chips">${d.keywords.map(k => `<span class="chip">${esc(k)}</span>`).join("")}</div></div>
+    <div class="card"><div class="h2">PLANS｜最初に撮る企画5本</div>${plans}</div>
+    <div class="card"><div class="h2">THUMBNAILS｜サムネ案</div>${thumbs}
+      <div class="note">人物は仮のシルエットです。実際は出演者の写真を切り抜いて入れます。</div></div>
+    <div class="card"><div class="h2">FIRST STEP｜最初の一歩</div><ol class="steps">${d.steps.map(s => `<li>${esc(s)}</li>`).join("")}</ol></div>
+    <div class="card" style="text-align:center"><div style="font-weight:900;font-size:16px;color:var(--navy)">この設計を、あなたの会社に合わせて<br>一緒に詰めませんか？</div>
+      <a class="btn cta" href="${CONSULT_URL}" target="_blank">無料で相談する</a>
+      <div class="note">企画10本・費用の目安まで入った詳しい設計書（PDF）がほしい方は、LINEで「設計書」と送ってください。</div></div>
+    <button class="btn ghost" onclick="location.reload()">もう一度つくる</button>
+    <p class="note">競合チャンネルと登録者数は YouTube の公開データ、検索の言葉は YouTube の検索候補から取得しています。企画・サムネ案はAIによる提案です。</p>`;
+  // 文字幅は表示してからでないと測れないので、先に結果を出してからサムネを描く（フォント読み込み後にもう一度合わせる）
+  $("#loading").classList.add("hide"); $("#result").classList.remove("hide"); window.scrollTo(0, 0);
+  const draw = () => d.thumbs.forEach((idx, n) => drawThumb($("#th" + n), d.plans[idx].thumb));
+  draw();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(draw);
+}
+
+// サムネ案：前置き（白）→キーワード（赤）→結論（黄）の3段。人物は仮のシルエット
+function drawThumb(box, lines) {
+  const NS = "http://www.w3.org/2000/svg";
+  box.innerHTML = `<svg viewBox="0 0 1280 720" xmlns="${NS}">
+    <defs><radialGradient id="bg${box.id}" cx="78%" cy="40%" r="80%"><stop offset="0" stop-color="#2b3f73"/><stop offset=".45" stop-color="#101a33"/><stop offset="1" stop-color="#05070d"/></radialGradient>
+    <linearGradient id="pg${box.id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7d8aa8"/><stop offset="1" stop-color="#3a4560"/></linearGradient></defs>
+    <rect width="1280" height="720" fill="url(#bg${box.id})"/>
+    <g transform="translate(830,120) scale(0.94)"><circle cx="235" cy="190" r="118" fill="url(#pg${box.id})"/>
+      <path d="M20 640 C 30 430, 140 350, 235 350 C 330 350, 440 430, 450 640 Z" fill="url(#pg${box.id})"/></g>
+    <rect x="7" y="7" width="1266" height="706" fill="none" stroke="#E60012" stroke-width="14"/>
+    <g font-family="Hiragino Sans, Noto Sans JP, sans-serif" font-weight="900" stroke-linejoin="round" style="paint-order:stroke">
+      <text x="50" y="190" font-size="96" fill="#fff" stroke="#000" stroke-width="18"></text>
+      <text x="50" y="370" font-size="128" fill="#FF1A1A" stroke="#fff" stroke-width="18"></text>
+      <text x="50" y="580" font-size="150" fill="#FFFC00" stroke="#000" stroke-width="22"></text>
+    </g></svg>`;
+  const texts = box.querySelectorAll("text");
+  lines.slice(0, 3).forEach((s, i) => {
+    const t = texts[i]; t.textContent = s;
+    let fs = parseFloat(t.getAttribute("font-size"));
+    while (t.getComputedTextLength() > 740 && fs > 40) { fs -= 2; t.setAttribute("font-size", fs); }
+  });
+}
+</script>
+</body>
+</html>
