@@ -459,11 +459,15 @@ function drawLayout(box, L) {
   // 文字の下地の色（帯・箱・吹き出し・丸・背景）。写真の上なら空
   function luminance(h) { const v = [1, 3, 5].map(i => parseInt(h.substr(i, 2), 16) / 255).map(c => c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4)); return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2]; }
   function contrast(a, b) { const x = luminance(a), y = luminance(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); }
+  let underBox = null;  // 下地になった帯・箱の範囲（文字がはみ出したら縁取りを足すため）
   function underColor(px, py) {
     let u = "";
+    underBox = null;
     (L.shapes || []).slice(0, 8).forEach(c => {
       const f = col(c.fill, ""), sx = num(c.x, -0.2, 1.2, 0), sy = num(c.y, -0.2, 1.2, 0), sw2 = num(c.w, 0, 1.4, 0.2), sh = num(c.h, 0, 1.4, 0.1);
-      if (f && ["band", "rect", "bubble", "circle"].indexOf(c.kind) >= 0 && !num(c.rot, -45, 45, 0) && px >= sx && px <= sx + sw2 && py >= sy && py <= sy + sh) u = f;
+      if (f && ["band", "rect", "bubble", "circle"].indexOf(c.kind) >= 0 && !num(c.rot, -45, 45, 0) && px >= sx && px <= sx + sw2 && py >= sy && py <= sy + sh) {
+        u = f; underBox = [sx * W, sy * H, (sx + sw2) * W, (sy + sh) * H];
+      }
     });
     if (u) return u;
     if (bg.kind === "photo" && SCENE_IDS.indexOf(bg.scene) >= 0) return "";
@@ -497,7 +501,8 @@ function drawLayout(box, L) {
       } else { x = cx0 + cw / 2; anchor = "middle"; maxw = Math.max(W * 0.08, cw - 2 * pd); }
     }
     const ts = lines.map((s, k) => `<text x="${x}" y="${y + k * size * 1.12}" font-size="${size}" fill="${fill}"${stroke ? ` stroke="${stroke}" stroke-width="${swr * size}"` : ""} text-anchor="${anchor}" data-maxw="${maxw}" data-swr="${swr}">${esc(s)}</text>`).join("");
-    texts += `<g class="tx" data-box="${col(t.box, "")}"${rot ? ` transform="rotate(${rot} ${x} ${y})"` : ""}>${ts}</g>`;
+    const ub = !col(t.box, "") && underBox && !stroke ? ` data-ub="${underBox.join(",")}"` : "";
+    texts += `<g class="tx" data-box="${col(t.box, "")}"${ub}${rot ? ` transform="rotate(${rot} ${x} ${y})"` : ""}>${ts}</g>`;
   });
   box.innerHTML = `<svg viewBox="0 0 ${W} ${H}" xmlns="${SVGNS}"><defs>${defs}</defs>${back}${people}${front}
     <g font-family="Hiragino Sans, Noto Sans JP, sans-serif" font-weight="900" stroke-linejoin="round" style="paint-order:stroke">${texts}</g>${frame}</svg>`;
@@ -552,6 +557,12 @@ function drawLayout(box, L) {
       if (b.y - bp() < m) dy = m - (b.y - bp()); else if (b.y + b.height + bp() > H - m) dy = H - m - (b.y + b.height + bp());
       if (l0 < m) dx += m - l0; else if (r0 > W - m) dx += W - m - r0;
       if (dx || dy) g.setAttribute("transform", `translate(${dx},${dy}) ` + (g.getAttribute("transform") || ""));
+      // 下地の帯・箱からはみ出した文字（写真や別の色にかかる）には、縁取りを足して読めるようにする
+      if (g.dataset.ub) {
+        const u = g.dataset.ub.split(",").map(Number), tol = H * 0.02;
+        if (b.x + dx < u[0] - tol || b.x + dx + b.width > u[2] + tol || b.y + dy < u[1] - tol || b.y + dy + b.height > u[3] + tol)
+          ts.forEach(el => { const fs = parseFloat(el.getAttribute("font-size")); el.setAttribute("stroke", luminance(el.getAttribute("fill")) > 0.4 ? "#000000" : "#FFFFFF"); el.setAttribute("stroke-width", fs * 0.1); });
+      }
     }
     if (g.dataset.box) {
       const b = g.getBBox(), pad = parseFloat(ts[0].getAttribute("font-size")) * 0.16;
