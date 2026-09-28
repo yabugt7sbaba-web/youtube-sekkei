@@ -387,25 +387,26 @@ function drawThumb(box, t) {
 
 // ---------- 競合サムネイルの再現 ----------
 // AIが参考の動画のサムネイル画像を見て書いた設計図（layout）どおりに描く。座標は画面に対する割合（0〜1）
-// 人物は、AIで作った架空の人物（persons/ のPNG。背景を切り抜いたもの）から選ぶ
+// 人物は AIで作った架空の人物（persons/ の切り抜きPNG）、写真の背景・コマは架空の場面（scenes/ のJPEG）。一覧は裏側（Code.gs の PERSONS・SCENES）
 const PERSON_BASE = "persons/", SCENE_BASE = "scenes/";
-const SCENE_IDS = ["living", "house", "office", "construction", "classroom", "clinic", "shop", "desk"];
-const PERSON_IDS = ["m40_suit_surprise", "m40_suit_serious", "m40_suit_troubled", "f30_office_surprise", "f30_office_serious", "f30_office_troubled",
-  "m50_work_surprise", "m50_work_serious", "m30_casual_surprise", "m30_casual_troubled", "f40_uniform_serious", "f40_suit_surprise"];
+const ASSET_ID = /^[a-z0-9_]{2,40}$/;
 function drawLayout(box, L) {
   const id = box.id, W = 1280, H = 720, SVGNS = "http://www.w3.org/2000/svg";
   const num = (v, lo, hi, d) => { v = Number(v); return isFinite(v) ? Math.min(hi, Math.max(lo, v)) : d; };
   const col = (c, d) => /^#[0-9a-fA-F]{6}$/.test(c || "") ? c : d;
   const bg = L.bg || {}, c1 = col(bg.c1, "#111111"), c2 = col(bg.c2, c1);
+  const shapes = (L.shapes || []).slice(0, 10);
+  const area = s => [num(s.x, -0.2, 1.2, 0) * W, num(s.y, -0.2, 1.2, 0) * H, num(s.w, 0, 1.4, 0.2) * W, num(s.h, 0, 1.4, 0.1) * H];
   const ol = L.outline === "" ? "" : col(L.outline, "#FFFFFF");  // 人物のフチ（空ならフチなし）
   let defs = ol ? `<filter id="ol${id}" x="-15%" y="-15%" width="130%" height="130%"><feMorphology in="SourceAlpha" operator="dilate" radius="7" result="d"/>
     <feFlood flood-color="${ol}"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>` : "";
   let back = "", front = "", people = "", texts = "", frame = "", frameT = 0;
-  // 背景：写真（架空の場面）・単色・グラデーション・塗り分け
-  if (bg.kind === "photo" && SCENE_IDS.indexOf(bg.scene) >= 0) {
-    back += `<rect width="${W}" height="${H}" fill="${c1}"/><image href="${SCENE_BASE}${bg.scene}.jpg" x="0" y="0" width="${W}" height="${H}" preserveAspectRatio="xMidYMid slice"/>`;
-    const dim = num(bg.dim, 0, 0.7, 0);
-    if (dim) back += `<rect width="${W}" height="${H}" fill="#000000" opacity="${dim}"/>`;
+  // 背景：写真（架空の場面。ぼかし・暗さ・色味）・単色・グラデーション・塗り分け
+  if (bg.kind === "photo" && ASSET_ID.test(bg.scene || "")) {
+    const blur = num(bg.blur, 0, 1, 0), dim = num(bg.dim, 0, 0.7, 0), m = blur ? 40 : 0;
+    if (blur) defs += `<filter id="bb${id}"><feGaussianBlur stdDeviation="${(blur * 16).toFixed(1)}"/></filter>`;
+    back += `<rect width="${W}" height="${H}" fill="${c1}"/><image href="${SCENE_BASE}${bg.scene}.jpg" x="${-m}" y="${-m}" width="${W + 2 * m}" height="${H + 2 * m}" preserveAspectRatio="xMidYMid slice"${blur ? ` filter="url(#bb${id})"` : ""}/>`;
+    if (dim) back += `<rect width="${W}" height="${H}" fill="${col(bg.tint, "#000000")}" opacity="${dim}"/>`;
   } else if (bg.kind === "gradient") {
     const d = bg.dir === "v" ? 'x2="0" y2="1"' : bg.dir === "d" ? 'x2="1" y2="1"' : 'x2="1" y2="0"';
     defs += `<linearGradient id="bg${id}" x1="0" y1="0" ${d}><stop offset="0" stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/></linearGradient>`;
@@ -419,12 +420,13 @@ function drawLayout(box, L) {
         : `<rect x="${W * at}" width="${W * (1 - at)}" height="${H}" fill="${c2}"/>`;
     }
   }
-  // 飾り：帯・箱・丸・矢印・吹き出し・線・画面のフチの枠（layer が front なら人物の上に描く。枠はいちばん上）
-  (L.shapes || []).slice(0, 8).forEach(s => {
-    const x = num(s.x, -0.2, 1.2, 0) * W, y = num(s.y, -0.2, 1.2, 0) * H, w = num(s.w, 0, 1.4, 0.2) * W, h = num(s.h, 0, 1.4, 0.1) * H;
+  // 飾り：帯・箱・丸・矢印・吹き出し・ギザギザ吹き出し・線・写真のコマ・絵文字・集中線・画面のフチの枠
+  // （layer が front なら人物の上に描く。枠はいちばん上）
+  shapes.forEach((s, si) => {
+    const [x, y, w, h] = area(s);
     const fill = col(s.fill, "none"), stroke = col(s.stroke, "none"), sw = stroke === "none" ? 0 : 12, rot = num(s.rot, -45, 45, 0);
     const tr = rot ? ` transform="rotate(${rot} ${x + w / 2} ${y + h / 2})"` : "";
-    let el;
+    let el = "";
     if (s.kind === "circle") el = `<ellipse cx="${x + w / 2}" cy="${y + h / 2}" rx="${w / 2}" ry="${h / 2}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"${tr}/>`;
     else if (s.kind === "arrow") {
       const x2 = num(s.x2, -0.2, 1.2, (x + w) / W) * W, y2 = num(s.y2, -0.2, 1.2, (y + h) / H) * H, len = Math.max(60, Math.hypot(x2 - x, y2 - y));
@@ -434,6 +436,31 @@ function drawLayout(box, L) {
       const tx = s.tail === "right" ? x + w * 0.78 : s.tail === "left" ? x + w * 0.22 : x + w * 0.5;
       el = `<g${tr}><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${Math.min(w, h) * 0.22}" fill="${fill === "none" ? "#FFFFFF" : fill}" stroke="${stroke}" stroke-width="${sw}"/>
         <polygon points="${tx - 34},${y + h - 2} ${tx + 34},${y + h - 2} ${tx + (s.tail === "left" ? -60 : s.tail === "right" ? 60 : 0)},${y + h + 70}" fill="${fill === "none" ? "#FFFFFF" : fill}" stroke="${stroke}" stroke-width="${sw}"/></g>`;
+    } else if (s.kind === "burst") {
+      const cx = x + w / 2, cy = y + h / 2, n = 16, pts = [];
+      for (let i = 0; i < n * 2; i++) {
+        const a = Math.PI * i / n - Math.PI / 2, r = i % 2 ? 0.74 : 1;
+        pts.push(`${(cx + Math.cos(a) * w / 2 * r).toFixed(1)},${(cy + Math.sin(a) * h / 2 * r).toFixed(1)}`);
+      }
+      el = `<polygon points="${pts.join(" ")}" fill="${fill === "none" ? "#FFE600" : fill}" stroke="${stroke}" stroke-width="${sw}" stroke-linejoin="round"${tr}/>`;
+    } else if (s.kind === "panel") {
+      const cid = `pc${id}_${si}`, dim = num(s.dim, 0, 0.7, 0);
+      defs += `<clipPath id="${cid}"><rect x="${x}" y="${y}" width="${w}" height="${h}"/></clipPath>`;
+      el = `<g${tr}><rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${fill === "none" ? "#D9D9D9" : fill}"/>` +
+        (ASSET_ID.test(s.scene || "") ? `<image href="${SCENE_BASE}${s.scene}.jpg" x="${x}" y="${y}" width="${w}" height="${h}" preserveAspectRatio="xMidYMid slice" clip-path="url(#${cid})"/>` : "") +
+        (dim ? `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#000000" opacity="${dim}"/>` : "") +
+        (stroke !== "none" ? `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="none" stroke="${stroke}" stroke-width="${Math.max(6, H * 0.012)}"/>` : "") + `</g>`;
+    } else if (s.kind === "emoji") {
+      const ch = Array.from(String(s.t || "")).slice(0, 4).join(""), fs = Math.max(24, Math.min(w, h)) * 0.9;
+      if (ch) el = `<text x="${x + w / 2}" y="${y + h / 2 + fs * 0.35}" font-size="${fs}" text-anchor="middle" font-family="Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif"${tr}>${esc(ch)}</text>`;
+    } else if (s.kind === "rays") {
+      const cx = x + w / 2, cy = y + h / 2, r0 = Math.max(60, Math.min(w, h) * 0.36), R = 1700, n = 64;
+      let d = "";
+      for (let i = 0; i < n; i++) {
+        const a = 2 * Math.PI * i / n + (i % 3) * 0.02, r1 = r0 * (1 + ((i * 37) % 10) / 22), da = 0.01 + ((i * 17) % 5) * 0.003;
+        d += `M${(cx + Math.cos(a - da) * R).toFixed(0)},${(cy + Math.sin(a - da) * R).toFixed(0)}L${(cx + Math.cos(a) * r1).toFixed(0)},${(cy + Math.sin(a) * r1).toFixed(0)}L${(cx + Math.cos(a + da) * R).toFixed(0)},${(cy + Math.sin(a + da) * R).toFixed(0)}Z`;
+      }
+      el = `<path d="${d}" fill="${fill === "none" ? "#000000" : fill}" opacity="0.5"/>`;
     } else if (s.kind === "frame") {
       const hv = num(s.h, 0, 1.4, 0.025), t = (hv > 0.1 ? 0.025 : Math.max(0.006, Math.min(0.04, hv))) * H;
       const c = fill !== "none" ? fill : stroke !== "none" ? stroke : "#FFE600";
@@ -444,53 +471,81 @@ function drawLayout(box, L) {
     else el = `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${s.kind === "rect" ? 16 : 0}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"${tr}/>`;
     if (s.layer === "front") front += el; else back += el;
     // 飾りの中の文字（「VS」「公開」など）
-    if (s.t && s.kind !== "arrow" && s.kind !== "line") {
-      const fs = Math.min(h * 0.58, H * 0.2), cy = s.kind === "bubble" ? y + h / 2 : y + h / 2;
-      texts += `<g class="tx" data-box="" data-in="1"${tr}><text x="${x + w / 2}" y="${cy + fs * 0.36}" font-size="${fs}" fill="${col(s.tc, "#FFFFFF")}" text-anchor="middle" data-maxw="${w * 0.86}" data-swr="0">${esc(String(s.t).slice(0, 8))}</text></g>`;
+    if (s.t && ["arrow", "line", "emoji", "panel", "rays"].indexOf(s.kind) < 0) {
+      const fs = Math.min(h * (s.kind === "burst" ? 0.4 : 0.58), H * 0.2);
+      texts += `<g class="tx" data-box="" data-in="1"${tr}><text x="${x + w / 2}" y="${y + h / 2 + fs * 0.36}" font-size="${fs}" fill="${col(s.tc, "#FFFFFF")}" text-anchor="middle" data-maxw="${w * (s.kind === "burst" ? 0.62 : 0.86)}" data-swr="0">${esc(String(s.t).slice(0, 8))}</text></g>`;
     }
   });
-  // 人物：下端を画面の下にそろえ、中心の横位置（cx）と高さ（h）で置く。白フチつき
-  (L.people || []).slice(0, 2).forEach(p => {
-    if (PERSON_IDS.indexOf(p.id) < 0) return;
-    const h = num(p.h, 0.3, 1.25, 0.9) * H, cx = num(p.cx, 0, 1, 0.5) * W;
-    const img = `<image href="${PERSON_BASE}${p.id}.png" x="${cx - W / 2}" y="${H - h}" width="${W}" height="${h}" preserveAspectRatio="xMidYMax meet" ${ol ? ` filter="url(#ol${id})"` : ""}/>`;
+  // 人物：下端（bottom。ふつうは画面の下）にそろえ、中心の横位置（cx）と高さ（h）で置く。最大3人
+  const persons = (L.people || []).slice(0, 3).filter(p => ASSET_ID.test(p.id || ""));
+  persons.forEach(p => {
+    const h = num(p.h, 0.3, 1.25, 0.9) * H, cx = num(p.cx, 0, 1, 0.5) * W, bot = num(p.bottom, 0.3, 1, 1) * H;
+    const img = `<image href="${PERSON_BASE}${p.id}.png" x="${cx - W / 2}" y="${bot - h}" width="${W}" height="${h}" preserveAspectRatio="xMidYMax meet"${ol ? ` filter="url(#ol${id})"` : ""}/>`;
     people += p.flip ? `<g transform="translate(${2 * cx},0) scale(-1,1)">${img}</g>` : img;
   });
-  // 文字の下地の色（帯・箱・吹き出し・丸・背景）。写真の上なら空
+  // 文字の下地の色（帯・箱・吹き出し・丸・背景）。写真（背景・コマ）の上なら空
   function luminance(h) { const v = [1, 3, 5].map(i => parseInt(h.substr(i, 2), 16) / 255).map(c => c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4)); return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2]; }
   function contrast(a, b) { const x = luminance(a), y = luminance(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); }
   let underBox = null;  // 下地になった帯・箱の範囲（文字がはみ出したら縁取りを足すため）
   function underColor(px, py) {
     let u = "";
     underBox = null;
-    (L.shapes || []).slice(0, 8).forEach(c => {
-      const f = col(c.fill, ""), sx = num(c.x, -0.2, 1.2, 0), sy = num(c.y, -0.2, 1.2, 0), sw2 = num(c.w, 0, 1.4, 0.2), sh = num(c.h, 0, 1.4, 0.1);
-      if (f && ["band", "rect", "bubble", "circle"].indexOf(c.kind) >= 0 && !num(c.rot, -45, 45, 0) && px >= sx && px <= sx + sw2 && py >= sy && py <= sy + sh) {
-        u = f; underBox = [sx * W, sy * H, (sx + sw2) * W, (sy + sh) * H];
-      }
+    shapes.forEach(c => {
+      const sx = num(c.x, -0.2, 1.2, 0), sy = num(c.y, -0.2, 1.2, 0), sw2 = num(c.w, 0, 1.4, 0.2), sh = num(c.h, 0, 1.4, 0.1);
+      if (num(c.rot, -45, 45, 0) || px < sx || px > sx + sw2 || py < sy || py > sy + sh) return;
+      if (c.kind === "panel") { u = "photo"; underBox = null; return; }
+      const f = col(c.fill, "");
+      if (f && ["band", "rect", "bubble", "circle", "burst"].indexOf(c.kind) >= 0) { u = f; underBox = [sx * W, sy * H, (sx + sw2) * W, (sy + sh) * H]; }
     });
+    if (u === "photo") return "";
     if (u) return u;
-    if (bg.kind === "photo" && SCENE_IDS.indexOf(bg.scene) >= 0) return "";
+    if (bg.kind === "photo" && ASSET_ID.test(bg.scene || "")) return "";
     if (bg.kind === "split") { const at = num(bg.at, 0.1, 0.9, 0.5); return (bg.dir === "v" ? py : px) < at ? c1 : c2; }
     if (bg.kind === "gradient") return "#" + [1, 3, 5].map(i => Math.round((parseInt(c1.substr(i, 2), 16) + parseInt(c2.substr(i, 2), 16)) / 2).toString(16).padStart(2, "0")).join("");  // 中間の色で見る
     return c1;
   }
-  // 文字：位置・大きさ・色・縁取り・箱。「／」で改行
-  (L.texts || []).slice(0, 5).forEach(t => {
-    const lines = String(t.t || "").split("／").map(x => x.trim()).filter(Boolean).slice(0, 3);
+  // 文字：位置・大きさ・色・縁取り（二重も）・グラデーション・光・影・斜体・箱。「／」で改行。vertical は縦書き
+  (L.texts || []).slice(0, 6).forEach((t, k) => {
+    const lines = String(t.t || "").split("／").map(x => x.trim()).filter(Boolean).slice(0, 4);
     if (!lines.length) return;
-    const size = num(t.size, 0.05, 0.3, 0.14) * H, y = num(t.y, 0.05, 1, 0.3) * H;
+    const vertical = !!t.vertical;
+    let size = num(t.size, 0.05, 0.3, 0.14) * H;
+    const y = num(t.y, 0, 1, 0.3) * H;
     let x = num(t.x, 0, 1, 0.05) * W, anchor = ["start", "middle", "end"].indexOf(t.align) >= 0 ? t.align : "start";
     let fill = col(t.color, "#FFFFFF"), stroke = col(t.stroke, ""), swr = stroke ? num(t.sw, 0, 0.3, 0.14) : 0;
-    const under = col(t.box, "") || underColor(x / W, (y - size * 0.4) / H);
+    const stroke2 = col(t.stroke2, ""), fill2 = col(t.fill2, ""), bx = col(t.box, "");
+    const under = bx || underColor(x / W, (vertical ? y + size * 0.6 : y - size * 0.4) / H);
     if (under) {
-      if (contrast(fill, under) < 3 && !(stroke && swr >= 0.08 && contrast(stroke, under) >= 3))
+      if (contrast(fill, under) < 3 && !(stroke && swr >= 0.08 && contrast(stroke, under) >= 3) && !(stroke2 && contrast(stroke2, under) >= 3))
         fill = contrast("#111111", under) >= contrast("#FFFFFF", under) ? "#111111" : "#FFFFFF";
-    } else if (!stroke) { stroke = luminance(fill) > 0.4 ? "#000000" : "#FFFFFF"; swr = 0.1; }
+    } else if (!stroke && !stroke2) { stroke = luminance(fill) > 0.4 ? "#000000" : "#FFFFFF"; swr = 0.1; }
+    const rot = num(t.rot, -30, 30, 0), skew = num(t.skew, -20, 20, 0);
+    const tf = [rot ? `rotate(${rot} ${x} ${y})` : "", skew ? `translate(${x} ${y}) skewX(${skew}) translate(${-x} ${-y})` : ""].filter(Boolean).join(" ");
+    const gid = `tg${id}_${k}`;
+    if (fill2) defs += `<linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0.2" stop-color="${fill}"/><stop offset="0.95" stop-color="${fill2}"/></linearGradient>`;
+    const paint = fill2 ? `url(#${gid})` : fill;
+    const strokeAt = sz => stroke ? ` stroke="${stroke}" stroke-width="${swr * sz}"` : "";
+    const eff = (stroke2 ? ` data-s2="${stroke2}" data-sw2="${num(t.sw2, 0.02, 0.3, 0.1)}"` : "") + (col(t.glow, "") ? ` data-glow="${col(t.glow, "")}"` : "") + (t.shadow ? ` data-shadow="1"` : "");
+    if (vertical) {
+      // 縦書き：「／」ごとに1列。右の列から左へ。x＝いちばん右の列の中心、y＝列の上端、maxw＝列の長さの上限（画面の高さに対する割合）
+      const n = Math.max(...lines.map(l => Array.from(l).length));
+      size = Math.max(Math.min(size, num(t.maxw, 0.1, 1, 0.9) * H / (n * 1.02)), H * 0.06);
+      const step = size * 1.02, gap = size * 1.15;
+      let els = "";
+      lines.forEach((l, ci) => Array.from(l).forEach((ch, i) => {
+        const cx = x - ci * gap, top = y + i * step;
+        let dx = 0, dy = 0, extra = "";
+        if (/[ー－―〜～…‥]/.test(ch)) extra = ` transform="rotate(90 ${cx} ${top + size * 0.5})"`;
+        else if (/[ぁぃぅぇぉっゃゅょゎァィゥェォッャュョヮヵヶ]/.test(ch)) { dx = size * 0.12; dy = -size * 0.1; }
+        else if (/[、。，．]/.test(ch)) { dx = size * 0.36; dy = -size * 0.52; }
+        els += `<text x="${cx + dx}" y="${top + size * 0.88 + dy}" font-size="${size}" fill="${paint}"${strokeAt(size)} text-anchor="middle" data-maxw="99999" data-swr="${swr}"${extra}>${esc(ch)}</text>`;
+      }));
+      texts += `<g class="tx" data-v="1" data-box="${bx}"${eff}${tf ? ` transform="${tf}"` : ""}>${els}</g>`;
+      return;
+    }
     let maxw = num(t.maxw, 0.1, 1, 0.9) * W;
-    const rot = num(t.rot, -30, 30, 0);
-    // 吹き出し・箱の中に置いた文字は、その中央に収める。帯の中の文字は、帯からはみ出さない幅にする
-    const inside = (L.shapes || []).slice(0, 8).find(c => ["bubble", "rect", "band"].indexOf(c.kind) >= 0 && !num(c.rot, -45, 45, 0) &&
+    // 吹き出し・箱・ギザギザの中に置いた文字は、その中央に収める。帯の中の文字は、帯からはみ出さない幅にする
+    const inside = shapes.find(c => ["bubble", "rect", "band", "burst"].indexOf(c.kind) >= 0 && !num(c.rot, -45, 45, 0) &&
       x >= num(c.x, -0.2, 1.2, 0) * W && x <= (num(c.x, -0.2, 1.2, 0) + num(c.w, 0, 1.4, 0.2)) * W &&
       y - size * 0.4 >= num(c.y, -0.2, 1.2, 0) * H && y - size * 0.4 <= (num(c.y, -0.2, 1.2, 0) + num(c.h, 0, 1.4, 0.1)) * H);
     if (inside) {
@@ -498,35 +553,35 @@ function drawLayout(box, L) {
       if (inside.kind === "band") {
         const room = anchor === "start" ? cx0 + cw - pd - x : anchor === "end" ? x - cx0 - pd : 2 * Math.min(x - cx0, cx0 + cw - x) - 2 * pd;
         maxw = Math.max(W * 0.08, Math.min(maxw, room));
-      } else { x = cx0 + cw / 2; anchor = "middle"; maxw = Math.max(W * 0.08, cw - 2 * pd); }
+      } else { x = cx0 + cw / 2; anchor = "middle"; maxw = Math.max(W * 0.08, cw * (inside.kind === "burst" ? 0.66 : 1) - 2 * pd); }
     }
-    const ts = lines.map((s, k) => `<text x="${x}" y="${y + k * size * 1.12}" font-size="${size}" fill="${fill}"${stroke ? ` stroke="${stroke}" stroke-width="${swr * size}"` : ""} text-anchor="${anchor}" data-maxw="${maxw}" data-swr="${swr}">${esc(s)}</text>`).join("");
-    const ub = !col(t.box, "") && underBox && !stroke ? ` data-ub="${underBox.join(",")}"` : "";
-    texts += `<g class="tx" data-box="${col(t.box, "")}"${ub}${rot ? ` transform="rotate(${rot} ${x} ${y})"` : ""}>${ts}</g>`;
+    const ts = lines.map((s, j) => `<text x="${x}" y="${y + j * size * 1.12}" font-size="${size}" fill="${paint}"${strokeAt(size)} text-anchor="${anchor}" data-maxw="${maxw}" data-swr="${swr}">${esc(s)}</text>`).join("");
+    const ub = !bx && underBox && !stroke && !stroke2 ? ` data-ub="${underBox.join(",")}"` : "";
+    texts += `<g class="tx" data-box="${bx}"${ub}${eff}${tf ? ` transform="${tf}"` : ""}>${ts}</g>`;
   });
   box.innerHTML = `<svg viewBox="0 0 ${W} ${H}" xmlns="${SVGNS}"><defs>${defs}</defs>${back}${people}${front}
     <g font-family="Hiragino Sans, Noto Sans JP, sans-serif" font-weight="900" stroke-linejoin="round" style="paint-order:stroke">${texts}</g>${frame}</svg>`;
   // はみ出す行があれば、そのかたまり全体を同じ割合で小さくする。人物の顔にかかる文字は顔の横の広い側へ寄せ、
-  // 画面の内側に収めてから、箱を後から敷く
-  const shrink = (ts, k) => {
-    if (!(k < 1)) return;
+  // 画面の内側に収めてから、箱を後から敷き、最後に文字の効果（外側の縁取り・光・影）を付ける
+  const shrink = (g, ts, k) => {
+    if (!(k < 1) || g.dataset.v) return;
     const y0 = +ts[0].getAttribute("y"), fs = parseFloat(ts[0].getAttribute("font-size")) * k;
     ts.forEach((el, i) => { el.setAttribute("font-size", fs); el.setAttribute("y", y0 + i * fs * 1.12); if (+el.dataset.swr) el.setAttribute("stroke-width", fs * el.dataset.swr); });
   };
-  const faces = (L.people || []).slice(0, 2).filter(p => PERSON_IDS.indexOf(p.id) >= 0).map(p => {
-    const h = num(p.h, 0.3, 1.25, 0.9) * H, cx = num(p.cx, 0, 1, 0.5) * W;
-    return {x1: cx - 0.19 * h, x2: cx + 0.19 * h, y1: H - h, y2: H - h * 0.5};
+  const faces = persons.map(p => {
+    const h = num(p.h, 0.3, 1.25, 0.9) * H, cx = num(p.cx, 0, 1, 0.5) * W, bot = num(p.bottom, 0.3, 1, 1) * H;
+    return {x1: cx - 0.19 * h, x2: cx + 0.19 * h, y1: bot - h, y2: bot - h * 0.5};
   });
   // 1) はみ出しを縮める 2) 顔にかかるものは、横へずらす量を決める（同じ列の文字は同じだけずらして、そろいを崩さない）
-  const items = [...box.querySelectorAll("g.tx")].map(g => {
+  const items = [...box.querySelectorAll("g.tx")].map((g, gi) => {
     const ts = [...g.querySelectorAll("text")];
     let k = 1;
-    ts.forEach(el => { const w = el.getComputedTextLength(), m = +el.dataset.maxw; if (w > m) k = Math.min(k, m / w); });
+    if (!g.dataset.v) ts.forEach(el => { const w = el.getComputedTextLength(), m = +el.dataset.maxw; if (w > m) k = Math.min(k, m / w); });
     // 小さくしすぎない（画面の高さの6.5%まで。飾りの中の文字は除く）
     const fs0 = parseFloat(ts[0].getAttribute("font-size")), floor = Math.min(fs0, H * 0.065);
     if (!g.dataset.in && fs0 * k < floor) k = floor / fs0;
-    shrink(ts, k);
-    const it = {g: g, ts: ts, dx: 0, key: ts[0].getAttribute("text-anchor") + Math.round(+ts[0].getAttribute("x") / 25)};
+    shrink(g, ts, k);
+    const it = {g: g, ts: ts, gi: gi, dx: 0, key: ts[0].getAttribute("text-anchor") + Math.round(+ts[0].getAttribute("x") / 25)};
     it.bp = () => g.dataset.box ? parseFloat(ts[0].getAttribute("font-size")) * 0.16 : 0;
     if (g.dataset.in || /rotate/.test(g.getAttribute("transform") || "")) return it;
     const m = H * 0.03, pad = W * 0.015;
@@ -536,7 +591,7 @@ function drawLayout(box, L) {
       if (x2 <= f.x1 || x1 >= f.x2 || y2 <= f.y1 || y1 >= f.y2) return;
       const left = (x1 + x2) / 2 < (f.x1 + f.x2) / 2, room = left ? f.x1 - pad - m : W - m - pad - f.x2;
       if (room < W * 0.22) return;  // 顔の横に余地がなければ、そのまま
-      if (x2 - x1 > room) { shrink(ts, room / (x2 - x1)); b = g.getBBox(); }
+      if (x2 - x1 > room) { shrink(g, ts, room / (x2 - x1)); b = g.getBBox(); }
       const l0 = b.x - it.bp(), w = b.width + 2 * it.bp();
       it.dx = left ? Math.max(m - l0, Math.min(it.dx, f.x1 - pad - (l0 + w))) : Math.min(W - m - w - l0, Math.max(it.dx, f.x2 + pad - l0));
     });
@@ -548,8 +603,8 @@ function drawLayout(box, L) {
     const ds = cols[key].map(it => it.dx), hi = Math.max(0, ...ds), lo = Math.min(0, ...ds), d = -lo > hi ? lo : hi;
     cols[key].forEach(it => { it.dx = d; });
   });
-  // 3) 画面の内側に収める 4) 箱を後から敷く
-  items.forEach(({g, ts, dx, bp}) => {
+  // 3) 画面の内側に収める 4) 箱を後から敷く 5) 文字の効果
+  items.forEach(({g, ts, gi, dx, bp}) => {
     if (!g.dataset.in) {
       const m = Math.max(H * 0.03, frameT + H * 0.012), b = g.getBBox();
       let dy = 0;
@@ -569,6 +624,19 @@ function drawLayout(box, L) {
       const r = document.createElementNS(SVGNS, "rect");
       r.setAttribute("x", b.x - pad); r.setAttribute("y", b.y - pad * 0.5); r.setAttribute("width", b.width + pad * 2); r.setAttribute("height", b.height + pad);
       r.setAttribute("fill", g.dataset.box); g.insertBefore(r, g.firstChild);
+    }
+    if (g.dataset.s2 || g.dataset.glow || g.dataset.shadow) {
+      const fs = parseFloat(ts[0].getAttribute("font-size")), fid = `tf${id}_${gi}`, v = !!g.dataset.v;
+      let prim = "";
+      const merge = [];
+      if (g.dataset.shadow) { prim += `<feOffset in="SourceAlpha" dx="${fs * 0.04}" dy="${fs * 0.06}" result="so"/><feGaussianBlur in="so" stdDeviation="${fs * 0.035}" result="sb"/><feFlood flood-color="#000000" flood-opacity="0.6"/><feComposite in2="sb" operator="in" result="sh"/>`; merge.push("sh"); }
+      if (g.dataset.glow) { prim += `<feMorphology in="SourceAlpha" operator="dilate" radius="${fs * 0.05}" result="gd"/><feGaussianBlur in="gd" stdDeviation="${fs * 0.1}" result="gb"/><feFlood flood-color="${g.dataset.glow}"/><feComposite in2="gb" operator="in" result="gl"/>`; merge.push("gl", "gl"); }
+      if (g.dataset.s2) { prim += `<feMorphology in="SourceAlpha" operator="dilate" radius="${fs * +g.dataset.sw2}" result="od"/><feFlood flood-color="${g.dataset.s2}"/><feComposite in2="od" operator="in" result="o2"/>`; merge.push("o2"); }
+      const f = document.createElementNS(SVGNS, "filter");
+      [["id", fid], ["x", v ? "-80%" : "-30%"], ["y", v ? "-20%" : "-60%"], ["width", v ? "260%" : "160%"], ["height", v ? "140%" : "220%"]].forEach(([a, val]) => f.setAttribute(a, val));
+      f.innerHTML = prim + `<feMerge>${merge.map(mm => `<feMergeNode in="${mm}"/>`).join("")}<feMergeNode in="SourceGraphic"/></feMerge>`;
+      box.querySelector("defs").appendChild(f);
+      g.setAttribute("filter", `url(#${fid})`);
     }
   });
 }
