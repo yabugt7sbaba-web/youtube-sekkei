@@ -108,8 +108,6 @@ textarea:focus,input:focus{outline:none;border-color:var(--blue)}
 .kwg:first-child .lb{margin-top:2px}
 .chip.on{background:#FFE9A8;color:#6b4a00}
 .kwnote{font-size:11.5px;color:var(--muted);margin-top:10px}
-ol.steps{margin:0;padding-left:20px;font-size:14px}
-ol.steps li{margin:4px 0}
 .note{font-size:11.5px;color:var(--muted);margin-top:12px}
 .hide{display:none}
 /* 見本の表示中 */
@@ -406,7 +404,6 @@ function render(d, biz) {
       <div class="ns">冒頭から締めまで、そのまま読める全文の台本です。あなたの会社の実際の話を入れるので、ほかの会社には作れない1本になります。</div></div>
     <div class="err" id="err2"></div>
     <div class="card"><div class="h2">PLANS｜最初に撮る企画${(d.plans || []).length}本</div>${plans}</div>
-    <div class="card"><div class="h2">FIRST STEP｜最初の一歩</div><ol class="steps">${(d.steps || []).map(s => `<li>${esc(s)}</li>`).join("")}</ol></div>
     <div class="card" style="text-align:center"><div style="font-weight:900;font-size:16px;color:var(--navy)">この設計を、あなたの会社に合わせて<br>一緒に詰めませんか？</div>
       <a class="btn cta" href="${CONSULT_URL}" target="_blank" rel="noopener">無料で相談する</a>
       <div class="note">企画10本・費用の目安まで入った詳しい設計書（PDF）がほしい方は、LINEで「設計書」と送ってください。</div></div>
