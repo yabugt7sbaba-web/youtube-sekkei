@@ -11,6 +11,7 @@
 <meta property="og:image" content="https://yabugt7sbaba-web.github.io/youtube-sekkei/ogp3.png">
 <meta name="twitter:card" content="summary_large_image">
 <title>あなた専用のYouTube設計｜Tsuzuru</title>
+<base target="_blank">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
@@ -23,10 +24,10 @@ header .in{max-width:560px;margin:0 auto;display:flex;justify-content:space-betw
 header b{font-size:15px}
 header span{font-size:11px;letter-spacing:.3em;opacity:.8}
 h1{font-size:22px;line-height:1.45;margin:22px 0 6px;color:var(--navy)}
-.lead{font-size:13.5px;color:var(--muted);margin:0 0 18px}
+.lead{font-size:13.5px;color:var(--muted);margin:0 0 14px}
 .card{background:#fff;border-radius:16px;padding:18px 16px;margin:12px 0;box-shadow:0 1px 3px rgba(10,22,51,.06)}
 label{display:block;font-weight:700;font-size:14.5px;margin:0 0 6px}
-textarea,input[type=text],input[type=url]{width:100%;border:2px solid var(--line);border-radius:12px;padding:12px;font:inherit;font-size:15px;background:#fafbfd;resize:none}
+textarea,input[type=text],input[type=url]{width:100%;border:2px solid var(--line);border-radius:12px;padding:12px;font:inherit;font-size:16px;background:#fafbfd;resize:none}
 textarea:focus,input:focus{outline:none;border-color:var(--blue)}
 .field{margin-bottom:16px}
 .field:last-child{margin-bottom:4px}
@@ -40,9 +41,15 @@ textarea:focus,input:focus{outline:none;border-color:var(--blue)}
 .btn.main{background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff}
 .btn.cta{background:#F97316;color:#fff;margin-top:10px}
 .btn.ghost{background:#E6EBF3;color:var(--navy2);font-weight:700;font-size:14px;margin-top:10px}
+.btn[disabled]{opacity:.45;cursor:default}
 .demo{margin-top:14px;font-size:12.5px;color:var(--muted)}
 .demo button{border:1px dashed #94a3b8;background:#fff;border-radius:999px;padding:5px 12px;margin:4px 4px 0 0;font:inherit;font-size:12.5px;cursor:pointer;color:var(--navy2)}
 .err{color:#dc2626;font-size:13px;margin-top:8px;min-height:1em}
+/* 3つの流れ */
+.flow{display:flex;gap:6px;margin:0 0 14px}
+.flow div{flex:1;background:#fff;border-radius:12px;padding:9px 6px 8px;text-align:center;font-size:12px;font-weight:700;color:var(--navy2);line-height:1.4;box-shadow:0 1px 3px rgba(10,22,51,.06)}
+.flow b{display:block;font-size:11px;color:var(--blue);letter-spacing:.1em}
+.promise{font-size:12.5px;color:var(--navy2);background:#EEF3FF;border-radius:10px;padding:8px 11px;margin:0 0 4px}
 /* loading */
 #loading{text-align:center;padding:60px 10px}
 .spin{width:46px;height:46px;border:5px solid #dbe3f0;border-top-color:var(--blue);border-radius:50%;margin:0 auto 18px;animation:sp 1s linear infinite}
@@ -92,6 +99,11 @@ textarea:focus,input:focus{outline:none;border-color:var(--blue)}
 .ref .rm{font-size:11px;color:var(--muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .plan .rw{font-size:12.5px;margin-top:4px}
 .plan .rw b{color:#F97316}
+.mk{display:block;width:100%;margin-top:10px;border:2px solid var(--blue);background:#fff;color:var(--blue);border-radius:12px;padding:10px;font:inherit;font-weight:900;font-size:14px;cursor:pointer}
+.next{background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff}
+.next .h2{color:var(--yellow)}
+.next .nt{font-weight:900;font-size:17px;line-height:1.5}
+.next .ns{font-size:13px;opacity:.9;margin-top:4px}
 .kwg .lb{font-size:12px;font-weight:900;color:var(--muted);margin:12px 0 5px}
 .kwg:first-child .lb{margin-top:2px}
 .chip.on{background:#FFE9A8;color:#6b4a00}
@@ -100,15 +112,75 @@ ol.steps{margin:0;padding-left:20px;font-size:14px}
 ol.steps li{margin:4px 0}
 .note{font-size:11.5px;color:var(--muted);margin-top:12px}
 .hide{display:none}
+/* 見本の表示中 */
+.mockbar{background:#FFF4D6;color:#6b4a00;font-size:12.5px;font-weight:700;padding:8px 16px;text-align:center}
+.mockbar button{border:none;background:#6b4a00;color:#fff;border-radius:999px;padding:3px 12px;margin-left:8px;font:inherit;font-size:12px;font-weight:700;cursor:pointer}
+/* 質問（取材） */
+.pt{font-weight:900;font-size:15.5px;line-height:1.5;color:var(--navy)}
+.dots{display:flex;gap:6px;justify-content:center;margin:14px 0 2px}
+.dots i{width:28px;height:5px;border-radius:3px;background:#d5deec}
+.dots i.done{background:var(--blue)}
+.dots i.now{background:var(--yellow)}
+.qno{font-size:12.5px;font-weight:900;color:var(--blue);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.use{font-size:11.5px;font-weight:700;color:#8a5a00;background:#FFF4D6;border-radius:999px;padding:1px 10px}
+.qt{font-weight:900;font-size:16.5px;line-height:1.55;color:var(--navy);margin:8px 0 10px}
+.row{display:flex;gap:8px;margin-top:12px}
+.row .btn{margin-top:0}
+.row .btn.ghost{flex:none;width:34%}
+.link{display:block;width:100%;border:none;background:none;color:var(--muted);font:inherit;font-size:13px;text-decoration:underline;padding:12px 0 2px;cursor:pointer}
+.sum{font-size:13px;color:var(--navy2);background:#EEF3FF;border-radius:10px;padding:8px 11px;margin:14px 0 12px}
+.sum.ng{background:#FEF2F2;color:#b91c1c}
+.alist{margin:0;padding:0;list-style:none;font-size:13px}
+.alist li{border-top:1px solid var(--line);padding:8px 0;display:flex;gap:8px;cursor:pointer}
+.alist li:first-child{border-top:none}
+.alist b{flex:none;color:var(--blue);font-size:12px;width:1.6em}
+.alist .em{color:#94a3b8}
+/* 台本 */
+.stitle{font-size:19px;font-weight:900;color:var(--navy);line-height:1.5;margin:2px 0 10px}
+.legend{font-size:12px;color:var(--muted);margin:10px 0 0;line-height:2}
+.nw{white-space:nowrap}
+mark.you{background:linear-gradient(transparent 55%,#FFE38A 55%);color:inherit;padding:0 1px}
+.slot{border:1.5px dashed #5B8DEF;border-radius:6px;color:#1B4B9F;background:#F3F7FF;padding:0 3px;font-weight:700;font-size:.94em}
+#script .say .slot{cursor:pointer}
+.fillcard{border:2px solid #5B8DEF;background:#F7FAFF}
+.fillcard .ft{font-weight:900;font-size:15.5px;color:var(--navy);line-height:1.55;margin-bottom:4px}
+.fq .qt{font-size:15px;font-weight:700;line-height:1.75;margin:8px 0 10px}
+.fq .qt .slot{font-size:1em}
+.notice{font-size:13.5px;font-weight:700;color:#166534;background:#F0FDF4;border-radius:10px;padding:9px 12px;margin:10px 0 0}
+.notice.ng{color:#9a3412;background:#FFF7ED}
+.say{font-size:15.5px;line-height:2;white-space:pre-wrap;word-break:break-word}
+.sh{display:flex;align-items:baseline;gap:8px;margin:0 0 8px}
+.sh b{font-size:16px;color:var(--navy);font-weight:900}
+.sh span{font-size:11.5px;color:var(--muted)}
+.part{border-top:1px solid var(--line);padding:14px 0 6px}
+.part:first-of-type{border-top:none;padding-top:2px}
+.part .pl{display:flex;gap:8px;align-items:center;font-weight:900;font-size:15px;color:var(--navy)}
+.part .say{margin-top:10px}
+.part .pl i{flex:none;width:24px;height:24px;border-radius:50%;background:var(--navy);color:var(--yellow);font-style:normal;font-size:12.5px;display:flex;align-items:center;justify-content:center}
+.leadbox{background:#F6F8FC;border-radius:12px;padding:9px 12px;margin:9px 0 8px;font-size:14.5px;line-height:1.8}
+.leadbox small{display:block;font-size:11px;font-weight:900;color:var(--blue)}
+ul.pts{margin:0;padding-left:20px;font-size:14.5px;line-height:1.85}
+ul.pts li{margin:3px 0}
+.pnote{font-size:12.5px;color:#8a5a00;background:#FFF9E8;border-radius:8px;padding:5px 10px;margin:8px 0 4px}
+ul.todo{margin:0;padding-left:20px;font-size:14px}
+ul.todo li{margin:5px 0}
+.copied{font-size:12.5px;color:#166534;text-align:center;min-height:1.2em;margin-top:6px}
 </style>
 </head>
 <body>
 <header><div class="in"><b>あなた専用のYouTube設計</b><span>TSUZURU</span></div></header>
+<div id="mockbar" class="mockbar hide">見本を表示しています（工務店の例）<button id="exitmock">自分の会社で作る</button></div>
 <div class="wrap">
 
 <section id="form">
-  <h1>あなたの会社専用の<br>YouTube設計を<br>その場でつくります</h1>
-  <p class="lead">コンセプト・競合チャンネル・検索されている言葉・最初に撮る企画と参考動画まで。企業のYouTubeを支援してきたTsuzuruの知見をもとに作ります。</p>
+  <h1>質問に答えるだけで、<br>最初の1本の台本ができます</h1>
+  <p class="lead">質問に答えるだけで、チャンネルの設計から、最初に撮る動画の台本までできます。台本は、冒頭から締めまでそのまま読める全文です。企業のYouTubeを支援してきたTsuzuruの知見をもとに作ります（無料）。</p>
+  <div class="flow">
+    <div><b>STEP 1</b>設計を見る<br>約1分</div>
+    <div><b>STEP 2</b>5つの質問に<br>答える</div>
+    <div><b>STEP 3</b>台本が<br>できる</div>
+  </div>
+  <p class="promise">AIが勝手に書くのではなく、あなたの話をAIが台本に整えます。</p>
   <div class="card">
     <div class="field"><label for="biz">どんな事業ですか？</label>
       <textarea id="biz" rows="2" placeholder="例：埼玉で注文住宅をつくる工務店"></textarea></div>
@@ -133,11 +205,12 @@ ol.steps li{margin:4px 0}
       <input type="url" id="blog" inputmode="url" autocapitalize="off" placeholder="https://"></div>
     <div class="field"><label for="yt">いまのYouTubeチャンネルのURL（ある方）</label>
       <input type="url" id="yt" inputmode="url" autocapitalize="off" placeholder="https://www.youtube.com/@..."></div>
-    <div class="field"><label for="str">強み・実績・よく聞かれる質問など</label>
+    <div class="field"><label for="str">得意なこと・実績・よく聞かれる質問など</label>
       <textarea id="str" rows="3" placeholder="例：創業30年・年間40棟。自然素材の家が得意。「総額いくら？」とよく聞かれる"></textarea></div>
   </div>
   <button class="btn main" id="go">設計をつくる（無料）</button>
   <div class="err" id="err"></div>
+  <button class="btn ghost" id="sample">先に見本を見る（工務店の例・すぐ見られます）</button>
   <div class="demo" id="demo">入力例を入れてみる
     <button data-k="koumuten">工務店の例</button><button data-k="rpo">IT採用の会社の例</button></div>
 </section>
@@ -145,72 +218,136 @@ ol.steps li{margin:4px 0}
 <section id="loading" class="hide">
   <div class="spin"></div>
   <div id="steplines"></div>
-  <div class="wait">1分ほどかかります。このままお待ちください。</div>
+  <div class="wait" id="waitnote">1分ほどかかります。このままお待ちください。</div>
 </section>
 
 <section id="result" class="hide"></section>
+<section id="interview" class="hide"></section>
+<section id="script" class="hide"></section>
+<section id="fill" class="hide"></section>
 </div>
 
 <script>
-// 本番：Google Apps Script のURLを入れると、その場でAIが作る。空のときは試作版（例の2つだけ表示）
+// 本番：Google Apps Script のURL。ここへ送ると、その場でAIが作る
 const API_URL = "https://script.google.com/macros/s/AKfycbwtQtVQrfOaH9p1loaIjetJCYi-IfV3jGSfXBTrJVm7AbDf5KaeVqPbmxwWx3KZTkC4eg/exec";
 const CONSULT_URL = "https://tsuzuru-movie.com/contact/?utm_source=line&utm_medium=sekkei";
-const DEMO = {"koumuten": {"input": {"business": "埼玉で注文住宅をつくる工務店", "audience": "はじめて家を建てる30〜40代の夫婦", "goal": "問い合わせ・集客"}, "concept": {"title": "建てる前に見る、地元工務店のホンネ", "desc": "埼玉で家を建てる人のために、工務店の社長と設計士が「後悔しない家づくり」の本当のところを話すチャンネル。全国向けの大手チャンネルが話せない、埼玉の土地・相場・暮らしの話で差をつけます。"}, "names": ["埼玉の家づくり相談室", "建てる前に見るチャンネル", "工務店社長のホンネ家づくり"], "target": "埼玉ではじめて注文住宅を考えている30〜40代の夫婦。とくに「ハウスメーカーと工務店で迷っている」「総額がいくらになるか不安」な人", "competitors": [{"name": "職人社長の家づくり工務店", "subs": "25.6万人", "note": "工務店の社長が業界の裏側を話す、この分野の最大手", "gap": "全国向けなので、埼玉の土地や相場の話はできない"}, {"name": "木の家専門店 谷口工務店", "subs": "2.4万人", "note": "滋賀の工務店。社長と設計士が家づくりのポイントを解説。1年で登録者が約1.2倍", "gap": "地方の工務店でも伸びる証拠。同じ型を埼玉でやる"}, {"name": "行列のできる工務店（埼玉・川口）", "subs": "1.2万人", "note": "同じ埼玉の工務店。ショート動画が中心", "gap": "長尺のルームツアー＋費用公開で、じっくり検討する人を取りにいく"}], "keywords": ["注文住宅 後悔", "工務店 選び方", "ハウスメーカー 工務店 違い", "注文住宅 費用", "注文住宅 間取り 後悔", "平屋 間取り", "土地探し コツ", "注文住宅 ルームツアー 30坪"], "plans": [{"title": "ハウスメーカーと工務店、どっちで建てる？埼玉の工務店社長が本音で答えます", "keyword": "ハウスメーカー 工務店 違い", "why": "迷っている人がそのまま検索する言葉。工務店が自分で言うから信頼される", "thumb": ["ハウスメーカーと", "工務店", "選ぶ基準は？"]}, {"title": "【費用公開】埼玉で30坪の注文住宅、総額いくらかかった？（施主さんの許可をいただいて公開）", "keyword": "注文住宅 費用", "why": "いちばん知りたいのに、どこも出さない数字。見学会の申し込みにつながりやすい", "thumb": ["30坪の家", "総額いくら？", "全部見せます"]}, {"title": "注文住宅で後悔した間取り10選｜建てた人に聞いたリアル", "keyword": "注文住宅 間取り 後悔", "why": "「後悔」は検索が多い言葉。施主さんの声を使えば、ほかにない一次情報になる", "thumb": ["その間取り", "住んでから", "後悔します"]}, {"title": "【ルームツアー】30坪・4人家族の家｜建てた理由と、住んでみてどうか", "keyword": "注文住宅 ルームツアー 30坪", "why": "見て比べたい人が必ず見る型。施工事例がそのまま動画になる", "thumb": ["30坪で", "4人家族が", "ゆったり暮らす"]}, {"title": "工務店の選び方｜見積もりのこの項目で、いい会社か分かります", "keyword": "工務店 選び方", "why": "選ぶ側の悩みに正面から答えると、「この会社なら」と思ってもらえる", "thumb": ["見積もりの", "この項目で", "会社が分かる"]}], "thumbs": [0, 1, 2], "steps": ["まず「会社の顔」になる5本（社長の家づくりへの考え方・ルームツアー2本・家づくりの流れ・よくある質問）", "次に、検索される言葉（後悔・費用・間取り・選び方）で月4本", "見学会・相談会の申し込みを、概要欄の上3行と動画の中で毎回案内"]}, "rpo": {"input": {"business": "IT企業向けの採用代行（RPO）", "audience": "エンジニアが採れないIT企業の経営者・人事", "goal": "問い合わせ・集客"}, "concept": {"title": "IT採用の中の人", "desc": "エンジニア採用で本当に起きていることを、現場を知る代表が話すチャンネル。採用担当者向けは市場が小さいので、再生数より「探している人に見つけてもらう」「商談の前に信頼してもらう」ことを狙います。"}, "names": ["エンジニア採用の裏側", "IT採用の中の人", "エンジニア採用ラボ"], "target": "スタートアップ〜グロースのIT企業の経営者・CTO・人事責任者。とくに「エンジニアが採れない」「人事が1〜2人で手が回らない」会社", "competitors": [{"name": "ジンジゴト（即戦力RPO）", "subs": "1,130人", "note": "スタートアップ・エンジニア採用のRPO。いちばん近い競合", "gap": "最近はショート中心。長尺で深く話すチャンネルは空いている"}, {"name": "採用係長の採用道", "subs": "6,540人", "note": "中小企業の経営者・人事向け。1本あたり平均 約2,000回", "gap": "IT・エンジニアに絞った話はしていない"}, {"name": "IT菩薩モロー（参考：求職者向け）", "subs": "3.6万人", "note": "IT転職エージェント。転職エージェント比較の動画は136万回", "gap": "見る人はエンジニア側。採用する側はまだ手薄"}], "keywords": ["エンジニア採用", "採用代行とは", "rpoとは", "リファラル採用", "採用 失敗", "スカウトメール", "面接官 質問", "採用 ai"], "plans": [{"title": "エンジニア採用が失敗する会社の特徴3つ｜元エンジニアの採用コンサルが本音で話す", "keyword": "エンジニア採用", "why": "「失敗する会社」型は開かれやすい。現場を知る人の一次情報になる", "thumb": ["その求人票", "エンジニアに", "読まれてない"]}, {"title": "採用代行（RPO）とは？頼んでも採れない会社と、頼むべき会社", "keyword": "採用代行とは", "why": "検索されている言葉そのまま。「向いていない会社もある」と正直に話すと信頼になる", "thumb": ["採用代行", "頼んでも", "採れない会社"]}, {"title": "スカウトの返信率が上がる文面・下がる文面", "keyword": "スカウトメール", "why": "明日から使える実務ネタで保存される", "thumb": ["そのスカウト", "開かれずに", "消えてます"]}, {"title": "エンジニアが内定を辞退する本当の理由｜人事が知らない選考の裏側", "keyword": "採用 辞退", "why": "「年収じゃない」という常識の逆を言う型", "thumb": ["内定辞退", "本当の理由は", "年収じゃない"]}, {"title": "採用業務はAIでどこまで減らせる？実際のやり方を全部見せます", "keyword": "採用 ai", "why": "今いちばん関心が高いテーマ。自社の仕組みの見せ場になる", "thumb": ["採用業務", "AIで", "ここまで減る"]}], "thumbs": [0, 1, 2], "steps": ["まず「会社の顔」になる5本（代表のストーリー・サービス・支援の流れ・メンバー・よくある質問）", "紹介をもらったら、商談の前に動画のリンクを送る", "検索される言葉で月4本。事例・対談は、出てくださる支援先が決まり次第"]}};
+const CONSULT_URL_SCRIPT = "https://tsuzuru-movie.com/contact/?utm_source=line&utm_medium=daihon";
+const DEMO = {"koumuten": {"input": {"business": "埼玉で注文住宅をつくる工務店", "audience": "はじめて家を建てる30〜40代の夫婦", "goal": "問い合わせ・集客", "strengths": "自然素材の家が得意。「総額いくら？」とよく聞かれる"}, "result": {"concept": {"title": "埼玉の自然素材注文住宅専門", "who": "埼玉ではじめて家を建てる30〜40代の夫婦", "needs": "総額いくらかかるか分からず不安、自然素材の家に興味はあるが相場が見えない", "benefit": "費用の内訳と自然素材の良さが分かり、安心して相談先を選べる", "diff": "扱うテーマを「埼玉×自然素材×総額公開」に絞り込むことで差をつける", "desc": ""}, "names": ["埼玉 自然素材の家づくり", "埼玉注文住宅 総額ch", "埼玉の工務店 家づくり相談室"], "target": "埼玉で注文住宅を検討している30〜40代の夫婦。総額がいくらかかるか分からず、自然素材の家にも興味がある人", "market_top": {"name": "まかろにお【工務店&ハウスメーカー攻略法】", "subs": "15万人", "url": "https://www.youtube.com/@housemaker", "icon": "https://yt3.ggpht.com/z0GkmB25sP5PsQWGCAGpKVy6QICJdWNgavyd_jg7kW_F7q7eQXbG6sw-1-qIdWwCkJR4Iwy8ZQ=s240-c-k-c0x00ffffff-no-rj"}, "market": "全国規模の住宅系YouTuberが多数いる大きな分野ですが、埼玉という地域と自然素材という専門性では、再生数より見つけてもらう・信頼してもらう勝負になります", "competitors": [{"name": "まかろにお【工務店&ハウスメーカー攻略法】", "subs": "15万人", "url": "https://www.youtube.com/@housemaker", "icon": "https://yt3.ggpht.com/z0GkmB25sP5PsQWGCAGpKVy6QICJdWNgavyd_jg7kW_F7q7eQXbG6sw-1-qIdWwCkJR4Iwy8ZQ=s240-c-k-c0x00ffffff-no-rj", "note": "大手ハウスメーカーを中立的な立場で比較する住宅系チャンネル", "gap": "大手ではなく埼玉の地域密着と自然素材という専門性で勝負する", "videos": [{"title": "熊本地震で起きたハウスメーカーで家を建てた人の被害について", "channel": "まかろにお【工務店&ハウスメーカー攻略法】", "views": "19.7万回", "ratio": 1.3, "thumb": "https://i.ytimg.com/vi/u0E07ahNHWk/mqdefault.jpg", "url": "https://www.youtube.com/watch?v=u0E07ahNHWk"}, {"title": "【豪雨対策】ヤマト住建 vs 一条工務店｜私だったら選ぶ耐水害住宅はこっち", "channel": "まかろにお【工務店&ハウスメーカー攻略法】", "views": "3.5万回", "ratio": 0.2, "thumb": "https://i.ytimg.com/vi/L2PFOmpNCAA/mqdefault.jpg", "url": "https://www.youtube.com/watch?v=L2PFOmpNCAA"}, {"title": "【キッチンツアー】やっぱりシステムキッチンと言えばパナソニックでしょ！！", "channel": "まかろにお【工務店&ハウスメーカー攻略法】", "views": "3.5万回", "ratio": 0.2, "thumb": "https://i.ytimg.com/vi/9cOuHMgtJ8c/mqdefault.jpg", "url": "https://www.youtube.com/watch?v=9cOuHMgtJ8c"}]}, {"name": "家づくり社長の後悔しない注文住宅【パティエ】", "subs": "7,760人", "url": "https://www.youtube.com/@iezukuri_shacho", "icon": "https://yt3.ggpht.com/T7_mZ4zsJtRfP50B-8WE_cGNdEdqHc84EzmgsiqKt4j9CivfuNTnBhKHp39nnJMKwllqy07OVg=s240-c-k-c0x00ffffff-no-rj", "note": "工務店社長が実例をもとに家づくりの考え方を発信", "gap": "総額公開という具体的な数字の切り口で一歩踏み込む", "videos": [{"title": "【予算別比較】3,000万・4,000万・5,000万円、建つ家はここまで変わる", "channel": "家づくり社長の後悔しない注文住宅【パティエ】", "views": "4,929回", "ratio": 0.6, "thumb": "https://i.ytimg.com/vi/qbcqLXcPnSI/mqdefault.jpg", "url": "https://www.youtube.com/watch?v=qbcqLXcPnSI"}, {"title": "【ルームツアー】この家事動線、反則。窓がほぼないのに明るい「中庭のある平屋」", "channel": "家づくり社長の後悔しない注文住宅【パティエ】", "views": "4,838回", "ratio": 0.6, "thumb": "https://i.ytimg.com/vi/3kOVgk-GjIA/mqdefault.jpg", "url": "https://www.youtube.com/watch?v=3kOVgk-GjIA"}, {"title": "【同じ予算なら】広い家 vs 高性能住宅、10年後に後悔しないのはどっち？", "channel": "家づくり社長の後悔しない注文住宅【パティエ】", "views": "1,541回", "ratio": 0.2, "thumb": "https://i.ytimg.com/vi/YBmzIEcHEKc/mqdefault.jpg", "url": "https://www.youtube.com/watch?v=YBmzIEcHEKc"}]}, {"name": "もちもちハウス", "subs": "1,510人", "url": "https://www.youtube.com/@mochimochi_house", "icon": "https://yt3.ggpht.com/b5dYErsenCRFIiWqcYHJFD4qAF5sZFF2A2Q0P9MMahnnlupUoLOwgK5BMAovP0afVxCyu18fadM=s240-c-k-c0x00ffffff-no-rj", "note": "施主目線で家づくりのリアルな後悔ポイントを発信", "gap": "施主の後悔談ではなく工務店側から費用の内訳を正直に見せる", "videos": [{"title": "【辛い】2階リビング半年住んで後悔の連続｜まさかの〇〇が大量発生【注文住宅】【一戸建て】【デメリット】", "channel": "もちもちハウス", "views": "23.4万回", "ratio": 154.8, "thumb": "https://i.ytimg.com/vi/LYHh-AWr_wQ/mqdefault.jpg", "url": "https://www.youtube.com/watch?v=LYHh-AWr_wQ"}, {"title": "【外構】工事放棄された衝撃理由と最悪の外構業者を選んでしまった理由【費用公開】【注文住宅】【一戸建て】", "channel": "もちもちハウス", "views": "7.7万回", "ratio": 50.9, "thumb": "https://i.ytimg.com/vi/FJ1Hun8TTMM/mqdefault.jpg", "url": "https://www.youtube.com/watch?v=FJ1Hun8TTMM"}, {"title": "【正直レビュー】クリナップステディアを半年以上使った「成功」と「後悔」一挙大公開！【注文住宅】【キッチン】", "channel": "もちもちハウス", "views": "7.3万回", "ratio": 48.3, "thumb": "https://i.ytimg.com/vi/LvS2J93I8v4/mqdefault.jpg", "url": "https://www.youtube.com/watch?v=LvS2J93I8v4"}]}], "keyword_groups": [{"label": "費用・お金", "words": ["注文住宅 総額", "注文住宅 安くする", "住宅 総額", "注文住宅 費用", "注文住宅 費用公開", "注文住宅 費用削減", "注文住宅 費用 内訳", "注文住宅 平屋 費用"]}, {"label": "選び方・比較", "words": ["工務店 選び方", "工務店選び", "工務店とは", "工務店 ハウスメーカー", "リフォーム 工務店 選び方", "ハウスメーカー 工務店 比較", "ハウスメーカー 工務店 違い"]}, {"label": "自然素材", "words": ["自然素材の家", "自然素材 家"]}, {"label": "失敗・後悔", "words": ["注文住宅 失敗", "注文住宅 失敗 後悔", "住友不動産 注文住宅 失敗"]}, {"label": "地域・流れ", "words": ["埼玉 工務店", "埼玉 新築", "埼玉 戸建て", "家づくり 流れ"]}], "plans": [{"title": "【費用公開】注文住宅の総額はいくら？埼玉の工務店が内訳を公開！", "ttype": "T4", "keyword": "注文住宅 総額", "who": "埼玉で家を建てたいが、総額がいくらになるか分からず不安な夫婦", "why": "よく聞かれる「総額いくら？」という質問に、実際の内訳構成を使って答え、検索から来る見込み客の不安を最初に解消する", "basis": ["K12", "K13", "K17", "K8"], "ref": {"title": "注文住宅っていくらで建つの？我が家の建築費用総額を大公開！🏠💰【注文住宅】【見積もり公開】", "channel": "ぷのhome【桧家住宅で家づくり】", "views": "7.5万回", "ratio": 129, "thumb": "https://i.ytimg.com/vi/ofJRsT15eps/mqdefault.jpg", "url": "https://www.youtube.com/watch?v=ofJRsT15eps"}, "refwhy": "見積もり総額を項目ごとに見せる構成を、自然素材分の内訳も加えて"}, {"title": "注文住宅の費用削減、自然素材でも叶う3つの考え方とは", "ttype": "T5", "keyword": "注文住宅 費用削減", "who": "自然素材の家に憧れつつ、費用が高くなりそうで諦めかけている夫婦", "why": "自然素材が得意という強みを生かし、価格を下げても素材を妥協しない工夫を自社の視点で解説する", "basis": ["K4", "K17", "K16"], "ref": {"title": "【注文住宅】知らなきゃ損！我が家の「コストダウン方法10選」。失敗もすべて暴露します【積水ハウス】【家づくり】", "channel": "きょんのおうち", "views": "63.8万回", "ratio": 16.3, "thumb": "https://i.ytimg.com/vi/ged-VltfDOo/mqdefault.jpg", "url": "https://www.youtube.com/watch?v=ged-VltfDOo"}, "refwhy": "コストダウン手法を列挙する形を、自然素材を削らない工夫で紹介"}, {"title": "【比較】工務店とハウスメーカーの違いを埼玉の工務店が正直解説", "ttype": "T2", "keyword": "工務店 ハウスメーカー", "who": "工務店とハウスメーカーのどちらに頼むべきか迷っている夫婦", "why": "検索で比較検討している段階の見込み客に向けて、工務店側の立場から現場の実情を交えて解説する", "basis": ["K6", "K13", "K17"], "ref": {"title": "予算3000万円で建てる家、ハウスメーカー vs 工務店の徹底比較", "channel": "職人社長の家づくり工務店", "views": "24.5万回", "ratio": 1, "thumb": "https://i.ytimg.com/vi/qZmfYD5QMhM/mqdefault.jpg", "url": "https://www.youtube.com/watch?v=qZmfYD5QMhM"}, "refwhy": "同予算での違いを比較する見せ方を、埼玉の実例で具体的に"}, {"title": "注文住宅で失敗しやすい人の特徴、後悔しないための3つの確認点", "ttype": "T3", "keyword": "注文住宅 失敗 後悔", "who": "注文住宅でよくある失敗や後悔を事前に知っておきたい夫婦", "why": "現場で見てきた失敗パターンを一次情報として示し、同じ失敗を避けたいという悩みに寄り添う", "basis": ["K17", "K19", "K14"], "ref": {"title": "【注文住宅】理想の家がまさかの失敗！？住んで気づいたリアルな後悔ポイント11選【マイホーム】", "channel": "構想三年の家", "views": "4.3万回", "ratio": 17.8, "thumb": "https://i.ytimg.com/vi/VJNcgD5yJBQ/mqdefault.jpg", "url": "https://www.youtube.com/watch?v=VJNcgD5yJBQ"}, "refwhy": "住んでからの後悔を並べる構成を、自然素材特有の注意点も足して"}, {"title": "自然素材の家が気になる人へ、暮らしで分かる良さをご紹介します", "ttype": "T2", "keyword": "自然素材の家", "who": "自然素材の家に興味はあるが、実際の暮らし心地が想像できない夫婦", "why": "自然素材が得意という自社の強みを中心に据え、実際の施工事例の体験談として伝える（出演のご了承が前提）", "basis": ["K4", "K17", "K11"], "ref": {"title": "【平屋ルームツアー】築10年の自然素材の風合いを楽しんでいる平屋/陰影をつくる設計を依頼された家（宇都宮市 COMODO建築工房）", "channel": "家づくり百貨", "views": "8.2万回", "ratio": 2.2, "thumb": "https://i.ytimg.com/vi/GuR7Y2XUEGI/mqdefault.jpg", "url": "https://www.youtube.com/watch?v=GuR7Y2XUEGI"}, "refwhy": "築年数を経た質感を見せるルームツアーを、埼玉の施主の声と共に"}], "steps": ["まず「総額いくら？」によく聞かれる内訳公開の動画と、自然素材の家の紹介動画を撮り、会社の顔となる5本をそろえます", "家づくりの流れや工務店の選び方を解説する動画は、商談前のお客様に事前に見てもらう案内として使い、相談の質を高めます", "月3〜4本を目安に検索される言葉を狙った動画を半年ほど継続し、問い合わせの数をもとに企画を見直していきます"], "keywords": ["注文住宅 総額", "注文住宅 安くする", "住宅 総額", "注文住宅 費用", "注文住宅 費用公開", "注文住宅 費用削減", "注文住宅 費用 内訳", "注文住宅 平屋 費用", "工務店 選び方", "工務店選び", "工務店とは", "工務店 ハウスメーカー", "リフォーム 工務店 選び方", "ハウスメーカー 工務店 比較", "ハウスメーカー 工務店 違い", "自然素材の家", "自然素材 家", "注文住宅 失敗", "注文住宅 失敗 後悔", "住友不動産 注文住宅 失敗", "埼玉 工務店", "埼玉 新築", "埼玉 戸建て", "家づくり 流れ"], "sources": {"hp": "", "blog": "", "channel": ""}, "own_channel": null, "knowledge": "2026-09-28"}, "questions": {"angle": "総額が不安なのは金額そのものより内訳が見えないせいではないか", "questions": [{"role": "voice", "q": "「総額いくら？」と聞かれるとき、お客さまは実際にどんな言い方で聞いてこられますか？", "hint": "「結局、全部でいくらになるんですか？広告の値段だけじゃ分からなくて」とよく言われます。", "use": "冒頭のつかみに使います"}, {"role": "answer", "q": "総額を聞かれたとき、いつもどんな順番でどう答えていますか？またその答え方にした理由も教えてください。", "hint": "まず土地と建物と諸費用の3つに分けて、割合で説明すると分かってもらいやすいんです。", "use": "本編の結論に使います"}, {"role": "case", "q": "実際にあったお客さまで、総額が分かって安心して話が進んだ例を1つ、言える範囲で教えてください。", "hint": "30代のご夫婦が、内訳を見て「これなら予算内で自然素材にできる」と即決されたことがあります。", "use": "具体例に使います"}, {"role": "trap", "q": "自然素材の家の総額について、お客さまが誤解しがちなことや、世間でよく言われるけど違うと思うことはありますか？", "hint": "「自然素材＝高い」と思われがちですが、実は仕上げの選び方次第で差は小さいんです。", "use": "注意点の気づきに使います"}, {"role": "belief", "q": "総額を正直に公開することについて、ご自身が大事にしている考えを教えてください。", "hint": "最初に本当の金額を見せることで、後から後悔しない家づくりをしてほしいんです。", "use": "締めの主張に使います"}]}, "answers": ["「で、結局ぜんぶでいくらなんですか？」ってほぼ全員に聞かれます。あと「坪単価はいくらですか」も多いです", "うちは最初に総額を出します。建物だけじゃなくて、外構とか登記とかカーテンまで入れた金額。坪単価だけ言うと後で話が違うってなるので", "去年建てた30代のご夫婦で、32坪で総額3,480万円でした。建物本体が2,650万、付帯工事が380万、外構が250万、あと諸費用が200万くらい。最初は他社で2,800万って言われてたのが最終的に3,600万になりそうで、うちに来られました", "坪単価で比べること。会社によって入ってるものが違うので比べても意味ないです。あと、自然素材は高いって思われてるけど、床と壁だけなら150万くらいの差です", "契約のあとに金額が上がらないこと。家を建てたあとの暮らしのほうが長いので、ローンで苦しくなってほしくない"], "cta": "見学会・来店・体験の申し込み（概要欄のリンクから）", "script": {"title": "【費用公開】注文住宅の総額はいくら？32坪3,480万円の内訳を埼玉の工務店が公開！", "point": "注文住宅は坪単価ではなく、総額の内訳で比べる", "insight": "坪単価で比べても意味がなく、総額に何が入っているかで比べる", "reason": "検索して来た人がいちばん知りたい「ぜんぶでいくら？」から入り、実際の内訳で信頼してもらう順番にしました。", "opening": "《「で、結局ぜんぶでいくらなんですか？」》\nって、ほぼ全員に聞かれるんですよ。\n《「坪単価はいくらですか」》も、多いです。\nで、坪単価、つまり1坪あたりの値段を聞けば、だいたい分かると思うじゃないですか。\nでも、坪単価だけ聞いて決めると、《後で話が違う》ってなってしまうんです。\nそのまま話を進めると、家を建てる前の不安が、ずっと残ってしまうんですよね。\n\nこんにちは、〔会社名〕の〔お名前〕です。\n埼玉で、自然素材の注文住宅をつくっています。\n\n今日は、注文住宅の総額に何が入っているのかと、去年建てたご夫婦の実際の例を、数字ごとお見せします。\n見終わるころには、総額を聞くときに何を確かめればいいかが分かるようになります。", "parts": [{"label": "総額は最初に出す理由", "text": "「家を建てたいけど、結局ぜんぶでいくらかかるの？」って、思いますよね。\n最初に聞いた金額と、あとで出てくる金額が違ったら、イヤじゃないですか。\nここがいちばん不安なところですよね。\n\nうちは、《最初に総額を出します》。\nなんでかというと、《坪単価だけ言うと後で話が違うってなる》からなんですよ。\nここで言う総額は、《建物だけじゃなくて、外構とか登記とかカーテンまで入れた金額》です。\n\n坪単価というのは、1坪あたりの値段のことです。\n外構というのは、建物の外まわり、たとえば庭や駐車場まわりの工事のことですね。\n登記というのは、この家はこの人のものですよ、と国に登録する手続きのことです。\n\nたとえるなら、お弁当を頼むときに、おかず代だけ聞いて決めたら、あとから箱代やお茶代が足されていくような感じなんです。\n「おかず代は分かったけど、最終的にいくら払うの？」って、なりますよね。\n家も同じで、建物の金額だけでは、ぜんぶでいくらかは見えてこないんです。\n\nなので、うちが総額に入れるのは、建物だけではありません。\n《外構》も入れます。\n《登記》も入れます。\n《カーテン》まで入れます。\nお客さまが実際に住み始めるまでに必要になるものを、先に全部、金額に入れて出すんです。\n\n「そんなに最初から全部出して、大丈夫なの？」と思った方もいるかもしれません。\nでも、先に出しておかないと、坪単価だけを聞いたときと同じように、あとで話が違うとなってしまうんです。\nそれは、お客さまにとっても、うちにとっても、いいことがないですよね。\n\n〔最初に総額を出すようになったきっかけや、お客さまの反応を、自分の言葉で話す〕\n\nなので、総額は、建物だけじゃなく、住み始めるまでにかかるものを全部入れた金額で聞くのが大事なんです。\nじゃあ、それが実際にどんな数字になるのか。\n去年建てたご夫婦の例で、見ていきましょう。", "note": "最初に総額を出す理由を、自分の言葉で言い切る"}, {"label": "32坪3,480万円の内訳", "text": "「実際の数字を見ないと、イメージがわかないよ」って思いますよね。\nなので、ここからは本当にあった例をお話しします。\n\n去年建てた30代のご夫婦です。\n《32坪で総額3,480万円》でした。\nこの金額が、何でできているのかというと、こういう内訳なんです。\n\nまず、《建物本体が2,650万》。\n次に、《付帯工事が380万》。付帯工事というのは、建物本体のほかに必要になる工事のことです。\nそして、《外構が250万》。\nあと、《諸費用が200万くらい》。諸費用というのは、工事以外にかかるお金のことですね。\n\n足してみると、2,650万、380万、250万、200万で、3,480万になります。\n建物本体の金額だけを見ると、総額より830万円少ないんです。\nここを知らないまま話を進めると、あとから金額がふくらんだように感じてしまいますよね。\n\nちなみに、くわしく聞きたい方は、概要欄のリンクから、見学会や来店、体験の申し込みができます。\n\nこのご夫婦は、最初は他社さんで《2,800万》と言われていたそうなんです。\nでも、それが《最終的に3,600万になりそう》だということで、うちに来られました。\n2,800万から3,600万ですから、800万円も違うんですよね。\n\n「800万円も増えるなんて、そんなことあるの？」と思った方もいるかもしれません。\nでも、実際にあったことなんです。\nうちで出した総額は3,480万円ですから、3,600万円と比べても、120万円低い金額でした。\n\n〔このご夫婦が総額を見たとき、どんな反応だったかを話す〕\n\nこの例から言えるのは、最初に聞く金額だけでは、最後にいくらになるかは分からないということなんです。\nだからこそ、総額と、その内訳を先に見ておくことが大事なんですよね。\nじゃあ、ほかの会社と比べるとき、何に気をつければいいのか。\n次は、よくある思い込みの話をします。", "note": "お客さまの例なので、了承をもらってから話す"}, {"label": "坪単価と自然素材の思い込み", "text": "「坪単価が安い会社のほうが、結局安いんじゃないの？」って思いますよね。\nそれと、「自然素材って、やっぱり高いんでしょ？」とも。\nどちらも、よく聞かれる話です。\n\nまず、坪単価で比べることについてです。\n《坪単価で比べること。会社によって入ってるものが違うので比べても意味ない》と、私は思っています。\nたとえば、A社の坪単価には外構が入っていて、B社の坪単価には入っていない、ということがあるんです。\nそうなると、数字だけを並べても、同じものを比べていることにならないんですよね。\n\nお弁当でいうと、ご飯が入っているお弁当と、入っていないお弁当を、おかずの値段だけで比べているようなものです。\nそれで安いほうを選んでも、ほんとうに安いかどうかは分かりませんよね。\n\nもうひとつが、自然素材は高いという思い込みです。\n《自然素材は高いって思われてる》んですけど、《床と壁だけなら150万くらいの差》なんです。\nもちろん、これは床と壁の話です。\nでも、「自然素材は手が届かない」と決めてしまう前に、まず150万円という数字を知ってほしいんです。\n\n「でも、150万円って、けっこう大きいよね」と思う方もいるかもしれません。\nたしかに、小さい金額ではないですよね。\nただ、2,800万円と言われていたものが3,600万円になりそうだった、というさっきの例を思い出してください。\n見えていない金額のほうが、ずっと大きかったりするんです。\n\n〔自然素材の床と壁について、お客さまにどう説明しているかを話す〕\n\nなので、比べるべきなのは坪単価ではなく、総額の内訳なんです。\nそして、自然素材だからといって、最初からあきらめなくていいんですよね。\nじゃあ、なぜうちは、ここまで総額にこだわるのか。\n最後に、その理由をお話しします。", "note": "150万円は床と壁だけの差だと、はっきり伝える"}, {"label": "総額にこだわる理由", "text": "「なんでそこまで、総額を正直に出すの？」って思いますよね。\n出さないほうが、楽な面もあるはずですから。\n\nうちが大事にしているのは、《契約のあとに金額が上がらないこと》なんです。\nなんでかというと、家を建てたあとの暮らしのほうが、ずっと長いからなんですよ。\n\n家は、建てて終わりではありません。\n建てたあとに、何十年も暮らしていくんですよね。\nだからこそ、《ローンで苦しくなってほしくない》と思っています。\n\nさっきの例を思い出してください。\n他社さんで2,800万円と言われていたのに、3,600万円になりそうだった。\nもし、そのまま契約していたら、ローンの返済も、あとから大きくなっていたかもしれません。\nそうならないように、うちは最初に総額を出します。\n外構も、登記も、カーテンも入れて出します。\n\n「そこまで正直に出して、お客さまが逃げちゃわない？」と思う方もいるかもしれません。\nでも、あとから金額が変わって不安になるよりも、先に全部知ってもらったうえで決めてもらうほうが、私は大事だと思っているんです。\n\n〔この考えを持つようになった経験があれば、自分の言葉で話す〕\n\nなので、総額を最初に出すのも、坪単価で比べないでほしいと言うのも、ぜんぶ同じ考えからなんです。\nお客さまに、家を建てたあとも、安心して暮らしてほしいんですよね。", "note": "きれいごとにせず、自分の本音の言葉で話す"}], "ending": "こうして見ると、家の値段は、坪単価ではなくて総額で見るのがいちばん分かりやすいんですよね。\nなので、どこの会社に相談するときも、まず「外構や登記、カーテンまで入れて、ぜんぶでいくらですか？」と聞いてみてください。\nそれだけで、あとから話が違うという不安は、ぐっと減るんです。\n\nあ、それと。\n見学会や来店、体験の申し込みは、概要欄のリンクからできます。\n気になったときに、のぞいてみてくださいね。\n次回は、「注文住宅の費用削減、自然素材でも叶う3つの考え方とは」についてお話しします。\n今日もありがとうございました。", "todo": ["〔 〕の所に話す体験やお客さまの反応を決める", "32坪のご夫婦の例を話す了承をもらう", "名乗りの会社名とお名前を入れる"], "basis": ["S1", "S3", "S6", "S8", "S9", "S12", "S18", "S21"], "dropped": 0, "unmarked": 0, "own": 21, "slots": ["〔最初に総額を出すようになったきっかけや、お客さまの反応を、自分の言葉で話す〕", "〔このご夫婦が総額を見たとき、どんな反応だったかを話す〕", "〔自然素材の床と壁について、お客さまにどう説明しているかを話す〕", "〔この考えを持つようになった経験があれば、自分の言葉で話す〕"], "check_numbers": [], "chars": 3317, "minutes": 8, "answered": 5, "knowledge": "2026-10-01"}, "fill_answers": {"〔最初に総額を出すようになったきっかけや、お客さまの反応を、自分の言葉で話す〕": "昔、坪単価だけ答えていた頃に、契約のあとで「こんなにかかるなんて聞いてない」と言われたことがあって、それからやり方を変えました。今は最初の打ち合わせで、ざっくりの総額を紙に書いて渡してます", "〔このご夫婦が総額を見たとき、どんな反応だったかを話す〕": "「最初から全部入りの金額を見せてくれたので、やっと比べられました」って言われたのを覚えてます", "〔自然素材の床と壁について、お客さまにどう説明しているかを話す〕": "うちだと床は無垢の杉かオーク、壁は漆喰です。全部を自然素材にしなくても、長くいるリビングと寝室だけにする方もいます"}, "filled": {"title": "【費用公開】注文住宅の総額はいくら？32坪3,480万円の内訳を埼玉の工務店が公開！", "point": "注文住宅は坪単価ではなく、総額の内訳で比べる", "insight": "坪単価で比べても意味がなく、総額に何が入っているかで比べる", "reason": "検索して来た人がいちばん知りたい「ぜんぶでいくら？」から入り、実際の内訳で信頼してもらう順番にしました。", "opening": "《「で、結局ぜんぶでいくらなんですか？」》\nって、ほぼ全員に聞かれるんですよ。\n《「坪単価はいくらですか」》も、多いです。\nで、坪単価、つまり1坪あたりの値段を聞けば、だいたい分かると思うじゃないですか。\nでも、坪単価だけ聞いて決めると、《後で話が違う》ってなってしまうんです。\nそのまま話を進めると、家を建てる前の不安が、ずっと残ってしまうんですよね。\n\nこんにちは、〔会社名〕の〔お名前〕です。\n埼玉で、自然素材の注文住宅をつくっています。\n\n今日は、注文住宅の総額に何が入っているのかと、去年建てたご夫婦の実際の例を、数字ごとお見せします。\n見終わるころには、総額を聞くときに何を確かめればいいかが分かるようになります。", "parts": [{"label": "総額は最初に出す理由", "text": "「家を建てたいけど、結局ぜんぶでいくらかかるの？」って、思いますよね。\n最初に聞いた金額と、あとで出てくる金額が違ったら、イヤじゃないですか。\nここがいちばん不安なところですよね。\n\nうちは、《最初に総額を出します》。\nなんでかというと、《坪単価だけ言うと後で話が違うってなる》からなんですよ。\nここで言う総額は、《建物だけじゃなくて、外構とか登記とかカーテンまで入れた金額》です。\n\n坪単価というのは、1坪あたりの値段のことです。\n外構というのは、建物の外まわり、たとえば庭や駐車場まわりの工事のことですね。\n登記というのは、この家はこの人のものですよ、と国に登録する手続きのことです。\n\nたとえるなら、お弁当を頼むときに、おかず代だけ聞いて決めたら、あとから箱代やお茶代が足されていくような感じなんです。\n「おかず代は分かったけど、最終的にいくら払うの？」って、なりますよね。\n家も同じで、建物の金額だけでは、ぜんぶでいくらかは見えてこないんです。\n\nなので、うちが総額に入れるのは、建物だけではありません。\n《外構》も入れます。\n《登記》も入れます。\n《カーテン》まで入れます。\nお客さまが実際に住み始めるまでに必要になるものを、先に全部、金額に入れて出すんです。\n\n「そんなに最初から全部出して、大丈夫なの？」と思った方もいるかもしれません。\nでも、先に出しておかないと、坪単価だけを聞いたときと同じように、あとで話が違うとなってしまうんです。\nそれは、お客さまにとっても、うちにとっても、いいことがないですよね。\n\n実はうちも、昔は坪単価だけをお答えしていた時期があったんです。\nで、《契約のあとで「こんなにかかるなんて聞いてない」と言われたこと》がありまして。\n《それからやり方を変えました》。\n《今は最初の打ち合わせで、ざっくりの総額を紙に書いて渡してます》。\n\nなので、総額は、建物だけじゃなく、住み始めるまでにかかるものを全部入れた金額で聞くのが大事なんです。\nじゃあ、それが実際にどんな数字になるのか。\n去年建てたご夫婦の例で、見ていきましょう。", "note": "最初に総額を出す理由を、自分の言葉で言い切る"}, {"label": "32坪3,480万円の内訳", "text": "「実際の数字を見ないと、イメージがわかないよ」って思いますよね。\nなので、ここからは本当にあった例をお話しします。\n\n去年建てた30代のご夫婦です。\n《32坪で総額3,480万円》でした。\nこの金額が、何でできているのかというと、こういう内訳なんです。\n\nまず、《建物本体が2,650万》。\n次に、《付帯工事が380万》。付帯工事というのは、建物本体のほかに必要になる工事のことです。\nそして、《外構が250万》。\nあと、《諸費用が200万くらい》。諸費用というのは、工事以外にかかるお金のことですね。\n\n足してみると、2,650万、380万、250万、200万で、3,480万になります。\n建物本体の金額だけを見ると、総額より830万円少ないんです。\nここを知らないまま話を進めると、あとから金額がふくらんだように感じてしまいますよね。\n\nちなみに、くわしく聞きたい方は、概要欄のリンクから、見学会や来店、体験の申し込みができます。\n\nこのご夫婦は、最初は他社さんで《2,800万》と言われていたそうなんです。\nでも、それが《最終的に3,600万になりそう》だということで、うちに来られました。\n2,800万から3,600万ですから、800万円も違うんですよね。\n\n「800万円も増えるなんて、そんなことあるの？」と思った方もいるかもしれません。\nでも、実際にあったことなんです。\nうちで出した総額は3,480万円ですから、3,600万円と比べても、120万円低い金額でした。\n\nこのご夫婦に総額をお見せしたとき、いただいた言葉を、今でも覚えているんですよ。\n《「最初から全部入りの金額を見せてくれたので、やっと比べられました」》と言ってもらえたんです。\n\nこの例から言えるのは、最初に聞く金額だけでは、最後にいくらになるかは分からないということなんです。\nだからこそ、総額と、その内訳を先に見ておくことが大事なんですよね。\nじゃあ、ほかの会社と比べるとき、何に気をつければいいのか。\n次は、よくある思い込みの話をします。", "note": "お客さまの例なので、了承をもらってから話す"}, {"label": "坪単価と自然素材の思い込み", "text": "「坪単価が安い会社のほうが、結局安いんじゃないの？」って思いますよね。\nそれと、「自然素材って、やっぱり高いんでしょ？」とも。\nどちらも、よく聞かれる話です。\n\nまず、坪単価で比べることについてです。\n《坪単価で比べること。会社によって入ってるものが違うので比べても意味ない》と、私は思っています。\nたとえば、A社の坪単価には外構が入っていて、B社の坪単価には入っていない、ということがあるんです。\nそうなると、数字だけを並べても、同じものを比べていることにならないんですよね。\n\nお弁当でいうと、ご飯が入っているお弁当と、入っていないお弁当を、おかずの値段だけで比べているようなものです。\nそれで安いほうを選んでも、ほんとうに安いかどうかは分かりませんよね。\n\nもうひとつが、自然素材は高いという思い込みです。\n《自然素材は高いって思われてる》んですけど、《床と壁だけなら150万くらいの差》なんです。\nもちろん、これは床と壁の話です。\nでも、「自然素材は手が届かない」と決めてしまう前に、まず150万円という数字を知ってほしいんです。\n\n「でも、150万円って、けっこう大きいよね」と思う方もいるかもしれません。\nたしかに、小さい金額ではないですよね。\nただ、2,800万円と言われていたものが3,600万円になりそうだった、というさっきの例を思い出してください。\n見えていない金額のほうが、ずっと大きかったりするんです。\n\nちなみに、うちで使っている自然素材は、こういうものなんですよ。\n《床は無垢の杉かオーク》、無垢というのは、一本の木をそのまま切り出した板のことです。\nで、《壁は漆喰》なんです。\nそれと、《全部を自然素材にしなくても、長くいるリビングと寝室だけにする方もいます》。\n\nなので、比べるべきなのは坪単価ではなく、総額の内訳なんです。\nそして、自然素材だからといって、最初からあきらめなくていいんですよね。\nじゃあ、なぜうちは、ここまで総額にこだわるのか。\n最後に、その理由をお話しします。", "note": "150万円は床と壁だけの差だと、はっきり伝える"}, {"label": "総額にこだわる理由", "text": "「なんでそこまで、総額を正直に出すの？」って思いますよね。\n出さないほうが、楽な面もあるはずですから。\n\nうちが大事にしているのは、《契約のあとに金額が上がらないこと》なんです。\nなんでかというと、家を建てたあとの暮らしのほうが、ずっと長いからなんですよ。\n\n家は、建てて終わりではありません。\n建てたあとに、何十年も暮らしていくんですよね。\nだからこそ、《ローンで苦しくなってほしくない》と思っています。\n\nさっきの例を思い出してください。\n他社さんで2,800万円と言われていたのに、3,600万円になりそうだった。\nもし、そのまま契約していたら、ローンの返済も、あとから大きくなっていたかもしれません。\nそうならないように、うちは最初に総額を出します。\n外構も、登記も、カーテンも入れて出します。\n\n「そこまで正直に出して、お客さまが逃げちゃわない？」と思う方もいるかもしれません。\nでも、あとから金額が変わって不安になるよりも、先に全部知ってもらったうえで決めてもらうほうが、私は大事だと思っているんです。\n\n〔この考えを持つようになった経験があれば、自分の言葉で話す〕\n\nなので、総額を最初に出すのも、坪単価で比べないでほしいと言うのも、ぜんぶ同じ考えからなんです。\nお客さまに、家を建てたあとも、安心して暮らしてほしいんですよね。", "note": "きれいごとにせず、自分の本音の言葉で話す"}], "ending": "こうして見ると、家の値段は、坪単価ではなくて総額で見るのがいちばん分かりやすいんですよね。\nなので、どこの会社に相談するときも、まず「外構や登記、カーテンまで入れて、ぜんぶでいくらですか？」と聞いてみてください。\nそれだけで、あとから話が違うという不安は、ぐっと減るんです。\n\nあ、それと。\n見学会や来店、体験の申し込みは、概要欄のリンクからできます。\n気になったときに、のぞいてみてくださいね。\n次回は、「注文住宅の費用削減、自然素材でも叶う3つの考え方とは」についてお話しします。\n今日もありがとうございました。", "todo": ["〔 〕の所に話す体験やお客さまの反応を決める", "32坪のご夫婦の例を話す了承をもらう", "名乗りの会社名とお名前を入れる"], "basis": ["S1", "S3", "S6", "S8", "S9", "S12", "S18", "S21"], "dropped": 0, "unmarked": 0, "own": 28, "slots": ["〔この考えを持つようになった経験があれば、自分の言葉で話す〕"], "check_numbers": [], "chars": 3545, "minutes": 9, "answered": 5, "knowledge": "2026-10-01", "filled": 3}}, "rpo": {"input": {"business": "IT企業向けの採用代行（RPO）", "audience": "エンジニアが採れないIT企業の経営者・人事", "goal": "問い合わせ・集客"}}};
+// Apps Script の中で開いたとき（試作ページ）は、裏側の関数を直接呼ぶ
+const IN_GAS = !!(window.google && google.script && google.script.run);
 const TITLE_TYPES = {T1: "緊急・警告型", T2: "講義型", T3: "失敗回避型", T4: "数字の裏づけ型", T5: "問い→断言型"};
+const CTAS = [["無料相談・お問い合わせ", "無料相談・お問い合わせ（概要欄のリンクから）"], ["見学会・来店・体験", "見学会・来店・体験の申し込み（概要欄のリンクから）"],
+              ["資料請求", "資料請求（概要欄のリンクから）"], ["公式LINEの登録", "公式LINEの登録（概要欄のリンクから）"], ["まだ決めていない", ""]];
 const $ = s => document.querySelector(s);
 const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const val = id => $(id).value.trim();
-let goal = "", demoKey = "";
+// いまの状態：req＝入力／design＝設計の結果／plan＝選んだ企画の番号／qs＝質問／saved＝企画ごとの答え／step＝いま何問目
+const S = {req: null, design: null, plan: -1, qs: null, saved: {}, ctas: {}, step: 0, script: null, mock: false, fills: {}, draft: {}, names: {}};
+let goal = "", demoKey = "", timer = null;
 
+function show(id) {
+  ["form", "loading", "result", "interview", "script", "fill"].forEach(x => $("#" + x).classList.toggle("hide", x !== id));
+  window.scrollTo(0, 0);
+}
+
+// ---- 裏側とのやりとり ----
+function callApi(req) {
+  if (S.mock) return mockApi(req);
+  // 通信そのものの失敗には transport の印を付ける（裏側が返した「作れませんでした」と区別する）
+  const lost = m => { const e = new Error(m || "通信に失敗しました。もう一度お試しください。"); e.transport = true; return e; };
+  if (IN_GAS) return new Promise((ok, ng) => google.script.run.withSuccessHandler(ok)
+    .withFailureHandler(e => ng(lost(e && e.message))).api(req));
+  return fetch(API_URL, {method: "POST", headers: {"Content-Type": "text/plain;charset=utf-8"}, body: JSON.stringify(req)})
+    .then(r => r.json(), () => { throw lost(); });
+}
+// 台本づくりは1分ほどかかる。途中で通信が切れても、裏側はそのまま作り終えて15分預かってくれるので、できた台本を取りに行く
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+async function recoverScript(rid, started) {
+  $("#waitnote").textContent = "通信が途切れました。できた台本を取りに行っています。このままお待ちください。";
+  while (Date.now() - started < 150000) {
+    await sleep(5000);
+    const r = await callApi({mode: "result", rid: rid}).catch(() => null);
+    if (r && !r.pending) return r;
+  }
+  throw new Error("通信が途切れて、台本を受け取れませんでした。お手数ですが、もう一度「台本をつくる」を押してください。");
+}
+// 見本（工務店の例）：AIは呼ばず、作っておいた結果を出す
+function mockApi(req) {
+  const d = DEMO.koumuten || {}, wait = ms => new Promise(r => setTimeout(r, ms));
+  if (req.mode === "questions") return wait(900).then(() => d.questions);
+  if (req.mode === "script") return wait(1500).then(() => d.script);
+  if (req.mode === "fill") return wait(1500).then(() => d.filled || d.script);
+  return wait(900).then(() => d.result);
+}
+function loading(lines, every, note) {
+  $("#steplines").innerHTML = lines.map(s => `<div class="stepline">${esc(s)}</div>`).join("");
+  $("#waitnote").textContent = note;
+  show("loading");
+  const els = document.querySelectorAll(".stepline");
+  let i = 0;
+  clearInterval(timer);
+  timer = setInterval(() => { if (i < els.length) els[i++].classList.add("done"); }, S.mock ? 300 : every);
+}
+
+// ---- 入力 ----
 document.querySelectorAll("#goal .opt").forEach(o => o.onclick = () => {
   document.querySelectorAll("#goal .opt").forEach(x => x.classList.remove("on"));
   o.classList.add("on"); goal = o.dataset.v;
 });
 document.querySelectorAll("#demo button").forEach(b => b.onclick = () => {
   const d = DEMO[b.dataset.k]; if (!d) return;
-  demoKey = b.dataset.k; $("#biz").value = d.input.business; $("#aud").value = d.input.audience;
+  demoKey = b.dataset.k; $("#biz").value = d.input.business; $("#aud").value = d.input.audience; $("#str").value = d.input.strengths || "";
   document.querySelectorAll("#goal .opt").forEach(x => x.classList.toggle("on", x.dataset.v === d.input.goal));
   goal = d.input.goal;
 });
-["#biz", "#aud"].forEach(id => $(id).addEventListener("input", () => { demoKey = ""; }));
+$("#sample").onclick = () => {
+  const d = DEMO.koumuten; if (!d || !d.result) return;
+  S.mock = true; $("#mockbar").classList.remove("hide");
+  S.req = Object.assign({company: "", hp: "", blog: "", youtube: "", strengths: ""}, d.input);
+  startDesign();
+};
+$("#exitmock").onclick = () => reset();
+function reset() {
+  clearInterval(timer);
+  Object.assign(S, {req: null, design: null, plan: -1, qs: null, saved: {}, ctas: {}, step: 0, script: null, mock: false, fills: {}, draft: {}, names: {}});
+  $("#mockbar").classList.add("hide"); $("#err").textContent = "";
+  show("form");
+}
 
-$("#go").onclick = async () => {
+$("#go").onclick = () => {
   const req = {business: val("#biz"), audience: val("#aud"), goal,
                company: val("#company"), hp: val("#hp"), blog: val("#blog"), youtube: val("#yt"), strengths: val("#str")};
   if (!req.business || !req.audience || !goal) { $("#err").textContent = "上の3つ（事業・届けたい相手・叶えたいこと）は入力してください"; return; }
   $("#err").textContent = "";
-  const steps = [];
+  S.req = req;
+  startDesign();
+};
+
+async function startDesign() {
+  const req = S.req, steps = [];
   if (req.hp || req.blog || req.youtube) steps.push("ホームページ・チャンネルを読んでいます");
   steps.push("競合チャンネルと、よく見られている動画を調べています", "実際に検索されている言葉を調べています",
              "Tsuzuruの知見をもとに、コンセプトと企画を考えています", "企画ごとに、参考になる競合の動画を選んでいます");
-  $("#steplines").innerHTML = steps.map(s => `<div class="stepline">${s}</div>`).join("");
-  $("#form").classList.add("hide"); $("#loading").classList.remove("hide"); window.scrollTo(0, 0);
-  const lines = document.querySelectorAll(".stepline");
-  let i = 0; const timer = setInterval(() => { if (i < lines.length) lines[i++].classList.add("done"); }, API_URL ? 9000 : 700);
+  loading(steps, 9000, "1分ほどかかります。このままお待ちください。");
   try {
-    let data;
-    if (API_URL) {
-      const r = await fetch(API_URL, {method: "POST", headers: {"Content-Type": "text/plain;charset=utf-8"}, body: JSON.stringify(req)});
-      data = await r.json();
-      if (data.error) throw new Error(data.error);
-    } else {
-      await new Promise(r => setTimeout(r, 3000));
-      data = DEMO[demoKey];
-      if (!data) throw new Error("試作版では「例で試す」の2つだけ表示できます。本番では、入力した内容でその場でAIが作ります。");
-    }
-    clearInterval(timer); render(data, req.business);
+    const data = await callApi(req);
+    if (!data || data.error) throw new Error((data && data.error) || "");
+    clearInterval(timer);
+    S.design = data; S.saved = {}; S.ctas = {};
+    render(data, req.business);
   } catch (e) {
     clearInterval(timer);
-    $("#loading").classList.add("hide"); $("#form").classList.remove("hide");
-    $("#err").textContent = e.message || "うまく作れませんでした。時間をおいてもう一度お試しください。";
+    const mock = S.mock; reset();
+    if (!mock) $("#err").textContent = e.message || "うまく作れませんでした。時間をおいてもう一度お試しください。";
   }
-};
+}
 
 function videoCard(v) {
   return `<a class="vcard" href="${esc(v.url)}" target="_blank" rel="noopener"><img src="${esc(v.thumb)}" alt="" loading="lazy">
     <div class="vt">${esc(v.title)}</div><div class="vv">${esc(v.views)}再生${v.ratio >= 1 ? `・登録者の${esc(v.ratio)}倍` : ""}</div></a>`;
 }
 
+// ---- 設計の結果 ----
 function render(d, biz) {
   // 読み込んだもの
   const src = d.sources || {};
@@ -239,7 +376,7 @@ function render(d, biz) {
       <div><div class="nm">${esc(x.name)}</div><div class="sb">登録者${esc(x.subs)}</div></div><span class="go">YouTubeで見る</span></a>
     <div class="d">${esc(x.note)}</div><div class="g"><b>差をつけるなら：</b>${esc(x.gap)}</div>
     ${(x.videos || []).length ? `<div class="vrow">${x.videos.map(videoCard).join("")}</div>` : ""}</div>`).join("");
-  // 企画
+  // 企画（1本ずつ「この企画で台本をつくる」）
   const refCard = r => `<a class="ref" href="${esc(r.url)}" target="_blank" rel="noopener"><img src="${esc(r.thumb)}" alt="" loading="lazy">
       <div><div class="rl">参考にする競合の動画</div><div class="rt">${esc(r.title)}</div>
       <div class="rm">${esc(r.channel)}・${esc(r.views)}再生${r.ratio >= 1 ? `（登録者の${esc(r.ratio)}倍）` : ""}</div></div></a>`;
@@ -247,7 +384,8 @@ function render(d, biz) {
     <div class="t">${esc(p.title)}</div>
     <span class="tag k">検索：${esc(p.keyword)}</span>${TITLE_TYPES[p.ttype] ? `<span class="tag y">${TITLE_TYPES[p.ttype]}</span>` : ""}
     ${p.who ? `<div class="w">こんな人に：${esc(p.who)}</div>` : ""}<div class="w">${esc(p.why)}</div>
-    ${p.ref ? refCard(p.ref) : ""}${p.ref && p.refwhy ? `<div class="rw"><b>参考にするところ：</b>${esc(p.refwhy)}</div>` : ""}</div></div>`).join("");
+    ${p.ref ? refCard(p.ref) : ""}${p.ref && p.refwhy ? `<div class="rw"><b>参考にするところ：</b>${esc(p.refwhy)}</div>` : ""}
+    <button class="mk" data-i="${i}">この企画で台本をつくる</button></div></div>`).join("");
   // 検索されている言葉：まとまりごとに。最初の企画で狙う言葉は色を変える
   const target = new Set((d.plans || []).map(p => p.keyword));
   const chip = k => `<span class="chip${target.has(k) ? " on" : ""}">${esc(k)}</span>`;
@@ -263,15 +401,289 @@ function render(d, biz) {
     ${(market || comps) ? `<div class="card"><div class="h2">RIVALS｜参考にする競合チャンネル</div>${market}${comps}</div>` : ""}
     <div class="card"><div class="h2">KEYWORDS｜検索されている言葉<span style="white-space:nowrap">（${kwCount}個）</span></div>${keywords}
       <div class="kwnote">YouTubeの検索候補に実際に出てくる言葉です。黄色は、下の「最初に撮る企画」で狙う言葉。</div></div>
+    <div class="card next" id="nextcard"><div class="h2">NEXT｜次は台本です</div>
+      <div class="nt">下の企画から1つ選ぶと、5つの質問に答えるだけで台本ができます。</div>
+      <div class="ns">冒頭から締めまで、そのまま読める全文の台本です。あなたの会社の実際の話を入れるので、ほかの会社には作れない1本になります。</div></div>
+    <div class="err" id="err2"></div>
     <div class="card"><div class="h2">PLANS｜最初に撮る企画${(d.plans || []).length}本</div>${plans}</div>
     <div class="card"><div class="h2">FIRST STEP｜最初の一歩</div><ol class="steps">${(d.steps || []).map(s => `<li>${esc(s)}</li>`).join("")}</ol></div>
     <div class="card" style="text-align:center"><div style="font-weight:900;font-size:16px;color:var(--navy)">この設計を、あなたの会社に合わせて<br>一緒に詰めませんか？</div>
       <a class="btn cta" href="${CONSULT_URL}" target="_blank" rel="noopener">無料で相談する</a>
       <div class="note">企画10本・費用の目安まで入った詳しい設計書（PDF）がほしい方は、LINEで「設計書」と送ってください。</div></div>
-    <button class="btn ghost" onclick="location.reload()">もう一度つくる</button>`;
-  $("#loading").classList.add("hide"); $("#result").classList.remove("hide"); window.scrollTo(0, 0);
+    <button class="btn ghost" id="again">もう一度つくる</button>`;
+  document.querySelectorAll("#result .mk").forEach(b => b.onclick = () => startInterview(Number(b.dataset.i)));
+  $("#again").onclick = reset;
+  show("result");
 }
 
+// ---- 質問（取材） ----
+const planOut = p => ({title: p.title, keyword: p.keyword, who: p.who || "", why: p.why || ""});
+const answers = () => S.saved[S.plan] || (S.saved[S.plan] = ["", "", "", "", ""]);
+const answered = () => answers().filter(a => a.trim().length >= 4).length;
+
+async function startInterview(i) {
+  S.plan = i; S.step = 0;
+  const p = S.design.plans[i];
+  loading(["企画に合わせて、質問を考えています", "あなたにしか答えられないことを選んでいます"], 5000, "10〜20秒ほどかかります。");
+  try {
+    const r = await callApi(Object.assign({mode: "questions"}, S.req, {concept: S.design.concept, plan: planOut(p)}));
+    if (!r || r.error || !(r.questions || []).length) throw new Error((r && r.error) || "");
+    clearInterval(timer);
+    S.qs = r.questions;
+    if (S.mock && DEMO.koumuten.answers) { S.saved[i] = DEMO.koumuten.answers.slice(); S.ctas[i] = DEMO.koumuten.cta || ""; }
+    renderInterview();
+  } catch (e) {
+    clearInterval(timer); show("result");
+    $("#err2").textContent = e.message || "質問を作れませんでした。時間をおいてもう一度お試しください。";
+    $("#nextcard").scrollIntoView();
+  }
+}
+
+function renderInterview() {
+  const p = S.design.plans[S.plan], n = S.qs.length, a = answers();
+  const dots = `<div class="dots">${S.qs.map((q, i) => `<i class="${i === S.step ? "now" : (a[i].trim().length >= 4 ? "done" : "")}"></i>`).join("")}<i class="${S.step === n ? "now" : ""}"></i></div>`;
+  const head = `<p class="for">取材｜5つの質問に答えるだけ</p>
+    <div class="card"><div class="h2">この企画の台本をつくります</div><div class="pt">${esc(p.title)}</div>
+      <div class="hint" style="margin:8px 0 0">話すように答えてください。スマホなら、キーボードのマイクで話すとラクです。くわしく話すほど、台本が長く具体的になります。一言でも大丈夫。分からない質問は飛ばせます。</div></div>`;
+  let body;
+  if (S.step < n) {
+    const q = S.qs[S.step];
+    body = `<div class="card"><div class="qno">質問 ${S.step + 1}／${n}<span class="use">${esc(q.use)}</span></div>
+      <div class="qt">${esc(q.q)}</div>
+      <textarea id="ans" rows="6" placeholder="例：${esc(q.hint)}">${esc(a[S.step])}</textarea>
+      <div class="row"><button class="btn ghost" id="back">${S.step === 0 ? "企画に戻る" : "戻る"}</button><button class="btn main" id="fwd">次へ</button></div>
+      <button class="link" id="skip">この質問は飛ばす</button></div>`;
+  } else {
+    const k = answered(), cta = S.ctas[S.plan];
+    body = `<div class="card"><div class="qno">最後に1つだけ</div>
+      <div class="qt">動画の最後に、見た人へ何を案内しますか？</div>
+      <div class="opts" id="cta">${CTAS.map(c => `<div class="opt${cta === c[1] ? " on" : ""}" data-v="${esc(c[1])}"${c[1] ? "" : ' style="grid-column:1/-1"'}>${esc(c[0])}</div>`).join("")}</div>
+      <div class="sum${k < 2 ? " ng" : ""}">${n}問のうち${k}問に答えました。${k < 2 ? "台本の材料になるので、あと" + (2 - k) + "問は答えてください。" : (k < n ? "答えていない所は、台本の中に「あなたが埋める場所」として残ります。" : "ありがとうございます。あなたの言葉で台本を作ります。")}</div>
+      <ul class="alist">${S.qs.map((q, i) => `<li data-i="${i}"><b>${i + 1}</b><span class="${a[i].trim().length >= 4 ? "" : "em"}">${a[i].trim().length >= 4 ? esc(a[i].trim().slice(0, 38)) + (a[i].trim().length > 38 ? "…" : "") : "（まだ答えていません。押すと戻れます）"}</span></li>`).join("")}</ul>
+      <button class="btn main" id="make" style="margin-top:14px"${k < 2 ? " disabled" : ""}>台本をつくる</button>
+      <button class="btn ghost" id="back">質問に戻る</button></div>`;
+  }
+  $("#interview").innerHTML = head + dots + body;
+  show("interview");
+  const keep = () => { if ($("#ans")) a[S.step] = $("#ans").value; };
+  if (S.step < n) {
+    $("#fwd").onclick = () => { keep(); S.step++; renderInterview(); };
+    $("#skip").onclick = () => { keep(); S.step++; renderInterview(); };
+    $("#back").onclick = () => { keep(); if (S.step === 0) show("result"); else { S.step--; renderInterview(); } };
+  } else {
+    document.querySelectorAll("#cta .opt").forEach(o => o.onclick = () => {
+      document.querySelectorAll("#cta .opt").forEach(x => x.classList.remove("on"));
+      o.classList.add("on"); S.ctas[S.plan] = o.dataset.v;
+    });
+    document.querySelectorAll(".alist li").forEach(li => li.onclick = () => { S.step = Number(li.dataset.i); renderInterview(); });
+    $("#back").onclick = () => { S.step = n - 1; renderInterview(); };
+    $("#make").onclick = makeScript;
+  }
+}
+
+// ---- 台本 ----
+async function makeScript() {
+  const p = S.design.plans[S.plan], a = answers();
+  const next = (S.design.plans || []).filter((x, i) => i !== S.plan)[0];
+  const rid = Date.now().toString(36) + Math.random().toString(36).slice(2, 10), started = Date.now();
+  const req = Object.assign({mode: "script", rid: rid}, S.req, {concept: S.design.concept, plan: planOut(p),
+    qa: S.qs.map((q, i) => ({role: q.role, q: q.q, a: a[i].trim()})), cta: S.ctas[S.plan] || "", next_title: next ? next.title : ""});
+  loading(["あなたの答えを読んでいます", "話す順番を組み立てています", "冒頭を書いています", "本編を、1パートずつ全文で書いています", "締めを書いています", "答えにない話が混ざっていないか、確かめています"], 9000, "全文を書くので、1分ほどかかります。このままお待ちください。");
+  try {
+    const s = await callApi(req).catch(e => { if (!e.transport || S.mock) throw e; return recoverScript(rid, started); });
+    if (!s || s.error) throw new Error((s && s.error) || "");
+    clearInterval(timer);
+    S.script = s; S.fills[S.plan] = []; S.draft = {};
+    renderScript(s);
+  } catch (e) {
+    clearInterval(timer); S.step = S.qs.length; renderInterview();
+    const el = document.querySelector("#interview .sum");
+    if (el) { el.classList.add("ng"); el.textContent = e.message || "台本を作れませんでした。時間をおいてもう一度お試しください。"; }
+  }
+}
+
+// 《 》＝あなたの言葉、〔 〕＝撮る前にあなたが埋める場所
+const mark = t => esc(t).replace(/《([^《》]*)》/g, '<mark class="you">$1</mark>').replace(/[《》]/g, "").replace(/〔\s*〕/g, '<span class="slot">青い枠</span>').replace(/〔([^〔〕]*)〕/g, '<span class="slot">$1</span>');
+const plain = t => String(t || "").replace(/[《》]/g, "");
+
+function scriptAsText(s) {
+  const L = [];
+  L.push("【タイトル】" + plain(s.title), "【この動画で伝えること】" + plain(s.point), "", "■冒頭", plain(s.opening), "", "■本編");
+  (s.parts || []).forEach((p, i) => {
+    L.push("", "▼" + (i + 1) + "．" + plain(p.label));
+    if (p.text) L.push(plain(p.text));
+    else { if (p.lead) L.push(plain(p.lead)); (p.points || []).forEach(x => L.push("・" + plain(x))); }  // 前の形（箇条書き）の見本用
+    if (p.note) L.push("（ひとこと：" + plain(p.note) + "）");
+  });
+  L.push("", "■締め", plain(s.ending));
+  const todo = todoList(s);
+  if (todo.length) { L.push("", "■撮る前に"); todo.forEach(x => L.push("・" + x)); }
+  L.push("", "※〔 〕は、撮る前にあなたが埋める所です。");
+  return L.join("\n");
+}
+function todoList(s) {
+  const out = (s.todo || []).map(plain);
+  (s.check_numbers || []).forEach(n => out.push("台本の中の「" + n + "」は、あなたの答えにない数字です。合っているか確かめてください"));
+  return out;
+}
+
+function renderScript(s, notice) {
+  const p = S.design.plans[S.plan];
+  const blanks = slotList(s), nm = nameSlots(s);
+  const mockDone = S.mock && (S.fills[S.plan] || []).length > 0;   // 見本では、書き足しは1回だけ見せる
+  const fillCard = !(blanks.length || nm.company || nm.person) ? "" : `<div class="card fillcard">
+      <div class="ft">${blanks.length ? `青い枠が${blanks.length}か所あります。答えると、その部分を全文に書き足します。` : "名乗り（会社名・お名前）を入れると、台本が仕上がります。"}</div>
+      <div style="font-size:13.5px">${blanks.length ? "あなたにしか話せない所です。一言でも答えると、あなたの言葉で文章にします。答えなくても、このまま使えます。" : ""}</div>
+      ${mockDone ? `<div class="note" style="margin-top:8px">見本ではここまでです。「自分の会社で作る」から始めると、残りの枠にも答えられます。</div>`
+                 : `<button class="mk" id="tofill">${blanks.length ? `青い枠に答える（${blanks.length}か所）` : "名乗りを入れる"}</button>`}</div>`;
+  // 本編は全文（text）。前の形（lead と points の箇条書き）で届いたときも表示できるようにしてある
+  const parts = (s.parts || []).map((x, i) => `<div class="part"><div class="pl"><i>${i + 1}</i>${mark(x.label)}</div>
+    ${x.text ? `<div class="say">${mark(x.text)}</div>` : `${x.lead ? `<div class="leadbox"><small>入りの一言</small>${mark(x.lead)}</div>` : ""}
+    <ul class="pts">${(x.points || []).map(t => `<li>${mark(t)}</li>`).join("")}</ul>`}
+    ${x.note ? `<div class="pnote">ひとこと：${mark(x.note)}</div>` : ""}</div>`).join("");
+  const todo = todoList(s);
+  const fixed = ["撮る前に、声に出して1回読む。言いにくい所は、自分の言葉に直す", "一言一句そのままでなくて大丈夫。意味が同じなら、自分の言い回しに変えていい", "カメラのレンズを見て話す（画面に映る自分を見ない）"];
+  $("#script").innerHTML = `
+    <p class="for">台本ができました</p>
+    ${notice ? `<div class="notice${notice.ng ? " ng" : ""}">${esc(notice.text)}</div>` : ""}
+    <div class="card"><div class="h2">TITLE｜タイトル</div><div class="stitle">${mark(s.title)}</div>
+      ${s.point ? `<div class="crow"><b>伝えること</b><div>${mark(s.point)}</div></div>` : ""}
+      ${s.insight ? `<div class="crow"><b>見た人の気づき</b><div>${mark(s.insight)}</div></div>` : ""}
+      ${s.reason ? `<div class="crow"><b>この順番の理由</b><div>${mark(s.reason)}</div></div>` : ""}
+      <div class="crow"><b>長さの目安</b><div>約${esc(s.minutes)}分${s.chars ? `（話す文字数 約${esc((Math.round(s.chars / 100) * 100).toLocaleString("ja-JP"))}字）` : ""}</div></div>
+      <div class="legend"><span class="nw"><mark class="you">黄色の線</mark>＝あなたの答えから使った言葉（${esc(s.own || 0)}か所）</span><br><span class="nw"><span class="slot">青い枠</span>＝撮る前にあなたが埋める所</span></div></div>
+    ${fillCard}
+    <div class="card"><div class="sh"><b>冒頭</b><span>40秒〜1分</span></div><div class="say">${mark(s.opening)}</div></div>
+    <div class="card"><div class="sh"><b>本編</b><span>${(s.parts || []).length}つのパート・全文</span></div>${parts}</div>
+    <div class="card"><div class="sh"><b>締め</b><span>主張で締めて、最後に案内</span></div><div class="say">${mark(s.ending)}</div></div>
+    <div class="card"><div class="h2">BEFORE SHOOTING｜撮る前に</div>
+      <ul class="todo">${todo.concat(fixed).map(t => `<li>${mark(t)}</li>`).join("")}</ul></div>
+    <button class="btn main" id="copy">台本をコピーする</button><div class="copied" id="copied"></div>
+    <div class="card" style="text-align:center"><div style="font-weight:900;font-size:16px;color:var(--navy)">この台本の冒頭と構成を、<br>一緒に仕上げませんか？</div>
+      <div class="note" style="margin:6px 0 0">冒頭と話の順番は、動画の出来を左右する所です。ここは人の目で仕上げるのがおすすめです。</div>
+      <a class="btn cta" href="${CONSULT_URL_SCRIPT}" target="_blank" rel="noopener">無料で相談する</a></div>
+    <button class="btn ghost" id="other">ほかの企画でも台本をつくる</button>
+    <button class="btn ghost" id="redo">質問の答えを直して、作り直す</button>`;
+  $("#copy").onclick = () => {
+    const t = scriptAsText(s);
+    const done = () => { $("#copied").textContent = "コピーしました。メモやLINEに貼り付けて使えます。"; };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(done, () => fallbackCopy(t, done));
+    else fallbackCopy(t, done);
+  };
+  $("#other").onclick = () => { show("result"); $("#nextcard").scrollIntoView(); };
+  $("#redo").onclick = () => { S.step = 0; renderInterview(); };
+  if ($("#tofill")) {
+    $("#tofill").onclick = () => renderFill("");
+    document.querySelectorAll("#script .say .slot").forEach(el => el.onclick = () => renderFill("〔" + el.textContent + "〕"));   // 青い枠を押しても、同じ画面へ
+  }
+  show("script");
+}
+
+// ---- 書き足し（青い枠に答える） ----
+// 名乗りの枠（会社名・お名前）はAIを使わず、その場で入れ替える。それ以外の枠は、答えをもとにAIがその場所を全文に書く
+const NAME_SLOT = /お名前|会社名|お店の名前|院の名前/;
+const RE_COMPANY = /〔(会社名|お店の名前|院の名前)〕/g, RE_PERSON = /〔[^〔〕]{0,8}お名前〕/g;
+const scriptTexts = s => [s.opening, s.ending].concat((s.parts || []).map(x => x.text)).join("\n");
+function slotList(s) {
+  const out = [];
+  const scan = (text, where, label) => (String(text || "").match(/〔[^〔〕]+〕/g) || []).forEach(m => {
+    if (!NAME_SLOT.test(m) && m.replace(/[〔〕\s]/g, "")) out.push({where: where, label: label, slot: m});
+  });
+  (s.parts || []).forEach((x, i) => scan(x.text, i + 1, "本編" + (i + 1) + "｜" + plain(x.label)));
+  scan(s.ending, "ending", "締め");
+  return out;
+}
+function nameSlots(s) {
+  const t = scriptTexts(s);
+  return {company: (t.match(RE_COMPANY) || [])[0] || "", person: (t.match(RE_PERSON) || [])[0] || ""};
+}
+function renderFill(focus) {
+  const s = S.script, list = slotList(s), nm = nameSlots(s);
+  // 見本では、答えの例を入れておく
+  const eg = (S.mock && DEMO.koumuten.fill_answers) || {};
+  const names = !(nm.company || nm.person) ? "" : `<div class="card"><div class="qno">名乗り<span class="use">その場で入ります</span></div>
+      ${nm.company ? `<div class="field" style="margin-top:10px"><label for="nmc">会社名・お店の名前</label><input type="text" id="nmc" value="${esc(S.names.c || (S.req && S.req.company) || "")}" placeholder="例：◯◯工務店"></div>` : ""}
+      ${nm.person ? `<div class="field"${nm.company ? "" : ' style="margin-top:10px"'}><label for="nmp">動画で名乗るお名前</label><input type="text" id="nmp" value="${esc(S.names.p || "")}" placeholder="例：山田"></div>` : ""}</div>`;
+  $("#fill").innerHTML = `
+    <p class="for">追加の質問｜青い枠に答える</p>
+    <div class="card"><div class="h2">ここを聞かせてください</div>
+      <div class="pt">答えた所だけ、台本を全文に書き足します。</div>
+      <div class="hint" style="margin:8px 0 0">話すように答えてください。スマホなら、キーボードのマイクで話すとラクです。一言でも大丈夫。答えない所は、青い枠のまま残ります。</div></div>
+    ${names}
+    ${list.map((x, i) => `<div class="card fq" data-i="${i}"><div class="qno">${esc(x.label)}</div>
+      <div class="qt"><span class="slot">${esc(x.slot.slice(1, -1))}</span></div>
+      <textarea rows="4" placeholder="ここで話したいことを、そのまま書いてください">${esc(S.draft[x.slot] != null ? S.draft[x.slot] : (eg[x.slot] || ""))}</textarea></div>`).join("")}
+    <button class="btn main" id="dofill">${list.length ? "答えた所を書き足す" : "名乗りを入れる"}</button>
+    <div class="err" id="err3"></div>
+    <button class="btn ghost" id="backscript">台本に戻る</button>`;
+  show("fill");
+  $("#dofill").onclick = doFill;
+  $("#backscript").onclick = () => { keepDraft(); renderScript(S.script); };
+  // 押した青い枠の所まで進める
+  const k = list.findIndex(x => x.slot === focus);
+  const el = k >= 0 ? document.querySelectorAll("#fill .fq")[k] : (NAME_SLOT.test(focus || "") ? ($("#nmc") || $("#nmp")) : null);
+  if (el) { el.scrollIntoView({block: "center"}); const ta = el.querySelector ? (el.querySelector("textarea") || el) : el; if (ta.focus) ta.focus({preventScroll: true}); }
+}
+function keepDraft() {
+  const list = slotList(S.script);
+  document.querySelectorAll("#fill .fq").forEach(el => { S.draft[list[Number(el.dataset.i)].slot] = el.querySelector("textarea").value; });
+  if ($("#nmc")) S.names.c = $("#nmc").value.trim();
+  if ($("#nmp")) S.names.p = $("#nmp").value.trim();
+}
+// 名乗りの枠に、入れてもらった会社名・お名前を入れる。入れ替えたら true
+function applyNames(s) {
+  let named = false;
+  const put = (re, v) => { if (!v) return;
+    ["opening", "ending"].forEach(k => { const t = String(s[k] || "").replace(re, v); if (t !== s[k]) { s[k] = t; named = true; } });
+    (s.parts || []).forEach(x => { const t = String(x.text || "").replace(re, v); if (t !== x.text) { x.text = t; named = true; } }); };
+  put(RE_COMPANY, S.names.c); put(RE_PERSON, S.names.p);
+  const left = nameSlots(s);
+  if (named && !left.company && !left.person) s.todo = (s.todo || []).filter(t => !/名乗り|会社名|お名前/.test(t));
+  return named;
+}
+async function doFill() {
+  keepDraft();
+  const before = S.script, s = JSON.parse(JSON.stringify(before)), list = slotList(before);
+  const named = applyNames(s);   // 名乗り：AIは使わず、その場で入れ替える
+  const fills = list.map(x => ({where: x.where, slot: x.slot, a: (S.draft[x.slot] || "").trim()})).filter(f => f.a.length >= 4);
+  if (!fills.length && !named) { $("#err3").textContent = list.length ? "1つ以上、答えを書いてください（一言でも大丈夫です）" : "会社名かお名前を入れてください"; return; }
+  if (!fills.length) { S.script = s; renderScript(s, {text: "名乗りを入れました。"}); return; }
+  const p = S.design.plans[S.plan], a = answers();
+  const next = (S.design.plans || []).filter((x, i) => i !== S.plan)[0];
+  const rid = Date.now().toString(36) + Math.random().toString(36).slice(2, 10), started = Date.now();
+  const core = {title: s.title, point: s.point, insight: s.insight, reason: s.reason, opening: s.opening,
+                parts: s.parts.map(x => ({label: x.label, text: x.text, note: x.note})), ending: s.ending, todo: s.todo, basis: s.basis};
+  const req = Object.assign({mode: "fill", rid: rid}, S.req, {concept: S.design.concept, plan: planOut(p),
+    qa: S.qs.map((q, i) => ({role: q.role, q: q.q, a: a[i].trim()})), cta: S.ctas[S.plan] || "", next_title: next ? next.title : "",
+    script: core, fills: fills, extra: S.fills[S.plan] || []});
+  loading(["あなたの答えを読んでいます", "青い枠の所を、全文に書いています", "答えにない話が混ざっていないか、確かめています"], 5000, "20秒ほどかかります。このままお待ちください。");
+  try {
+    const r = await callApi(req).catch(e => { if (!e.transport || S.mock) throw e; return recoverScript(rid, started); });
+    if (!r || r.error) throw new Error((r && r.error) || "");
+    clearInterval(timer);
+    const n = S.mock ? fills.length : Number(r.filled || 0);
+    S.fills[S.plan] = (S.fills[S.plan] || []).concat(fills.map(f => f.a));
+    fills.forEach(f => { delete S.draft[f.slot]; });
+    // 書き足したパートのうち、最初の所まで進める
+    applyNames(r);   // 見本のときは作っておいた結果が返るので、名乗りを入れ直す
+    const changed = (r.parts || []).findIndex((x, i) => !before.parts[i] || before.parts[i].text !== x.text);
+    S.script = r;
+    renderScript(r, n === 0 ? {ng: true, text: "答えを台本に入れられませんでした。もう少しくわしく答えてみてください。"}
+      : {text: n + "か所を、あなたの答えで書き足しました。" + (n < fills.length ? "（" + (fills.length - n) + "か所は、答えを文章にできなかったので、青い枠のまま残しています）" : "")});
+    const el = changed >= 0 ? document.querySelectorAll("#script .part")[changed] : null;
+    if (el && n > 0) el.scrollIntoView();
+  } catch (e) {
+    clearInterval(timer); renderFill("");
+    $("#err3").textContent = e.message || "書き足せませんでした。時間をおいてもう一度お試しください。";
+  }
+}
+function fallbackCopy(t, done) {
+  const ta = document.createElement("textarea");
+  ta.value = t; ta.style.position = "fixed"; ta.style.opacity = "0";
+  document.body.appendChild(ta); ta.select();
+  try { document.execCommand("copy"); done(); } catch (e) { $("#copied").textContent = "コピーできませんでした。長押しで選んでコピーしてください。"; }
+  document.body.removeChild(ta);
+}
 </script>
 </body>
 </html>
