@@ -242,7 +242,7 @@ const $ = s => document.querySelector(s);
 const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const val = id => $(id).value.trim();
 // いまの状態：req＝入力／design＝設計の結果／plan＝選んだ企画の番号／qs＝質問／saved＝企画ごとの答え／step＝いま何問目
-const S = {req: null, design: null, plan: -1, qs: null, saved: {}, ctas: {}, step: 0, script: null, mock: false, fills: {}, draft: {}, names: {}};
+const S = {req: null, design: null, plan: -1, qs: null, saved: {}, ctas: {}, step: 0, script: null, mock: false, fills: {}, draft: {}, names: {}, ptypes: {}, follows: {}};
 let goal = "", demoKey = "", timer = null;
 
 function show(id) {
@@ -264,7 +264,7 @@ function callApi(req) {
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 async function recoverScript(rid, started) {
   $("#waitnote").textContent = "通信が途切れました。できた台本を取りに行っています。このままお待ちください。";
-  while (Date.now() - started < 150000) {
+  while (Date.now() - started < 270000) {
     await sleep(5000);
     const r = await callApi({mode: "result", rid: rid}).catch(() => null);
     if (r && !r.pending) return r;
@@ -275,6 +275,7 @@ async function recoverScript(rid, started) {
 function mockApi(req) {
   const d = DEMO.koumuten || {}, wait = ms => new Promise(r => setTimeout(r, ms));
   if (req.mode === "questions") return wait(900).then(() => d.questions);
+  if (req.mode === "followup") return wait(700).then(() => d.followup || {questions: []});
   if (req.mode === "script") return wait(1500).then(() => d.script);
   if (req.mode === "fill") return wait(1500).then(() => d.filled || d.script);
   return wait(900).then(() => d.result);
@@ -309,7 +310,7 @@ $("#sample").onclick = () => {
 $("#exitmock").onclick = () => reset();
 function reset() {
   clearInterval(timer);
-  Object.assign(S, {req: null, design: null, plan: -1, qs: null, saved: {}, ctas: {}, step: 0, script: null, mock: false, fills: {}, draft: {}, names: {}});
+  Object.assign(S, {req: null, design: null, plan: -1, qs: null, saved: {}, ctas: {}, step: 0, script: null, mock: false, fills: {}, draft: {}, names: {}, ptypes: {}, follows: {}});
   $("#mockbar").classList.add("hide"); $("#err").textContent = "";
   show("form");
 }
@@ -333,7 +334,7 @@ async function startDesign() {
     const data = await callApi(req);
     if (!data || data.error) throw new Error((data && data.error) || "");
     clearInterval(timer);
-    S.design = data; S.saved = {}; S.ctas = {};
+    S.design = data; S.saved = {}; S.ctas = {}; S.ptypes = {}; S.follows = {};
     render(data, req.business);
   } catch (e) {
     clearInterval(timer);
@@ -415,7 +416,9 @@ function render(d, biz) {
 }
 
 // ---- 質問（取材） ----
-const planOut = p => ({title: p.title, keyword: p.keyword, who: p.who || "", why: p.why || ""});
+const planOut = p => ({title: p.title, keyword: p.keyword, who: p.who || "", why: p.why || "", ptype: S.ptypes[(S.design.plans || []).indexOf(p)] || ""});
+// 追加の質問への答え（答えたものだけ）
+const followOut = () => { const f = S.follows[S.plan]; return f ? f.qs.map((q, i) => ({role: q.role, q: q.q, a: (f.a[i] || "").trim()})).filter(x => x.a.length >= 2) : []; };
 const answers = () => S.saved[S.plan] || (S.saved[S.plan] = ["", "", "", "", ""]);
 const answered = () => answers().filter(a => a.trim().length >= 4).length;
 
@@ -427,7 +430,7 @@ async function startInterview(i) {
     const r = await callApi(Object.assign({mode: "questions"}, S.req, {concept: S.design.concept, plan: planOut(p)}));
     if (!r || r.error || !(r.questions || []).length) throw new Error((r && r.error) || "");
     clearInterval(timer);
-    S.qs = r.questions;
+    S.qs = r.questions; S.ptypes[i] = r.ptype || "";
     if (S.mock && DEMO.koumuten.answers) { S.saved[i] = DEMO.koumuten.answers.slice(); S.ctas[i] = DEMO.koumuten.cta || ""; }
     renderInterview();
   } catch (e) {
@@ -475,8 +478,44 @@ function renderInterview() {
     });
     document.querySelectorAll(".alist li").forEach(li => li.onclick = () => { S.step = Number(li.dataset.i); renderInterview(); });
     $("#back").onclick = () => { S.step = n - 1; renderInterview(); };
-    $("#make").onclick = makeScript;
+    $("#make").onclick = beforeScript;
   }
+}
+
+// ---- 追加の質問（5つの答えを読んで、足りない所だけを聞く） ----
+async function beforeScript() {
+  const p = S.design.plans[S.plan], a = answers();
+  const key = JSON.stringify(a.map(x => x.trim()));
+  const f = S.follows[S.plan];
+  if (f && f.key === key) { if (f.qs.length && !f.done) return renderFollow(); return makeScript(); }   // 同じ答えでは、聞き直さない
+  loading(["あなたの答えを読んでいます", "もう少し聞きたい所がないか、確かめています"], 4000, "10秒ほどかかります。");
+  let qs = [];
+  try {
+    const r = await callApi(Object.assign({mode: "followup"}, S.req, {concept: S.design.concept, plan: planOut(p),
+      qa: S.qs.map((q, i) => ({role: q.role, q: q.q, a: a[i].trim()}))}));
+    qs = (r && !r.error && Array.isArray(r.questions)) ? r.questions.slice(0, 3) : [];
+  } catch (e) { qs = []; }   // 聞けなかったときは、そのまま台本づくりへ進む
+  clearInterval(timer);
+  S.follows[S.plan] = {key: key, qs: qs, a: qs.map(() => ""), done: !qs.length};
+  if (qs.length) renderFollow(); else makeScript();
+}
+
+function renderFollow() {
+  const p = S.design.plans[S.plan], f = S.follows[S.plan], n = f.qs.length;
+  $("#interview").innerHTML = `<p class="for">あと少しだけ｜追加の質問（${n}つ）</p>
+    <div class="card"><div class="h2">あと${n}つだけ教えてください</div><div class="pt">${esc(p.title)}</div>
+      <div class="hint" style="margin:8px 0 0">5つの答えを読みました。ここに答えると、台本があなたの会社にしか話せない内容になります。一言でも大丈夫です。答えなくても、このまま台本を作れます。</div></div>
+    ${f.qs.map((q, i) => `<div class="card"><div class="qno">追加の質問 ${i + 1}／${n}${q.why ? `<span class="use">${esc(q.why)}</span>` : ""}</div>
+      <div class="qt">${esc(q.q)}</div>
+      <textarea class="fans" data-i="${i}" rows="4" placeholder="${q.hint ? "例：" + esc(q.hint) : ""}">${esc(f.a[i] || "")}</textarea></div>`).join("")}
+    <div class="card"><button class="btn main" id="fmake">この答えを足して、台本をつくる</button>
+      <button class="btn ghost" id="fback">5つの質問に戻る</button>
+      <button class="link" id="fskip">答えずに、台本をつくる</button></div>`;
+  show("interview");
+  const keep = () => document.querySelectorAll("#interview .fans").forEach(t => { f.a[Number(t.dataset.i)] = t.value; });
+  $("#fmake").onclick = () => { keep(); f.done = true; makeScript(); };
+  $("#fskip").onclick = () => { f.a = f.qs.map(() => ""); f.done = true; makeScript(); };
+  $("#fback").onclick = () => { keep(); S.step = S.qs.length; renderInterview(); };
 }
 
 // ---- 台本 ----
@@ -485,8 +524,8 @@ async function makeScript() {
   const next = (S.design.plans || []).filter((x, i) => i !== S.plan)[0];
   const rid = Date.now().toString(36) + Math.random().toString(36).slice(2, 10), started = Date.now();
   const req = Object.assign({mode: "script", rid: rid}, S.req, {concept: S.design.concept, plan: planOut(p),
-    qa: S.qs.map((q, i) => ({role: q.role, q: q.q, a: a[i].trim()})), cta: S.ctas[S.plan] || "", next_title: next ? next.title : ""});
-  loading(["あなたの答えを読んでいます", "話す順番を組み立てています", "冒頭を書いています", "本編を、1パートずつ全文で書いています", "締めを書いています", "答えにない話が混ざっていないか、確かめています"], 9000, "全文を書くので、1分ほどかかります。このままお待ちください。");
+    qa: S.qs.map((q, i) => ({role: q.role, q: q.q, a: a[i].trim()})), follow: followOut(), cta: S.ctas[S.plan] || "", next_title: next ? next.title : ""});
+  loading(["あなたの答えを読んでいます", "話す順番を組み立てています", "冒頭を書いています", "本編を、1パートずつ全文で書いています", "締めを書いています", "書いた台本を読み直して、弱い所を書き直しています", "答えにない話が混ざっていないか、確かめています"], 13000, "全文を書いてから読み直すので、1分半〜2分ほどかかります。このままお待ちください。");
   try {
     const s = await callApi(req).catch(e => { if (!e.transport || S.mock) throw e; return recoverScript(rid, started); });
     if (!s || s.error) throw new Error((s && s.error) || "");
@@ -649,10 +688,10 @@ async function doFill() {
   const p = S.design.plans[S.plan], a = answers();
   const next = (S.design.plans || []).filter((x, i) => i !== S.plan)[0];
   const rid = Date.now().toString(36) + Math.random().toString(36).slice(2, 10), started = Date.now();
-  const core = {title: s.title, point: s.point, insight: s.insight, reason: s.reason, opening: s.opening,
+  const core = {title: s.title, shape: s.shape || "", point: s.point, insight: s.insight, reason: s.reason, opening: s.opening,
                 parts: s.parts.map(x => ({label: x.label, text: x.text, note: x.note})), ending: s.ending, todo: s.todo, basis: s.basis};
   const req = Object.assign({mode: "fill", rid: rid}, S.req, {concept: S.design.concept, plan: planOut(p),
-    qa: S.qs.map((q, i) => ({role: q.role, q: q.q, a: a[i].trim()})), cta: S.ctas[S.plan] || "", next_title: next ? next.title : "",
+    qa: S.qs.map((q, i) => ({role: q.role, q: q.q, a: a[i].trim()})), follow: followOut(), cta: S.ctas[S.plan] || "", next_title: next ? next.title : "",
     script: core, fills: fills, extra: S.fills[S.plan] || []});
   loading(["あなたの答えを読んでいます", "青い枠の所を、全文に書いています", "答えにない話が混ざっていないか、確かめています"], 5000, "20秒ほどかかります。このままお待ちください。");
   try {
