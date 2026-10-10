@@ -223,6 +223,92 @@ header{border-bottom:3px solid var(--accent-y)}
 .btn.cta{background:var(--accent);color:#fff}
 .dots i.now{background:var(--accent-y)}
 .comp .g b,.plan .rw b{color:#d97e00}
+
+/* ===== 2026-10-10 作り込み（第2段）：HPの部品（小ラベル・薄い英字・斜線の番号・白丸の＞）＋余白を8の倍数に ===== */
+body{background-color:#eef0f6;background-image:radial-gradient(rgba(4,43,102,.10) 1px,transparent 1.2px);background-size:16px 16px}
+.wrap{max-width:600px;padding:0 20px 56px}
+header{padding:18px 20px}
+header .in{max-width:600px}
+.hero{position:relative;padding:40px 0 8px;overflow:hidden}
+.bgtext{position:absolute;left:-6px;top:18px;font-size:72px;font-weight:700;line-height:1;color:#043389;opacity:.07;white-space:nowrap;pointer-events:none;letter-spacing:-.01em}
+.eyebrow{position:relative;display:flex;align-items:center;gap:10px;margin:0 0 14px;font-size:13px;font-weight:700;color:var(--navy2);letter-spacing:.06em}
+.eyebrow span{letter-spacing:.14em;font-size:12px}
+.eyebrow i{width:28px;height:1px;background:currentColor}
+h1{position:relative;font-size:27px;line-height:1.5;margin:0 0 16px;letter-spacing:.03em}
+.nw{white-space:nowrap}
+.mark{position:relative;white-space:nowrap;background:linear-gradient(transparent 66%,rgba(255,200,61,.75) 66%);padding:0 .04em}
+.lead{font-size:14px;line-height:1.85;color:#4b5567;margin:0 0 24px}
+/* 3つの流れ：HPの「1 ／」 */
+.flow{gap:0;margin:0 0 16px;border:1px solid var(--line);background:#fff}
+.flow div{position:relative;border:0;border-radius:0;background:transparent;padding:14px 6px 12px;font-size:12.5px}
+.flow div+div{border-left:1px solid var(--line)}
+.flow b{display:inline-block;position:relative;font-size:11px;letter-spacing:.12em;margin-bottom:4px;padding-right:12px}
+.flow b::after{content:"";position:absolute;right:2px;top:-1px;width:1px;height:16px;background:var(--accent);transform:rotate(32deg)}
+.promise{position:relative;padding:12px 14px 12px 40px;margin:0 0 24px;font-size:13px;line-height:1.7;background:#fff;border:1px solid var(--line);color:var(--navy)}
+.promise::before{content:"";position:absolute;left:14px;top:50%;width:14px;height:14px;margin-top:-7px;border-radius:50%;background:var(--accent-y);box-shadow:0 0 0 4px rgba(255,200,61,.25)}
+/* 入力 */
+.card{padding:24px 20px;margin:16px 0}
+.main-card{border-top:3px solid var(--navy)}
+.field{margin-bottom:24px}
+label{display:flex;align-items:center;gap:10px;font-size:15px;margin:0 0 10px;color:var(--navy)}
+.qn{font-style:normal;flex:none;display:inline-grid;place-items:center;min-width:30px;height:22px;padding:0 6px;background:var(--navy);color:var(--accent-y);font-size:11.5px;font-weight:700;letter-spacing:.04em}
+textarea,input[type=text],input[type=url]{padding:14px;border-color:rgba(4,43,102,.22);transition:border-color .2s,box-shadow .2s}
+textarea:focus,input:focus{box-shadow:0 0 0 3px rgba(4,43,102,.12)}
+.opts{gap:10px}
+.opt{position:relative;padding:14px 8px;border-color:rgba(4,43,102,.22);transition:border-color .2s,background .2s,color .2s}
+.opt.on{border-color:var(--navy);background:var(--navy);color:#fff}
+.opt.on::after{content:"";position:absolute;right:8px;top:8px;width:8px;height:8px;border-radius:50%;background:var(--accent-y)}
+.opt-card{background:transparent;border-style:dashed}
+.opt-card .ohead{font-size:15px}
+.opt-card label{font-size:13.5px;font-weight:700}
+.hint{margin:6px 0 20px}
+/* ボタン：HPの紺の四角＋白丸の＞ */
+.btn{position:relative;padding:18px 56px 18px 20px;font-size:16px}
+.btn.main{margin-top:24px}
+.btn.main::after,.btn.cta::after{content:"";position:absolute;right:14px;top:50%;width:30px;height:30px;margin-top:-15px;border-radius:50%;background:#fff}
+.btn.main::before,.btn.cta::before{content:"";position:absolute;z-index:1;right:27px;top:50%;width:7px;height:7px;margin-top:-4px;border-top:2px solid var(--navy);border-right:2px solid var(--navy);transform:rotate(45deg);transition:transform .3s}
+.btn.cta::before{border-color:var(--accent)}
+.btn.main:hover::before,.btn.cta:hover::before{transform:translateX(3px) rotate(45deg)}
+.btn.ghost{padding:14px 16px;background:#fff;border:1px solid var(--line)}
+.demo{text-align:center;margin-top:16px}
+.demo button{border-style:solid;border-color:var(--line)}
+/* 読み込み中 */
+#loading .stepline{position:relative;padding-left:20px;text-align:left;display:inline-block}
+#loading .stepline::before{content:"";position:absolute;left:0;top:.55em;width:8px;height:8px;border:1px solid var(--line);background:#fff}
+#loading .stepline.done::before{background:var(--accent);border-color:var(--accent)}
+#steplines{display:flex;flex-direction:column;align-items:center}
+/* 結果 */
+.for{margin:32px 0 6px}
+.result-card,.card{position:relative}
+.h2{font-size:11.5px;margin:0 0 10px}
+.concept{font-size:25px;line-height:1.45;margin:4px 0 14px}
+.crow{padding:10px 0}
+.chip{padding:6px 12px}
+.plan{padding:16px 0}
+.plan .no{width:30px;height:30px;font-size:14px}
+.plan .t{font-size:15.5px}
+.next{padding:28px 20px}
+.next .nt{font-size:18px}
+
+/* 第2段の直し：見出しの割れ・STEPの並び・選択肢の折り返し */
+body{word-break:auto-phrase}
+h1{font-size:24px}
+.flow b{display:block;width:fit-content;margin:0 auto 6px}
+.opt{font-size:13.5px;line-height:1.45}
+@media (min-width:420px){h1{font-size:27px}}
+
+/* 第2段の直し：結果の画面 */
+.concept{font-size:23px}
+.chead{min-width:0}
+.chead>div{min-width:0;flex:1}
+.chead .go{flex:none;border-radius:5px;font-size:11px;padding:4px 9px;margin-left:8px}
+@media (min-width:420px){.concept{font-size:26px}}
+@media (min-width:760px){
+  .wrap{max-width:640px}
+  header .in{max-width:640px}
+  h1{font-size:32px}
+  .bgtext{font-size:96px}
+}
 </style>
 </head>
 <body>
@@ -231,7 +317,11 @@ header{border-bottom:3px solid var(--accent-y)}
 <div class="wrap">
 
 <section id="form">
-  <h1>質問に答えるだけで、<br>最初の1本の台本ができます</h1>
+  <div class="hero">
+    <div class="bgtext" aria-hidden="true">FREE TOOL</div>
+    <p class="eyebrow"><span>FREE TOOL</span><i></i>無料のYouTube設計</p>
+    <h1><span class="nw">質問に答えるだけで、</span><br><span class="mark">最初の1本の台本</span><span class="nw">ができます</span></h1>
+  </div>
   <p class="lead">質問に答えるだけで、チャンネルの設計から、最初に撮る動画の台本までできます。台本は、冒頭から締めまでそのまま読める全文です。企業のYouTubeを支援してきたTsuzuruの知見をもとに作ります（無料）。</p>
   <div class="flow">
     <div><b>STEP 1</b>設計を見る<br>約1分</div>
@@ -239,12 +329,12 @@ header{border-bottom:3px solid var(--accent-y)}
     <div><b>STEP 3</b>台本が<br>できる</div>
   </div>
   <p class="promise">AIが勝手に書くのではなく、あなたの話をAIが台本に整えます。</p>
-  <div class="card">
-    <div class="field"><label for="biz">どんな事業ですか？</label>
+  <div class="card main-card">
+    <div class="field"><label for="biz"><em class="qn">Q1</em>どんな事業ですか？</label>
       <textarea id="biz" rows="2" placeholder="例：埼玉で注文住宅をつくる工務店"></textarea></div>
-    <div class="field"><label for="aud">動画を届けたい相手は？</label>
+    <div class="field"><label for="aud"><em class="qn">Q2</em>動画を届けたい相手は？</label>
       <textarea id="aud" rows="2" placeholder="例：はじめて家を建てる30〜40代の夫婦"></textarea></div>
-    <div class="field"><label>YouTubeでいちばん叶えたいこと</label>
+    <div class="field"><label><em class="qn">Q3</em>YouTubeでいちばん叶えたいこと</label>
       <div class="opts" id="goal">
         <div class="opt" data-v="問い合わせ・集客">問い合わせ・集客</div>
         <div class="opt" data-v="採用">採用</div>
@@ -252,7 +342,7 @@ header{border-bottom:3px solid var(--accent-y)}
         <div class="opt" data-v="会社を知ってもらう">会社を知ってもらう</div>
       </div></div>
   </div>
-  <div class="card">
+  <div class="card opt-card">
     <div class="ohead">もっと精度を上げる<span class="badge">任意</span></div>
     <p class="hint">入れていただくと、ホームページや実績の内容を読み込んで、あなたの会社にしか作れない提案にします。わかるものだけで大丈夫です。</p>
     <div class="field"><label for="company">会社名・屋号</label>
