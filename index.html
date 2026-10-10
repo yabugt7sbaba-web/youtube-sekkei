@@ -208,6 +208,21 @@ textarea:focus,input:focus{border-color:var(--navy2)}
 .fillcard{border-width:1px;border-color:var(--navy2);background:#f6f8fc}
 .slot{border-color:var(--navy2);color:var(--navy2);background:#eef1f8}
 .pnote,.use{background:#f7efd8;color:#6b5310}
+
+/* ===== 2026-10-10 差し色（黄色〜オレンジ）を少しだけ ===== */
+:root{--accent:#f39800;--accent-y:#ffc83d}
+header{border-bottom:3px solid var(--accent-y)}
+.flow b{color:var(--accent)}
+.h2{display:flex;align-items:center;gap:8px}
+.h2::before{content:"";flex:none;width:3px;height:1.1em;background:var(--accent)}
+.plan .no,.part .pl i{color:var(--accent-y)}
+.chip.on,.tag.k{background:#ffe9a6;color:#6b4a00}
+.next{border-top:3px solid var(--accent-y)}
+.next .h2{color:var(--accent-y)}
+.next .h2::before{background:var(--accent-y)}
+.btn.cta{background:var(--accent);color:#fff}
+.dots i.now{background:var(--accent-y)}
+.comp .g b,.plan .rw b{color:#d97e00}
 </style>
 </head>
 <body>
