@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex, nofollow">
 <meta property="og:type" content="website">
 <meta property="og:title" content="あなた専用のYouTube設計｜Tsuzuru">
-<meta property="og:description" content="3つ答えるだけで、コンセプト・競合チャンネル・検索されている言葉・最初に撮る企画と参考動画をその場でAIが作成します（無料）">
+<meta property="og:description" content="3つ答えるだけで、コンセプト・競合チャンネル・対策KW・おすすめの伸びる企画と参考動画をその場でAIが作成します（無料）">
 <meta property="og:url" content="https://yabugt7sbaba-web.github.io/youtube-sekkei/">
 <meta property="og:image" content="https://yabugt7sbaba-web.github.io/youtube-sekkei/ogp3.png">
 <meta name="twitter:card" content="summary_large_image">
@@ -163,6 +163,51 @@ ul.pts li{margin:3px 0}
 ul.todo{margin:0;padding-left:20px;font-size:14px}
 ul.todo li{margin:5px 0}
 .copied{font-size:12.5px;color:#166534;text-align:center;min-height:1.2em;margin-top:6px}
+
+/* ===== 2026-10-10 HP（tsuzuru-movie.com）のトンマナにそろえる：紺の単色・四角に近い角・金の札 ===== */
+:root{--navy:#041941;--navy2:#042b66;--blue:#043389;--yellow:#deba5a;--bg:#eef0f6;--line:rgba(4,43,102,.14)}
+body{font-family:"Noto Sans JP","Hiragino Sans",sans-serif;letter-spacing:.02em;font-feature-settings:"palt"}
+header{background:var(--navy);padding:16px}
+header b{font-weight:700;letter-spacing:.06em}
+h1{font-weight:700;letter-spacing:.03em}
+.card{border-radius:0;box-shadow:none;border:1px solid var(--line)}
+textarea,input[type=text],input[type=url]{border-radius:5px;border-width:1px;background:#fff}
+textarea:focus,input:focus{border-color:var(--navy2)}
+.opt{border-radius:5px;border-width:1px;background:#fff}
+.opt.on{border-color:var(--navy2);background:#e6eaf4;color:var(--navy)}
+.badge,.tag,.use{border-radius:6px}
+.badge{background:#e6eaf4;color:var(--blue)}
+.btn{border-radius:5px;font-weight:700;letter-spacing:.06em}
+.btn.main,.next{background:var(--navy)}
+.btn.cta{background:var(--navy2)}
+.btn.ghost{background:#e6eaf4;color:var(--navy2)}
+.mk{border-radius:5px;border-width:1px;border-color:var(--navy2);color:var(--navy2);font-weight:700}
+.demo button{border-radius:6px}
+.flow div{border-radius:0;box-shadow:none;background:#fff;border:1px solid var(--line)}
+.flow b{color:var(--navy2)}
+.promise,.src,.sum{border-radius:0;background:#e6eaf4;color:var(--navy2)}
+.h2{color:var(--navy2);font-weight:700;letter-spacing:.14em}
+.concept,.stitle,.pt,.qt{font-weight:700}
+.crow b,.alist b,.qno,.ref .rl,.leadbox small{color:var(--navy2)}
+.chip{border-radius:6px;background:#e6eaf4;color:var(--blue)}
+.chip.on{background:#f3e7c4;color:#6b5310}
+.tag.k{background:#f3e7c4;color:#6b5310}
+.tag.y{background:#e6eaf4;color:var(--blue)}
+.market,.ref,.leadbox{border-radius:0;background:#f4f6fa}
+.plan .no,.part .pl i{border-radius:0;background:var(--navy);color:#fff;font-weight:700}
+.comp .g b,.plan .rw b{color:#a8842a}
+.vcard img,.ref img{border-radius:0}
+.next .h2{color:var(--yellow)}
+.spin{border-top-color:var(--navy2)}
+.dots i{border-radius:0}
+.dots i.done{background:var(--navy2)}
+.dots i.now{background:var(--yellow)}
+.mockbar{background:#f3e7c4;color:#5a4510}
+.mockbar button{border-radius:5px;background:var(--navy)}
+.notice{border-radius:0}
+.fillcard{border-width:1px;border-color:var(--navy2);background:#f6f8fc}
+.slot{border-color:var(--navy2);color:var(--navy2);background:#eef1f8}
+.pnote,.use{background:#f7efd8;color:#6b5310}
 </style>
 </head>
 <body>
@@ -327,7 +372,7 @@ $("#go").onclick = () => {
 async function startDesign() {
   const req = S.req, steps = [];
   if (req.hp || req.blog || req.youtube) steps.push("ホームページ・チャンネルを読んでいます");
-  steps.push("競合チャンネルと、よく見られている動画を調べています", "実際に検索されている言葉を調べています",
+  steps.push("競合チャンネルと、よく見られている動画を調べています", "対策KWを調べています",
              "Tsuzuruの知見をもとに、コンセプトと企画を考えています", "企画ごとに、参考になる競合の動画を選んでいます");
   loading(steps, 9000, "1分ほどかかります。このままお待ちください。");
   try {
@@ -400,13 +445,13 @@ function render(d, biz) {
     <div class="card"><div class="h2">NAME｜チャンネル名の案</div><div class="chips">${(d.names || []).map(n => `<span class="chip">${esc(n)}</span>`).join("")}</div>
       <div class="h2" style="margin-top:14px">TARGET｜見てほしい人</div><div style="font-size:14px">${esc(d.target)}</div></div>
     ${(market || comps) ? `<div class="card"><div class="h2">RIVALS｜参考にする競合チャンネル</div>${market}${comps}</div>` : ""}
-    <div class="card"><div class="h2">KEYWORDS｜検索されている言葉<span style="white-space:nowrap">（${kwCount}個）</span></div>${keywords}
-      <div class="kwnote">YouTubeの検索候補に実際に出てくる言葉です。黄色は、下の「最初に撮る企画」で狙う言葉。</div></div>
+    <div class="card"><div class="h2">KEYWORDS｜対策KW<span style="white-space:nowrap">（${kwCount}個）</span></div>${keywords}
+      <div class="kwnote">YouTubeの検索候補に実際に出てくる言葉です。黄色は、下の「おすすめの伸びる企画」で狙うKW。</div></div>
     <div class="card next" id="nextcard"><div class="h2">NEXT｜次は台本です</div>
       <div class="nt">下の企画から1つ選ぶと、5つの質問に答えるだけで台本ができます。</div>
       <div class="ns">冒頭から締めまで、そのまま読める全文の台本です。あなたの会社の実際の話を入れるので、ほかの会社には作れない1本になります。</div></div>
     <div class="err" id="err2"></div>
-    <div class="card"><div class="h2">PLANS｜最初に撮る企画${(d.plans || []).length}本</div>${plans}</div>
+    <div class="card"><div class="h2">PLANS｜おすすめの伸びる企画${(d.plans || []).length}本</div>${plans}</div>
     <div class="card" style="text-align:center"><div style="font-weight:900;font-size:16px;color:var(--navy)">この設計を、あなたの会社に合わせて<br>一緒に詰めませんか？</div>
       <a class="btn cta" href="${CONSULT_URL}" target="_blank" rel="noopener">無料で相談する</a></div>
     <button class="btn ghost" id="again">もう一度つくる</button>`;
