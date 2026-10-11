@@ -5,12 +5,12 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <meta property="og:type" content="website">
-<meta property="og:title" content="あなた専用のYouTube設計｜Tsuzuru">
+<meta property="og:title" content="御社専用のYouTube設計｜Tsuzuru">
 <meta property="og:description" content="3つ答えるだけで、コンセプト・競合チャンネル・対策KW・おすすめの伸びる企画と参考動画をその場でAIが作成します（無料）">
 <meta property="og:url" content="https://yabugt7sbaba-web.github.io/youtube-sekkei/">
 <meta property="og:image" content="https://yabugt7sbaba-web.github.io/youtube-sekkei/ogp3.png">
 <meta name="twitter:card" content="summary_large_image">
-<title>あなた専用のYouTube設計｜Tsuzuru</title>
+<title>御社専用のYouTube設計｜Tsuzuru</title>
 <base target="_blank">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
@@ -309,10 +309,31 @@ h1{font-size:24px}
   h1{font-size:32px}
   .bgtext{font-size:96px}
 }
+
+/* 2026-10-11 KAWAI「AIデザインの指示帳」で点検して直した所 */
+.lead b{color:var(--navy);font-weight:700}
+#optbox summary{list-style:none;cursor:pointer;position:relative;padding-right:28px}
+#optbox summary::-webkit-details-marker{display:none}
+#optbox .plus{position:absolute;right:2px;top:50%;width:14px;height:14px;margin-top:-7px}
+#optbox .plus::before,#optbox .plus::after{content:"";position:absolute;left:0;top:6px;width:14px;height:2px;background:var(--navy);transition:transform .25s}
+#optbox .plus::after{transform:rotate(90deg)}
+#optbox[open] .plus::after{transform:rotate(0)}
+#optbox:not([open]) .hint{display:none}
+#optbox[open] summary{margin-bottom:4px}
+#steplines{align-items:flex-start;width:fit-content;max-width:100%;margin:0 auto}
+#loading .stepline{display:block}
+.rnav{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:6px;margin:10px 0 4px}
+.rnav a{display:flex;justify-content:center;align-items:baseline;gap:3px;padding:8px 4px;white-space:nowrap;background:#fff;border:1px solid var(--line);border-radius:6px;color:var(--navy);font-size:13px;font-weight:700;text-decoration:none}
+.rnav a small{font-size:10.5px;color:var(--accent);font-weight:900}
+#result .card[id]{scroll-margin-top:12px}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+.crow>div,.ref>div{min-width:0;overflow-wrap:anywhere}
+.ctanote{font-size:12px;color:var(--muted);margin:10px 0 0;line-height:1.7}
 </style>
 </head>
 <body>
-<header><div class="in"><b>あなた専用のYouTube設計</b><span>TSUZURU</span></div></header>
+<header><div class="in"><b>YouTube無料設計</b><span>TSUZURU</span></div></header>
 <div id="mockbar" class="mockbar hide">見本を表示しています（工務店の例）<button id="exitmock">自分の会社で作る</button></div>
 <div class="wrap">
 
@@ -320,12 +341,12 @@ h1{font-size:24px}
   <div class="hero">
     <div class="bgtext" aria-hidden="true">FREE TOOL</div>
     <p class="eyebrow"><span>FREE TOOL</span><i></i>無料のYouTube設計</p>
-    <h1><span class="nw">質問に答えるだけで、</span><br><span class="mark">最初の1本の台本</span><span class="nw">ができます</span></h1>
+    <h1><span class="nw">御社専用のYouTube設計が、</span><br><span class="nw">たった</span><span class="mark">1分</span><span class="nw">で届きます</span></h1>
   </div>
-  <p class="lead">質問に答えるだけで、チャンネルの設計から、最初に撮る動画の台本までできます。台本は、冒頭から締めまでそのまま読める全文です。企業のYouTubeを支援してきたTsuzuruの知見をもとに作ります（無料）。</p>
+  <p class="lead">業種・お客さん・目標の3つに答えるだけで、コンセプト・<b>おすすめの伸びる企画5本</b>・<b>対策KW24個</b>が届きます。気に入った企画は、そのまま台本まで作れます。累計約30社を支援してきたTsuzuruの知見をもとに作ります（無料）。</p>
   <div class="flow">
-    <div><b>STEP 1</b>設計を見る<br>約1分</div>
-    <div><b>STEP 2</b>5つの質問に<br>答える</div>
+    <div><b>STEP 1</b>3つ答えて<br>設計を見る</div>
+    <div><b>STEP 2</b>企画を選んで<br>5つ答える</div>
     <div><b>STEP 3</b>台本が<br>できる</div>
   </div>
   <div class="card main-card">
@@ -341,8 +362,8 @@ h1{font-size:24px}
         <div class="opt" data-v="会社を知ってもらう">会社を知ってもらう</div>
       </div></div>
   </div>
-  <div class="card opt-card">
-    <div class="ohead">もっと精度を上げる<span class="badge">任意</span></div>
+  <details class="card opt-card" id="optbox">
+    <summary class="ohead">もっと精度を上げる<span class="badge">任意</span><i class="plus" aria-hidden="true"></i></summary>
     <p class="hint">入れていただくと、ホームページや実績の内容を読み込んで、あなたの会社にしか作れない提案にします。わかるものだけで大丈夫です。</p>
     <div class="field"><label for="company">会社名・屋号</label>
       <input type="text" id="company" placeholder="例：株式会社◯◯工務店"></div>
@@ -354,7 +375,7 @@ h1{font-size:24px}
       <input type="url" id="yt" inputmode="url" autocapitalize="off" placeholder="https://www.youtube.com/@..."></div>
     <div class="field"><label for="str">得意なこと・実績・よく聞かれる質問など</label>
       <textarea id="str" rows="3" placeholder="例：創業30年・年間40棟。自然素材の家が得意。「総額いくら？」とよく聞かれる"></textarea></div>
-  </div>
+  </details>
   <button class="btn main" id="go">設計をつくる（無料）</button>
   <div class="err" id="err"></div>
   <button class="btn ghost" id="sample">先に見本を見る（工務店の例・すぐ見られます）</button>
@@ -439,6 +460,13 @@ function loading(lines, every, note) {
   timer = setInterval(() => { if (i < els.length) els[i++].classList.add("done"); }, S.mock ? 300 : every);
 }
 
+// 結果の上の目次：ページ内のその場所へ動かす（<base target="_blank"> があるので、リンク任せにしない）
+document.addEventListener("click", e => {
+  const a = e.target.closest && e.target.closest(".rnav a"); if (!a) return;
+  e.preventDefault();
+  const t = document.querySelector(a.getAttribute("href")); if (t) t.scrollIntoView({behavior: "smooth", block: "start"});
+});
+
 // ---- 入力 ----
 document.querySelectorAll("#goal .opt").forEach(o => o.onclick = () => {
   document.querySelectorAll("#goal .opt").forEach(x => x.classList.remove("on"));
@@ -446,7 +474,7 @@ document.querySelectorAll("#goal .opt").forEach(o => o.onclick = () => {
 });
 document.querySelectorAll("#demo button").forEach(b => b.onclick = () => {
   const d = DEMO[b.dataset.k]; if (!d) return;
-  demoKey = b.dataset.k; $("#biz").value = d.input.business; $("#aud").value = d.input.audience; $("#str").value = d.input.strengths || "";
+  demoKey = b.dataset.k; $("#biz").value = d.input.business; $("#aud").value = d.input.audience; $("#str").value = d.input.strengths || ""; if (d.input.strengths) $("#optbox").open = true;
   document.querySelectorAll("#goal .opt").forEach(x => x.classList.toggle("on", x.dataset.v === d.input.goal));
   goal = d.input.goal;
 });
@@ -545,19 +573,21 @@ function render(d, biz) {
     : `<div class="chips">${(d.keywords || []).map(chip).join("")}</div>`;
   $("#result").innerHTML = `
     <p class="for">「${esc(biz)}」のあなたへ</p>${srcLine ? `<div class="src">${esc(srcLine)}</div>` : ""}${own}
-    <div class="card"><div class="h2">CONCEPT｜コンセプト</div>${concept}</div>
+    <nav class="rnav" aria-label="届いた設計の中身"><a href="#r-concept" target="_self">コンセプト</a>${(market || comps) ? `<a href="#r-rivals" target="_self">競合</a>` : ""}<a href="#r-kw" target="_self">対策KW<small>${kwCount}個</small></a><a href="#r-plans" target="_self">企画<small>${(d.plans || []).length}本</small></a></nav>
+    <div class="card" id="r-concept"><div class="h2">CONCEPT｜コンセプト</div>${concept}</div>
     <div class="card"><div class="h2">NAME｜チャンネル名の案</div><div class="chips">${(d.names || []).map(n => `<span class="chip">${esc(n)}</span>`).join("")}</div>
       <div class="h2" style="margin-top:14px">TARGET｜見てほしい人</div><div style="font-size:14px">${esc(d.target)}</div></div>
-    ${(market || comps) ? `<div class="card"><div class="h2">RIVALS｜参考にする競合チャンネル</div>${market}${comps}</div>` : ""}
-    <div class="card"><div class="h2">KEYWORDS｜対策KW<span style="white-space:nowrap">（${kwCount}個）</span></div>${keywords}
+    ${(market || comps) ? `<div class="card" id="r-rivals"><div class="h2">RIVALS｜参考にする競合チャンネル</div>${market}${comps}</div>` : ""}
+    <div class="card" id="r-kw"><div class="h2">KEYWORDS｜対策KW<span style="white-space:nowrap">（${kwCount}個）</span></div>${keywords}
       <div class="kwnote">YouTubeの検索候補に実際に出てくる言葉です。黄色は、下の「おすすめの伸びる企画」で狙うKW。</div></div>
     <div class="card next" id="nextcard"><div class="h2">NEXT｜次は台本です</div>
       <div class="nt">下の企画から1つ選ぶと、5つの質問に答えるだけで台本ができます。</div>
       <div class="ns">冒頭から締めまで、そのまま読める全文の台本です。あなたの会社の実際の話を入れるので、ほかの会社には作れない1本になります。</div></div>
     <div class="err" id="err2"></div>
-    <div class="card"><div class="h2">PLANS｜おすすめの伸びる企画${(d.plans || []).length}本</div>${plans}</div>
-    <div class="card" style="text-align:center"><div style="font-weight:900;font-size:16px;color:var(--navy)">この設計を、あなたの会社に合わせて<br>一緒に詰めませんか？</div>
-      <a class="btn cta" href="${CONSULT_URL}" target="_blank" rel="noopener">無料で相談する</a></div>
+    <div class="card" id="r-plans"><div class="h2">PLANS｜おすすめの伸びる企画${(d.plans || []).length}本</div>${plans}</div>
+    <div class="card" style="text-align:center"><div style="font-weight:900;font-size:16px;color:var(--navy)">この設計を、御社に合わせて<br>一緒に詰めませんか？</div>
+      <a class="btn cta" href="${CONSULT_URL}" target="_blank" rel="noopener">日程を選んで無料相談する</a>
+      <p class="ctanote">予約カレンダーが開きます。空いている日時を選ぶだけで、費用はかかりません。</p></div>
     <button class="btn ghost" id="again">もう一度つくる</button>`;
   document.querySelectorAll("#result .mk").forEach(b => b.onclick = () => startInterview(Number(b.dataset.i)));
   $("#again").onclick = reset;
