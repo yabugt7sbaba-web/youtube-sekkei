@@ -330,6 +330,17 @@ html{scroll-behavior:smooth}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 .crow>div,.ref>div{min-width:0;overflow-wrap:anywhere}
 .ctanote{font-size:12px;color:var(--muted);margin:10px 0 0;line-height:1.7}
+
+/* 2026-10-11 デザイン面の直し（KAWAI指示帳 10〜18章）：色を3役割に・窮屈さ・文字の濃さ・英字の切れ */
+.chead{flex-wrap:wrap;row-gap:6px}
+.chead>div{flex:1 1 calc(100% - 56px)}
+.chead .go{order:3;margin:0 0 0 56px;background:#fff;color:var(--navy);border:1px solid rgba(4,43,102,.3);font-weight:700}
+.chead:hover .go{background:var(--navy);color:#fff}
+.comp .g b,.plan .rw b{color:var(--navy2)}
+.lead{color:#2f3a4c}
+.plan .w,.comp .d,.market{color:#475467}
+.bgtext{font-size:min(15vw,72px)}
+@media (min-width:600px){.bgtext{font-size:96px}}
 </style>
 </head>
 <body>
@@ -343,7 +354,7 @@ html{scroll-behavior:smooth}
     <p class="eyebrow"><span>FREE TOOL</span><i></i>無料のYouTube設計</p>
     <h1><span class="nw">御社専用のYouTube設計が、</span><br><span class="nw">たった</span><span class="mark">1分</span><span class="nw">で届きます</span></h1>
   </div>
-  <p class="lead">業種・お客さん・目標の3つに答えるだけで、コンセプト・<b>おすすめの伸びる企画5本</b>・<b>対策KW24個</b>が届きます。気に入った企画は、そのまま台本まで作れます。累計約30社を支援してきたTsuzuruの知見をもとに作ります（無料）。</p>
+  <p class="lead">業種・お客さん・目標の3つに答えるだけで、コンセプト・<b>おすすめの伸びる企画5本</b>・<b style="white-space:nowrap">対策KW最大24個</b>が届きます。気に入った企画は、そのまま台本まで作れます。累計約30社を支援してきたTsuzuruの知見をもとに作ります（無料）。</p>
   <div class="flow">
     <div><b>STEP 1</b>3つ答えて<br>設計を見る</div>
     <div><b>STEP 2</b>企画を選んで<br>5つ答える</div>
